@@ -93,7 +93,9 @@ export function useSession(
             storyId: bundle.meta.id,
             characterId,
             session: { beatId: s.beatId, flags: s.flags, cluesFound: s.cluesFound, day: t.day, phase: t.phase },
-            transcriptTail: (s.transcripts[characterId] ?? []).slice(-TAIL),
+            // Exclude the just-appended player message (the final entry) — it's already
+          // sent separately as `playerMessage`; including it here would send it twice.
+          transcriptTail: (s.transcripts[characterId] ?? []).slice(-TAIL - 1, -1),
             playerMessage,
             wantAudio: s.mode === 'voice',
             wantSuggestions: s.mode === 'mcq',

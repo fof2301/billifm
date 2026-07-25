@@ -48,6 +48,18 @@ describe('useSession', () => {
     expect(result.current.state.elapsedRealMs).toBe(3000)
   })
 
+  it('sends the just-appended player message once: it is the playerMessage, not also in transcriptTail', async () => {
+    dialogueMock.mockResolvedValue({ text: 'reply' })
+    const { result } = renderHook(() => useSession(bundle, 'text', false, () => {}))
+    act(() => result.current.selectCharacter('ann'))
+    act(() => result.current.send('unique player text'))
+    await waitFor(() => expect(dialogueMock).toHaveBeenCalled())
+    const call = dialogueMock.mock.calls[0]![0] as { playerMessage: string; transcriptTail: { text: string }[] }
+    expect(call.playerMessage).toBe('unique player text')
+    expect(call.transcriptTail.some((e) => e.text === 'unique player text')).toBe(false)
+    await act(async () => { await vi.runOnlyPendingTimersAsync() })
+  })
+
   it('sends a message: dialogue call, reply appended, judge success ends story', async () => {
     dialogueMock.mockResolvedValue({ text: 'oh really' })
     judgeMock.mockResolvedValue({ success: true, feedback: 'done' })
