@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Audio } from 'expo-av';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import { EventEngine } from '../engine/eventEngine';
+import { handlerFor } from '../effects/registry';
 import { audioUrl, fetchEventTrack, postEpisodeComplete } from '../lib/api';
 import type { EffectContext, EventTrack, FakeCallEvent } from '../types';
 import { C, FADE_MS } from '../theme';
@@ -24,6 +26,9 @@ export default function PlayerScreen({ classic }: { classic: boolean }) {
 
   const overlay = useRef(new Animated.Value(0)).current;
   const [blockTouches, setBlockTouches] = useState(false);
+  // The torch is a prop on a mounted CameraView, so its on/off lives in state.
+  const [torchOn, setTorchOn] = useState(false);
+  const [camPerm, requestCamPerm] = useCameraPermissions();
   const [call, setCall] = useState<FakeCallEvent | null>(null);
   const [playing, setPlaying] = useState(false);
   const [ready, setReady] = useState(false);
@@ -48,6 +53,9 @@ export default function PlayerScreen({ classic }: { classic: boolean }) {
         await sound.setVolumeAsync(from + ((to - from) * i) / steps);
         await sleep(50);
       }
+    },
+    setTorch(on) {
+      setTorchOn(on);
     },
     setOverlay(opacity, block, fadeMs) {
       setBlockTouches(block);
@@ -108,6 +116,9 @@ export default function PlayerScreen({ classic }: { classic: boolean }) {
     (async () => {
       try {
         await activateKeepAwakeAsync();
+        // Torch needs camera permission AND a mounted CameraView. Ask now, at
+        // the top of the episode - never at t=127s with the room already dark.
+        if (!classic && !camPerm?.granted) await requestCamPerm();
         const track: EventTrack = await fetchEventTrack(8);
         const { sound } = await Audio.Sound.createAsync(
           { uri: audioUrl(track.audio) },
@@ -121,7 +132,7 @@ export default function PlayerScreen({ classic }: { classic: boolean }) {
         soundRef.current = sound;
 
         if (!classic) {
-          engineRef.current = new EventEngine(track, ctx, () => positionRef.current);
+          engineRef.current = new EventEngine(track, ctx, () => positionRef.current, handlerFor);
         }
         setReady(true);
         pushLog(`loaded ep${track.episode} · ${track.events.length} events${classic ? ' (classic mode - effects off)' : ''}`);
@@ -158,6 +169,15 @@ export default function PlayerScreen({ classic }: { classic: boolean }) {
 
   return (
     <View style={s.root}>
+      {/*
+        The torch. Mounted for the whole episode and effectively invisible, because
+        expo-camera 16 exposes the torch only as a prop on a live CameraView.
+        Do not unmount this to "save battery" - the torch dies with it.
+      */}
+      {!classic && camPerm?.granted && (
+        <CameraView style={s.torchHost} facing="back" enableTorch={torchOn} />
+      )}
+
       <View style={s.cover}>
         <Text style={s.logo}>AAKHRI AWAAZ</Text>
         <Text style={s.ep}>Episode 8 — Sutradhar</Text>
@@ -237,4 +257,7 @@ const s = StyleSheet.create({
   log: { position: 'absolute', bottom: 24, left: 20, right: 20 },
   logLine: { color: '#3A3A46', fontSize: 10, fontFamily: 'monospace' },
   overlay: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#000' },
+  // 1x1 and transparent: mounted so the torch works, invisible so the player
+  // never looks like a camera app.
+  torchHost: { position: 'absolute', width: 1, height: 1, top: 0, left: 0, opacity: 0 },
 });

@@ -18,7 +18,7 @@
 | D5 | File-based state (`listener.json`), no DB, no queue | YAGNI; 18-hour build | 2026-07 |
 | D6 | Mic = amplitude metering only; never record/store/transmit | Privacy is a pitch point, not a footnote | 2026-07 |
 | D7 | Story = original IP "Aakhri Awaaz", Ep 8 showcase, Hinglish | Zero copyright risk; canon small enough to control | 2026-07 |
-| D8 | Voice stack: Vapi (agents/telephony) + ElevenLabs (voices) + Claude (brain) | Fastest proven path; Retell is the swap-in alternative | 2026-07 |
+| D8 | ~~Voice stack: Vapi (agents/telephony) + ElevenLabs (voices) + Claude (brain)~~ **SUPERSEDED BY D12** | Fastest proven path; Retell is the swap-in alternative | 2026-07 |
 | D9 | Live generation ONLY for conversations; all narration/branches pre-generated | Quality + demo reliability | 2026-07 |
 | D10 | Cut order under pressure: voice note → outbound callback → NEVER the in-episode trio | Protects the demo core | 2026-07 |
 
@@ -49,6 +49,15 @@
 `.env` requires: `ANTHROPIC_API_KEY`, `ELEVENLABS_API_KEY`, `VAPI_API_KEY`, `VAPI_PHONE_NUMBER_ID`, `TWILIO_SID`, `TWILIO_AUTH`, `TWILIO_FROM`, `SERVER_BASE_URL`, `DEMO_PHONE_NUMBER`. Voice IDs (fill when created): `MEERA_VOICE_ID=__`, `VILLAIN_VOICE_ID=__`, `NARRATOR_VOICE_ID=__`.
 
 ## 6. Session log (newest first)
+### 2026-07-25 — Session 2 (first build session, with Claude Code)
+- Built: repo scaffold + verified locally. `app/` (Expo, engine + 5 effect handlers + 3 screens), `server/` (FastAPI, 9 endpoints, episode-gated canon, Realtime broker, WebRTC call page), `director/` (M7 annotate + validate + compare + 500-episode synthetic catalog), `content/` (event_track.json, lines/ep8.json, timing-track generator). Plus TEAM.md (4-way split; only 1 of us knows RN, so the app is the critical path).
+- Verified, not assumed: app typechecks clean; headless engine harness 9/9 stable across runs; every no-key server endpoint exercised over HTTP; `/call_ended` degrades to FALLBACK without a key instead of 500; canon gating proven to withhold the Ep 9 twist at progress 7 and 8.
+- Broke/fixed: `Camera.setTorchAsync` does not exist in expo-camera 16 — torch is a prop on a mounted `<CameraView>`. Restructured as `ctx.setTorch()` + a 1x1 invisible CameraView held for the whole episode. **This would have killed M2 on device.** Also: pinned `pydantic==2.10.4` has no py3.14 wheel and tried to compile Rust; requirements now use ranges and are tested on 3.13.
+- Decided: **D19** — the live agent runs in a hidden WebView loading the server's `/call` page, not `react-native-webrtc`. Keeps a native-module fight off the one RN dev, and lets the villain be retuned with zero app rebuilds. **D20** — audio streams from `GET /audio/*` instead of shipping in the bundle, so Content replaces takes without a rebuild.
+- Docs: fixed stale Vapi/Claude references in architecture/scope/phases (code follows D12); D8 marked superseded.
+- Still blocked on us, not on code: `OPENAI_API_KEY`, `ELEVENLABS_API_KEY` + 3 voice IDs, the real `ep8.mp3`, and a dev build on the demo phone. M6 Twilio leg is deliberately unimplemented (first in cut order).
+- Next: Phase 0 per TEAM.md — P1 torch spike on the demo phone is the gate that decides whether M2 survives.
+
 ### 2026-07-25 — Session 1 (strategy revision, with Claude)
 - Idea stress-tested vs alternatives (Adaalat, Kaun Tha?, 1000 Kaan, AI Bigg Boss) — Sutradhar reconfirmed; partner analysis (OpenAI/Databricks/Pocket FM) strengthened it.
 - Locked D11–D16: annotation agent to P0, Realtime API stack, Databricks pipeline, two-round strategy (film → finals room-sync ace), branching language ban, M8 added.

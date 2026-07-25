@@ -1,5 +1,4 @@
-import type { EffectContext, EventTrack, TrackEvent } from '../types';
-import { handlerFor } from '../effects/registry';
+import type { EffectContext, EffectType, EventTrack, TrackEvent } from '../types';
 
 /**
  * The engine is deliberately dumb (rules.md 3): it compares audio position to
@@ -9,8 +8,15 @@ import { handlerFor } from '../effects/registry';
  *  1. Events fire exactly once - tracked in `fired`.
  *  2. `pause_audio` events suspend the ticker until they resolve, so a 90-second
  *     villain call does not cause every later event to fire at once on resume.
+ *
+ * The handler lookup is injected rather than imported so this file pulls in NO
+ * native modules - which is what lets harness/engine.test.mjs run the real engine
+ * in plain Node and catch ordering bugs before the phone exists.
  */
 export const TICK_MS = 250;
+
+export type EffectHandler = (event: any, ctx: EffectContext) => Promise<void>;
+export type HandlerResolver = (type: EffectType) => EffectHandler | undefined;
 
 export class EventEngine {
   private fired = new Set<string>();
@@ -20,7 +26,8 @@ export class EventEngine {
   constructor(
     private track: EventTrack,
     private ctx: EffectContext,
-    private getPositionMs: () => number
+    private getPositionMs: () => number,
+    private resolve: HandlerResolver
   ) {}
 
   start() {
@@ -52,7 +59,7 @@ export class EventEngine {
   }
 
   private async dispatch(event: TrackEvent) {
-    const handler = handlerFor(event.type);
+    const handler = this.resolve(event.type);
     if (!handler) {
       this.ctx.log(`no handler for effect type "${event.type}" - skipping ${event.id}`);
       return;

@@ -15,16 +15,16 @@
 │ duck       dim/black   (torch API)   (patterns)   screen (UI)    (metering)    │
 │ (gain)     (overlay)                                  │              │         │
 │                                                       ▼              ▼         │
-│                                             Vapi Web SDK      branch selector  │
+│                                             Realtime WebRTC   branch selector  │
 │                                             (live villain)    (safe/caught)    │
 └──────────────────────────────────┬─────────────────────────────────────────────┘
                                    │ HTTPS
                                    ▼
 ┌────────────────────────── FASTAPI SERVER (single service) ─────────────────────┐
 │                                                                                │
-│  /episode_complete  ──▶ schedules outbound call (30s) ──▶ Vapi outbound API    │
-│  /vapi/webhook      ──▶ builds agent context per call  ──▶ returns config      │
-│  /call_ended        ──▶ Claude summarizes call ──▶ append to listener state    │
+│  /episode_complete  ──▶ schedules outbound call (30s) ──▶ Twilio outbound      │
+│  /realtime_session  ──▶ builds agent context per call  ──▶ ephemeral token     │
+│  /call_ended        ──▶ GPT summarizes call ──▶ append to listener state       │
 │                        └──▶ generate villain voice note (ElevenLabs)           │
 │                             └──▶ Twilio SMS with mp3 link                      │
 │                                                                                │
@@ -32,8 +32,8 @@
 └────────────────────────────────────────────────────────────────────────────────┘
                     │                          │                    │
                     ▼                          ▼                    ▼
-              Anthropic API              ElevenLabs API        Vapi / Twilio
-              (Claude — brain)           (TTS voices)          (telephony)
+              OpenAI API                 ElevenLabs API        Twilio
+              (Realtime + GPT)           (TTS voices)          (telephony)
 ```
 
 ## 2. Components
@@ -47,7 +47,7 @@
 | `app/effects/screen.ts` | Dim overlay + blackout overlay + brightness | `expo-brightness` |
 | `app/effects/flashlight.ts` | Torch on/off/flicker patterns | `expo-camera` torch |
 | `app/effects/haptics.ts` | Named vibration patterns (knock_x3, heartbeat_rising) | `expo-haptics` |
-| `app/effects/fakeCall.tsx` | Full-screen Android-style call UI; on answer, opens Vapi web call | Vapi Web SDK |
+| `app/effects/fakeCall.ts` + `screens/FakeCallScreen.tsx` | Full-screen Android-style call UI; on answer, a hidden WebView loads the server's `/call` page, which runs the OpenAI Realtime session over WebRTC | `react-native-webview` |
 | `app/effects/micListen.ts` | 10s amplitude metering; threshold compare; report branch | expo-av recording metering |
 
 Design decision: **volume duck attenuates our own player**, not system volume — zero permissions, identical perceived effect.
@@ -72,10 +72,14 @@ Rules: events fire once (engine tracks `fired` set); `pause_audio` events suspen
 
 ### 2.3 Server (FastAPI, single process)
 Endpoints:
-- `POST /episode_complete {listener_id, episode}` → update state; `asyncio` 30s delay → Vapi outbound call (heroine assistant).
-- `POST /vapi/webhook` → assemble system prompt: persona md + canon up to `episode_progress` + last 3 interaction summaries → return to Vapi.
-- `POST /call_ended` (Vapi end-of-call hook) → transcript → Claude summary (≤3 bullets) → append to `state/listener.json` → fire villain voice note pipeline.
-- `GET /state` → app fetches progress on launch.
+- `POST /episode_complete {listener_id, episode, path}` → update state; `asyncio` 30s delay → Twilio outbound call (heroine on path A, The Voice on path B).
+- `POST /realtime_session {agent, decision_id}` → assemble system prompt: persona md + canon up to `episode_progress` + last 3 interaction summaries → mint an ephemeral OpenAI Realtime token. The API key never reaches the device.
+- `GET /call` → the WebRTC page the app hides in a WebView; it does the SDP handshake with that token.
+- `POST /call_ended` → transcript → GPT summary (≤3 bullets) + decision outcome + flags → append to `state/listener.json`.
+- `POST /silence_result {result}` → record the silence-test branch.
+- `GET /event_track/{episode}` → serve the track from `content/`, so timings retune without an app rebuild.
+- `GET /state` → app fetches progress on launch. `GET /healthz` → keys present, audio present, state summary.
+- `GET /audio/{file}` → static episode audio (streamed, not bundled).
 
 ### 2.4 State model (`state/listener.json`)
 ```json
@@ -129,7 +133,7 @@ The validator is the guardrail that makes agent output directly playable — tha
 
 ## 3. Data flows (the two live loops)
 
-**Loop A — in-episode call:** event `e5` fires → audio pauses → fake call UI → answer → Vapi web call → webhook builds villain context → conversation → hangup → `/call_ended` → summary + flag extraction → state updated → episode audio resumes.
+**Loop A — in-episode call:** event `e7` fires → audio pauses → fake call UI → answer → hidden WebView loads `/call` → `/realtime_session` builds villain context and mints a token → WebRTC conversation → hangup → `/call_ended` → summary + outcome + flag extraction → state updated → episode audio resumes.
 
 **Loop B — post-episode presence:** episode ends → `/episode_complete` → 30s → heroine calls listener's real number, context includes Loop A summary ("you told him nothing — thank you") → call ends → villain voice note generated referencing the same facts → SMS delivered.
 
@@ -137,16 +141,21 @@ The two loops sharing one state file is the "characters remember" magic — and 
 
 ## 4. Repo layout
 ```
-sutradhar/
-├── app/                 # Expo app
-│   ├── player/  engine/  effects/  assets/audio/
+billifm/
+├── app/                 # Expo app (Android)
+│   ├── src/screens/  src/engine/  src/effects/  src/lib/
+│   └── harness/         # headless engine tests - no phone required
 ├── server/              # FastAPI
-│   ├── main.py  vapi.py  summarize.py  voicenote.py
+│   ├── main.py  agents.py  summarize.py  state.py
 │   ├── prompts/ (villain.md, heroine.md, summarizer.md)
+│   ├── static/call.html # OpenAI Realtime over WebRTC
 │   ├── canon/story_bible.md
+│   ├── audio/           # served at /audio/*
 │   └── state/listener.json
-├── content/             # source scripts, event_track.json, ElevenLabs gen scripts
-└── docs/                # these six documents
+├── director/            # M7: annotate.py, validate.py, compare.py, make_catalog.py
+├── eval/                # M10a genome: persona sim → Delta → cohort profiles
+├── content/             # event_track.json, lines/ep8.json, gen_audio.py
+└── files/               # these ten documents
 ```
 
 ## 5. Explicit non-choices

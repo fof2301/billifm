@@ -17,6 +17,9 @@ app/android/
 app/ios/
 *.keystore
 
-# Generated audio - too big for git, regenerate with content/gen_audio.py
+# Generated audio - too big for git.
+# mp3: regenerate with content/gen_audio.py
+# wav: regenerate with content/make_timing_track.py
 server/audio/*.mp3
+server/audio/*.wav
 

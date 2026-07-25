@@ -34,7 +34,7 @@ The prototype exists to produce these six moments. Every hour of work must trace
 - Scope boundary: exactly two named patterns (knock_x3, heartbeat_rising). No haptic framework.
 
 ### M4 — Fake incoming call → live villain agent (P0)
-- Full-screen "UNKNOWN NUMBER" call UI mid-episode; answering connects to a live Claude+ElevenLabs villain via Vapi Web SDK; call summary is captured and stored.
+- Full-screen "UNKNOWN NUMBER" call UI mid-episode; answering connects to a live OpenAI Realtime villain over WebRTC (D12); call summary is captured and stored.
 - Scope boundary: ONE character agent live in-episode. Max 2-sentence turns. 60–90s call by design. The call happens over the app's own VoIP session — real PSTN is only for M6.
 
 ### M5 — The silence test (P0)
@@ -69,7 +69,7 @@ The prototype exists to produce these six moments. Every hour of work must trace
 
 ### Supporting scope (only what the moments need)
 - 3-screen app: episode list (facade), player, fake-call screen.
-- One FastAPI server: 4 endpoints (`/state`, `/episode_complete`, `/vapi/webhook`, `/call_ended`).
+- One FastAPI server: `/state`, `/event_track/{ep}`, `/realtime_session`, `/call`, `/call_ended`, `/silence_result`, `/episode_complete`, `/healthz`, plus static `/audio`.
 - One state file (`listener.json`) with progress, flags, interaction summaries.
 - Content package: Ep 8 main audio + 2 branch audios + 2 post-call reaction variants + serial recap paragraph + 3 agent prompt files.
 - Demo kit: backup video of full run, pre-staged screenshots, fallback call audio, demo-phone checklist.

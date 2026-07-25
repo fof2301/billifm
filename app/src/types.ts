@@ -94,6 +94,12 @@ export interface EffectContext {
   setVolume(to: number, rampMs: number): Promise<void>;
   /** Show/hide the overlay. blockTouches is for blackout only. */
   setOverlay(opacity: number, blockTouches: boolean, fadeMs: number): void;
+  /**
+   * Drive the real torch. expo-camera 16 has no imperative torch API - it is a
+   * prop on a mounted <CameraView>. PlayerScreen keeps one mounted and invisible
+   * for the whole episode; this just flips its state.
+   */
+  setTorch(on: boolean): void;
   /** Suspend the position ticker and pause audio (fake_call). */
   pauseAudio(): Promise<void>;
   resumeAudio(): Promise<void>;

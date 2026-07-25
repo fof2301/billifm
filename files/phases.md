@@ -13,7 +13,7 @@ Hackathon window: 18 hours. Team split assumes 3 streams (App / Agent-Server / C
 6. [Post-submission, if shortlisted] room-sync web player
 
 ## Phase 0 — Pre-hackathon (do BEFORE the clock starts)
-- [ ] Accounts + keys live: Anthropic, ElevenLabs, Vapi (or Retell), Twilio. Verify outbound call to an Indian number OR confirm web-SDK fallback.
+- [ ] Accounts + keys live: OpenAI, ElevenLabs, Twilio. Verify outbound call to an Indian number OR confirm the in-app WebRTC fallback.
 - [ ] Expo dev build installed and running on the exact demo Android phone (torch, haptics, mic tested with a 10-line spike).
 - [ ] Story bible drafted (see Design.md): 8-episode serial summary + Episode 8 script beats.
 **Exit:** `hello world` effect (torch blink from a button) works on demo phone.
@@ -28,8 +28,8 @@ Goal: full 6-minute episode plays with all passive effects.
 
 ## Phase 2 — The Live Villain (hrs 7–11) · P0
 Goal: fake call answered → live in-character conversation.
-- [ ] 7–8h · Server: FastAPI skeleton, `state/listener.json`, `/vapi/webhook` returning villain prompt (persona + canon ≤ ep8).
-- [ ] 8–9.5h · App: fake-call full-screen UI (`pause_audio` handling) + Vapi Web SDK call on answer.
+- [ ] 7–8h · Server: FastAPI skeleton, `state/listener.json`, `/realtime_session` returning villain prompt (persona + canon ≤ ep8) as an ephemeral token.
+- [ ] 8–9.5h · App: fake-call full-screen UI (`pause_audio` handling) + hidden WebView loading `/call` on answer.
 - [ ] 9.5–11h · Tune: villain voice in ElevenLabs, 2-sentence turn limit, 5-turn rehearsed conversation, graceful hangup line.
 **Exit criterion (demo moment 4):** teammate answers, has a 30-second in-character exchange, latency acceptable on venue-like network.
 
@@ -58,7 +58,7 @@ Goal: fake call answered → live in-character conversation.
 **Exit criterion:** two-genomes comparison exists; villain is jailbreak-graceful.
 
 ## Phase 4 — The Story That Calls Back (hrs 13–15) · P1
-- [ ] `/episode_complete` → 30s delay → Vapi outbound heroine call to demo phone number.
+- [ ] `/episode_complete` → 30s delay → Twilio outbound heroine call to demo phone number.
 - [ ] `/call_ended` → Claude summary → state append; heroine context includes villain-call summary.
 - [ ] Villain voice note: ElevenLabs mp3 → Twilio SMS link (fallback: pre-staged screenshot).
 **Exit criterion (demo moment 6):** finish episode → phone rings → heroine references what was said to the villain.

@@ -200,5 +200,7 @@ def healthz() -> dict[str, Any]:
         "episode_progress": current.get("episode_progress"),
         "interactions": len(current.get("interactions", [])),
         "openai_key": bool(os.environ.get("OPENAI_API_KEY")),
-        "audio_files": sorted(p.name for p in AUDIO_DIR.glob("*.mp3")),
+        "audio_files": sorted(
+            p.name for p in AUDIO_DIR.iterdir() if p.suffix.lower() in {".mp3", ".wav", ".m4a"}
+        ),
     }
