@@ -33,3 +33,17 @@ describe('buildJudgeSystemPrompt', () => {
     expect(p).toContain('"success"')
   })
 })
+
+describe('dialogue quality guardrails', () => {
+  it('instructs against repetition and demands a fresh hint each reply', () => {
+    const p = buildCharacterSystemPrompt({ bundle, secrets, characterId: 'viktor', session, wantSuggestions: false })
+    expect(p).toContain('Never repeat')
+    expect(p).toContain('one NEW concrete detail')
+    expect(p).toMatch(/vague/i)
+  })
+
+  it('asks for three distinct tactics as suggestions', () => {
+    const p = buildCharacterSystemPrompt({ bundle, secrets, characterId: 'viktor', session, wantSuggestions: true })
+    expect(p).toContain('DISTINCT tactics')
+  })
+})

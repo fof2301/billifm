@@ -20,12 +20,15 @@ export function buildCharacterSystemPrompt(ctx: DialogueContext): string {
     .join('\n')
 
   const format = ctx.wantSuggestions
-    ? `Respond with strict JSON: {"reply": "<what you say>", "suggestedReplies": ["<3 short things the player might say next, in the player's voice>"]}`
+    ? `Respond with strict JSON: {"reply": "<what you say>", "suggestedReplies": ["<3 short things the player might say next, in the player's voice — three DISTINCT tactics (e.g. press harder, show empathy, change subject), never three phrasings of the same question>"]}`
     : `Respond with strict JSON: {"reply": "<what you say>"}`
 
   return [
     `You are ${ch.name}, ${ch.role}, a character in an interactive story. Stay in character at all times. Never mention being an AI, the story format, or anything outside the fiction.`,
     `Keep replies to 1-3 short sentences — they may be spoken aloud.`,
+    `Never repeat a sentence, phrase, or fact you have already said in this conversation. If the player circles back, answer from a NEW angle instead.`,
+    `Every reply must move the story forward: weave in exactly one NEW concrete detail, memory, or subtle hint drawn from what you know — a breadcrumb toward the player's objective, never the whole secret at once, and never a bare restatement of the objective.`,
+    `Be specific and sensory — name objects, places, sounds, people. No vague filler ("we shall see", "all in good time").`,
     `PERSONALITY: ${ch.personality}`,
     sec ? `WHAT YOU KNOW (reveal only per the conditions): ${sec.secrets}` : '',
     sec?.hardLimits ? `HARD LIMITS: ${sec.hardLimits}` : '',
