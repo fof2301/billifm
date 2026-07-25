@@ -59,7 +59,7 @@ export function useSession(
         api.snapshot(initial.sessionId, bundle.meta.id, stateRef.current).catch(() => {})
       }
       if (e.type === 'STORY_ENDED') onEndedRef.current(e.endingId)
-      if (e.type === 'REQUEST_DIALOGUE') void requestDialogue(e.characterId, e.playerMessage, 0)
+      if (e.type === 'REQUEST_DIALOGUE') void requestDialogue(e.characterId, e.playerMessage)
       if (e.type === 'REQUEST_JUDGE') void requestJudge(e.challengeId)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -77,7 +77,7 @@ export function useSession(
     [bundle],
   )
 
-  async function requestDialogue(characterId: string, playerMessage: string, attempt: number) {
+  async function requestDialogue(characterId: string, playerMessage: string) {
     setBusy(true)
     setFailedMessage(null)
     const stall = setTimeout(() => {
@@ -85,23 +85,29 @@ export function useSession(
       setStallLine(lines.length ? lines[Math.floor(Math.random() * lines.length)]! : '…')
     }, STALL_MS)
     try {
-      const s = stateRef.current
-      const t = storyTime(bundle.clock, s.elapsedRealMs)
-      const res = await api.dialogue({
-        storyId: bundle.meta.id,
-        characterId,
-        session: { beatId: s.beatId, flags: s.flags, cluesFound: s.cluesFound, day: t.day, phase: t.phase },
-        transcriptTail: (s.transcripts[characterId] ?? []).slice(-TAIL),
-        playerMessage,
-        wantAudio: s.mode === 'voice',
-        wantSuggestions: s.mode === 'mcq',
-      })
-      dispatch({ type: 'CHARACTER_REPLY', characterId, text: res.text, suggestedReplies: res.suggestedReplies })
-      if (res.audioBase64) onAudio.current?.(res.audioBase64)
-    } catch {
-      if (attempt === 0) return requestDialogue(characterId, playerMessage, 1)
-      setFailedMessage(playerMessage)
-      dispatch({ type: 'RESUME', reason: 'request' })
+      for (let attempt = 0; attempt < 2; attempt++) {
+        try {
+          const s = stateRef.current
+          const t = storyTime(bundle.clock, s.elapsedRealMs)
+          const res = await api.dialogue({
+            storyId: bundle.meta.id,
+            characterId,
+            session: { beatId: s.beatId, flags: s.flags, cluesFound: s.cluesFound, day: t.day, phase: t.phase },
+            transcriptTail: (s.transcripts[characterId] ?? []).slice(-TAIL),
+            playerMessage,
+            wantAudio: s.mode === 'voice',
+            wantSuggestions: s.mode === 'mcq',
+          })
+          dispatch({ type: 'CHARACTER_REPLY', characterId, text: res.text, suggestedReplies: res.suggestedReplies })
+          if (res.audioBase64) onAudio.current?.(res.audioBase64)
+          return
+        } catch {
+          if (attempt === 1) {
+            setFailedMessage(playerMessage)
+            dispatch({ type: 'RESUME', reason: 'request' })
+          }
+        }
+      }
     } finally {
       clearTimeout(stall)
       setStallLine(null)
@@ -147,7 +153,7 @@ export function useSession(
     retry: () => {
       const msg = failedMessage
       const charId = stateRef.current.activeCharacterId
-      if (msg && charId) void requestDialogue(charId, msg, 0)
+      if (msg && charId) void requestDialogue(charId, msg)
     },
     pick: (optionId) => {
       const ch = stateRef.current.activeChallenge

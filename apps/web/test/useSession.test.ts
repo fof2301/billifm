@@ -86,6 +86,19 @@ describe('useSession', () => {
     expect(result.current.state.pauseReasons).not.toContain('request')
   })
 
+  it('keeps busy true through the retry window after the first dialogue attempt fails', async () => {
+    dialogueMock
+      .mockRejectedValueOnce(new Error('boom'))
+      .mockReturnValueOnce(new Promise<{ text: string }>(() => {})) // retry attempt: never resolves
+    const { result } = renderHook(() => useSession(bundle, 'text', false, () => {}))
+    act(() => result.current.selectCharacter('ann'))
+    act(() => result.current.send('hello'))
+    expect(result.current.busy).toBe(true)
+    await act(async () => { await vi.runOnlyPendingTimersAsync() })
+    await waitFor(() => expect(dialogueMock).toHaveBeenCalledTimes(2))
+    expect(result.current.busy).toBe(true)
+  })
+
   it('persists to localStorage and resumes', () => {
     const { result, unmount } = renderHook(() => useSession(bundle, 'text', false, () => {}))
     act(() => result.current.selectCharacter('ann'))
