@@ -52,3 +52,18 @@ describe('kidnapping-escape plays headlessly to the good ending', () => {
     expect(r.state.beatId).toBe('b3-alone')
   })
 })
+
+describe('ancestor-tree plays headlessly to the keeper ending', () => {
+  it('h1 success -> a2, h2 success -> keeper', () => {
+    const bundle = StoryBundleSchema.parse(load('ancestor-tree', 'story.json'))
+    const { state } = createSession(bundle, 'text')
+    expect(state.activeChallenge?.id).toBe('h1')
+
+    let r = reduce(bundle, state, { type: 'CHALLENGE_RESOLVED', challengeId: 'h1', success: true })
+    expect(r.state.beatId).toBe('a2')
+    expect(r.state.activeChallenge?.id).toBe('h2')
+
+    r = reduce(bundle, r.state, { type: 'CHALLENGE_RESOLVED', challengeId: 'h2', success: true })
+    expect(r.state.endingId).toBe('keeper')
+  })
+})
