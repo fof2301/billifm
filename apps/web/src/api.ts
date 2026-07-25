@@ -56,8 +56,11 @@ export const judge = (body: {
 }) => req<{ success: boolean; feedback: string }>('/api/judge', { method: 'POST', body: JSON.stringify(body) })
 
 export const stt = (blob: Blob) => {
+  // iOS Safari's MediaRecorder produces audio/mp4, not audio/webm — name the upload to
+  // match what was actually recorded so it isn't mislabeled to the server / Whisper.
+  const ext = blob.type.includes('mp4') ? 'mp4' : 'webm'
   const form = new FormData()
-  form.append('audio', blob, 'speech.webm')
+  form.append('audio', blob, `speech.${ext}`)
   return req<{ text: string }>('/api/stt', { method: 'POST', body: form })
 }
 

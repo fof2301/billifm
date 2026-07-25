@@ -19,7 +19,9 @@ export function createRecorder(): { start(): Promise<void>; stop(): Promise<Blob
         if (!recorder) return reject(new Error('not recording'))
         recorder.onstop = () => {
           stream?.getTracks().forEach((t) => t.stop())
-          resolve(new Blob(chunks, { type: 'audio/webm' }))
+          // iOS Safari's MediaRecorder produces audio/mp4, not audio/webm — label the
+          // blob with what was actually recorded so the upload isn't mislabeled.
+          resolve(new Blob(chunks, { type: recorder!.mimeType || 'audio/webm' }))
         }
         recorder.stop()
       })

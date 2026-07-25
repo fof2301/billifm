@@ -5,12 +5,13 @@ class FakeMediaRecorder {
   static instances: FakeMediaRecorder[] = []
   ondataavailable: ((e: { data: Blob }) => void) | null = null
   onstop: (() => void) | null = null
+  mimeType = 'audio/webm'
   constructor(public stream: { getTracks(): { stop(): void }[] }) {
     FakeMediaRecorder.instances.push(this)
   }
   start() {}
   stop() {
-    this.ondataavailable?.({ data: new Blob(['x'], { type: 'audio/webm' }) })
+    this.ondataavailable?.({ data: new Blob(['x'], { type: this.mimeType }) })
     this.onstop?.()
   }
 }
@@ -27,6 +28,20 @@ describe('createRecorder', () => {
     const blob = await rec.stop()
     expect(blob.type).toBe('audio/webm')
     expect(stop).toHaveBeenCalled()
+    vi.unstubAllGlobals()
+  })
+
+  it('labels the blob with the recorder\'s real mimeType (iOS Safari MediaRecorder produces audio/mp4)', async () => {
+    const stop = vi.fn()
+    vi.stubGlobal('MediaRecorder', FakeMediaRecorder)
+    vi.stubGlobal('navigator', {
+      mediaDevices: { getUserMedia: vi.fn(async () => ({ getTracks: () => [{ stop }] })) },
+    })
+    const rec = createRecorder()
+    await rec.start()
+    FakeMediaRecorder.instances.at(-1)!.mimeType = 'audio/mp4'
+    const blob = await rec.stop()
+    expect(blob.type).toBe('audio/mp4')
     vi.unstubAllGlobals()
   })
 
