@@ -22,6 +22,8 @@ MODEL = dbutils.widgets.get("model")
 import sys, os, json
 nb_path = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
 repo_root = "/".join(nb_path.split("/")[:-3])  # strip /databricks/notebooks/<file>
+if not repo_root.startswith("/Workspace/"):
+    repo_root = "/Workspace" + repo_root   # Databricks FS is /Workspace/... under Files In Repos
 if repo_root not in sys.path:
     sys.path.insert(0, repo_root)
 os.environ["OPENAI_API_KEY"] = dbutils.secrets.get(scope="sutradhar", key="OPENAI_API_KEY")
