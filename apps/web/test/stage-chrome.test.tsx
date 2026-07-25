@@ -29,21 +29,21 @@ const baseState = {
 }
 
 describe('TopBar', () => {
-  it('shows day, phase, objective, and a mm:ss countdown when a challenge is active', () => {
+  it('shows day, story clock, objective, and the challenge deadline in story time', () => {
     render(
       <TopBar
         bundle={bundle}
         state={{ ...baseState, activeChallenge: { id: 'x', deadlineMs: 95_000 } }}
-        time={{ day: 1, phase: 'day' }}
+        time={{ day: 1, phase: 'day', hour: 0, minute: 0 }}
         clueCount={0}
         onOpenJournal={() => {}}
         onOpenSettings={() => {}}
       />,
     )
     expect(screen.getByText(/Day 1/)).toBeInTheDocument()
-    expect(screen.getByText(/day/)).toBeInTheDocument()
     expect(screen.getByText('Find the key')).toBeInTheDocument()
-    expect(screen.getByText(/01:35/)).toBeInTheDocument() // 95s remaining at t=0
+    expect(screen.getByText(/00:00/)).toBeInTheDocument() // story clock at t=0
+    expect(screen.getByText(/by 07:36/)).toBeInTheDocument() // 95s deadline = 07:36 story time
   })
 })
 

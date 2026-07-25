@@ -33,7 +33,7 @@ const baseState = {
 function makeSession(overrides: object = {}) {
   return {
     state: baseState,
-    time: { day: 1, phase: 'day', expired: false },
+    time: { day: 1, phase: 'day', expired: false, hour: 0, minute: 0 },
     busy: false,
     stallLine: null,
     failedMessage: null,

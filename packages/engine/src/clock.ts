@@ -4,6 +4,9 @@ export interface StoryTime {
   day: number
   phase: string
   expired: boolean
+  /** 24h in-story clock: one full 0-24 sweep per story day. */
+  hour: number
+  minute: number
 }
 
 export function storyTime(clock: ClockConfig, elapsedRealMs: number): StoryTime {
@@ -14,7 +17,12 @@ export function storyTime(clock: ClockConfig, elapsedRealMs: number): StoryTime 
   const phaseMs = dayMs / clock.phases.length
   const withinDay = expired ? dayMs - 1 : elapsedRealMs % dayMs
   const phaseIdx = Math.min(Math.floor(withinDay / phaseMs), clock.phases.length - 1)
-  return { day, phase: clock.phases[phaseIdx]!, expired }
+  // Integer math: (withinDay/dayMs)*24 floats can land at 7.5999…, flooring
+  // the minutes one short.
+  const totalStoryMinutes = Math.floor((withinDay * 1440) / dayMs)
+  const hour = Math.floor(totalStoryMinutes / 60)
+  const minute = totalStoryMinutes % 60
+  return { day, phase: clock.phases[phaseIdx]!, expired, hour, minute }
 }
 
 export function clockAtLeast(

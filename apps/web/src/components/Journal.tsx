@@ -1,8 +1,8 @@
 import type { SessionState, StoryBundle } from '@story/schema'
-import { isCharacterAvailable } from '@story/engine'
+import { isCharacterAvailable, storyTime } from '@story/engine'
 import { useEffect } from 'react'
 import { assetUrl } from '../api'
-import { mmss } from './TopBar'
+import { hhmm } from './TopBar'
 
 function Section({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -63,7 +63,7 @@ export function Journal({
           <p className="text-sm font-medium text-slate-100">{beat?.objective}</p>
           {challenge && state.activeChallenge && (
             <p className="mt-2 rounded-xl bg-red-950/60 px-3 py-2 text-xs text-red-200">
-              ⏱ {mmss(state.activeChallenge.deadlineMs - state.elapsedRealMs)} — {challenge.prompt}
+              ⏱ by {hhmm(storyTime(bundle.clock, state.activeChallenge.deadlineMs))} — {challenge.prompt}
             </p>
           )}
         </Section>

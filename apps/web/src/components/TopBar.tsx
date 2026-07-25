@@ -1,8 +1,9 @@
 import type { SessionState, StoryBundle } from '@story/schema'
+import { storyTime } from '@story/engine'
 
-export function mmss(ms: number): string {
-  const s = Math.max(0, Math.ceil(ms / 1000))
-  return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
+/** In-story 24h clock face, e.g. "07:36". */
+export function hhmm(t: { hour: number; minute: number }): string {
+  return `${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`
 }
 
 const PHASE_ICON: Record<string, string> = {
@@ -19,23 +20,24 @@ export function TopBar({
 }: {
   bundle: StoryBundle
   state: SessionState
-  time: { day: number; phase: string }
+  time: { day: number; phase: string; hour: number; minute: number }
   clueCount: number
   onOpenJournal: () => void
   onOpenSettings: () => void
 }) {
   const beat = bundle.beats.find((b) => b.id === state.beatId)
   const remaining = state.activeChallenge ? state.activeChallenge.deadlineMs - state.elapsedRealMs : null
+  const deadline = state.activeChallenge ? storyTime(bundle.clock, state.activeChallenge.deadlineMs) : null
   return (
     <div className="pointer-events-none">
       <div className="flex items-center justify-between gap-2">
         <span className="rounded-full bg-black/50 px-3 py-1 text-xs text-slate-100">
-          {PHASE_ICON[time.phase] ?? '🕐'} Day {time.day} · {time.phase}
+          {PHASE_ICON[time.phase] ?? '🕐'} Day {time.day} · {hhmm(time)}
         </span>
         <div className="flex items-center gap-2">
-          {remaining !== null && (
+          {remaining !== null && deadline !== null && (
             <span className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${remaining < 30_000 ? 'bg-red-600' : 'bg-red-500/80'}`}>
-              {`⏱ ${mmss(remaining)}`}
+              {`⏱ by ${hhmm(deadline)}`}
             </span>
           )}
           <button

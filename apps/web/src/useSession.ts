@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { Mode, PauseReason, SessionState, StoryBundle } from '@story/schema'
 import type { Action, Effect } from '@story/engine'
 import { createSession, reduce, storyTime } from '@story/engine'
+import type { StoryTime } from '@story/engine'
 import * as api from './api'
 
 const TAIL = 12
@@ -9,7 +10,7 @@ const STALL_MS = 6000
 
 export interface SessionApi {
   state: SessionState
-  time: { day: number; phase: string; expired: boolean }
+  time: StoryTime
   busy: boolean
   stallLine: string | null
   failedMessage: string | null
