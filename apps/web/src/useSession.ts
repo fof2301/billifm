@@ -38,9 +38,13 @@ export function useSession(
     if (resumeSave) {
       const raw = localStorage.getItem(saveKey)
       if (raw) {
-        const saved = JSON.parse(raw) as { sessionId: string; state: SessionState }
-        // never resume paused-by-stale-reasons
-        return { sessionId: saved.sessionId, state: { ...saved.state, pauseReasons: [] as PauseReason[] } }
+        try {
+          const saved = JSON.parse(raw) as { sessionId: string; state: SessionState }
+          // never resume paused-by-stale-reasons
+          return { sessionId: saved.sessionId, state: { ...saved.state, pauseReasons: [] as PauseReason[] } }
+        } catch {
+          // corrupt save — fall through to a fresh session below instead of crashing
+        }
       }
     }
     return { sessionId: crypto.randomUUID(), state: createSession(bundle, mode).state }

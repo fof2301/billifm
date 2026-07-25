@@ -16,7 +16,18 @@ export function Intro({
   const [bundle, setBundle] = useState<StoryBundle | null>(null)
   const [mode, setMode] = useState<Mode | null>(null)
   const [error, setError] = useState(false)
-  const hasSave = Boolean(localStorage.getItem(`sf-session-${storyId}`))
+  const hasSave = (() => {
+    const raw = localStorage.getItem(`sf-session-${storyId}`)
+    if (!raw) return false
+    try {
+      const saved = JSON.parse(raw) as { state?: { endingId?: string | null } }
+      // A save that already reached an ending mounts a frozen Stage on resume
+      // (the reducer early-returns on every action) — offer a fresh start instead.
+      return saved.state?.endingId == null
+    } catch {
+      return false
+    }
+  })()
 
   useEffect(() => {
     getStory(storyId)

@@ -14,7 +14,14 @@ export function Ending({
 }) {
   const ending = bundle.endings.find((e) => e.id === endingId)
   const raw = localStorage.getItem(`sf-session-${bundle.meta.id}`)
-  const state = raw ? (JSON.parse(raw).state as SessionState) : null
+  let state: SessionState | null = null
+  if (raw) {
+    try {
+      state = JSON.parse(raw).state as SessionState
+    } catch {
+      // corrupt save — render the ending without the conversations section below
+    }
+  }
 
   return (
     <div className="mx-auto max-w-md p-6 pb-12">

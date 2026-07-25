@@ -35,4 +35,12 @@ describe('Ending', () => {
     expect(screen.getByText('Sunlight.')).toBeInTheDocument()
     expect(screen.getByText(/Ann/)).toBeInTheDocument()
   })
+
+  it('renders the ending without the conversations section when the saved session string is corrupt', () => {
+    localStorage.setItem('sf-session-ex', 'not valid json{{{')
+    render(<Ending bundle={bundle} endingId="good" onReplay={() => {}} onLibrary={() => {}} />)
+    expect(screen.getByText('You made it')).toBeInTheDocument()
+    expect(screen.getByText('Sunlight.')).toBeInTheDocument()
+    expect(screen.queryByText(/Ann/)).not.toBeInTheDocument()
+  })
 })

@@ -152,6 +152,14 @@ describe('useSession', () => {
     expect(result.current.busy).toBe(true)
   })
 
+  it('falls back to a fresh session instead of crashing when the saved session string is corrupt', () => {
+    localStorage.setItem(`sf-session-${bundle.meta.id}`, 'not valid json{{{')
+    const { result } = renderHook(() => useSession(bundle, 'text', true, () => {}))
+    expect(result.current.state.beatId).toBe('b1')
+    expect(result.current.state.activeCharacterId).toBeNull()
+    expect(result.current.state.elapsedRealMs).toBe(0)
+  })
+
   it('persists to localStorage and resumes', () => {
     const { result, unmount } = renderHook(() => useSession(bundle, 'text', false, () => {}))
     act(() => result.current.selectCharacter('ann'))
