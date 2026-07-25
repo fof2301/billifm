@@ -49,6 +49,8 @@ const SnapshotBodySchema = z.object({
 })
 
 const MIME: Record<string, string> = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
   '.svg': 'image/svg+xml',
   '.mp3': 'audio/mpeg',
   '.mp4': 'video/mp4',

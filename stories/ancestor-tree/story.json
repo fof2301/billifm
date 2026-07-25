@@ -5,62 +5,130 @@
     "tagline": "Everyone you came from is still here, if you know how to listen.",
     "genre": "mystery",
     "estimatedMinutes": 7,
-    "cover": "assets/cover.svg",
-    "modes": ["mcq", "text", "voice"],
-    "stallLines": ["The attic light flickers…", "Dust drifts through the lamplight…"]
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "stallLines": [
+      "The attic light flickers\u2026",
+      "Dust drifts through the lamplight\u2026"
+    ]
   },
-  "clock": { "realMinutesPerStoryDay": 5, "totalStoryDays": 2, "phases": ["morning", "evening"] },
+  "clock": {
+    "realMinutesPerStoryDay": 5,
+    "totalStoryDays": 2,
+    "phases": [
+      "morning",
+      "evening"
+    ]
+  },
   "scene": {
     "id": "attic",
-    "backgrounds": { "morning": "assets/attic-morning.svg", "evening": "assets/attic-evening.svg" }
+    "backgrounds": {
+      "morning": "assets/morning.jpg",
+      "evening": "assets/evening.jpg"
+    }
   },
   "characters": [
     {
       "id": "rose",
       "name": "Grandma Rose",
       "role": "Your great-grandmother, 1920s",
-      "portrait": "assets/rose.svg",
+      "portrait": "assets/rose.jpg",
       "personality": "Warm, wry, sharp memory for songs and grudges. Talks around painful things until asked gently.",
       "greeting": "Well now. You have her eyes, you know.",
-      "voice": { "voiceId": "coral", "instructions": "warm, slow, old-fashioned" },
-      "availability": { "beats": ["*"], "phases": ["*"] }
+      "voice": {
+        "voiceId": "coral",
+        "instructions": "warm, slow, old-fashioned"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ]
+      }
     },
     {
       "id": "elias",
       "name": "Captain Elias",
       "role": "Your ancestor, 1800s sailor",
-      "portrait": "assets/elias.svg",
+      "portrait": "assets/elias.jpg",
       "personality": "Gruff, superstitious, secretly sentimental. Speaks in weather and omens.",
       "greeting": "Storm's coming, little one. Speak quick.",
-      "voice": { "voiceId": "onyx", "instructions": "gravelly, wind-worn" },
-      "availability": { "beats": ["*"], "phases": ["evening"] }
+      "voice": {
+        "voiceId": "onyx",
+        "instructions": "gravelly, wind-worn"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "evening"
+        ]
+      }
     },
     {
       "id": "amara",
       "name": "Amara",
       "role": "Your ancestor, 1700s healer",
-      "portrait": "assets/amara.svg",
+      "portrait": "assets/amara.jpg",
       "personality": "Serene, precise, speaks in remedies and roots. Answers questions with questions until trust is earned.",
       "greeting": "Sit. The tea is almost ready, child of my child.",
-      "voice": { "voiceId": "sage", "instructions": "calm, deliberate, kind" },
-      "availability": { "beats": ["*"], "phases": ["morning"] }
+      "voice": {
+        "voiceId": "sage",
+        "instructions": "calm, deliberate, kind"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "morning"
+        ]
+      }
     }
   ],
   "beats": [
     {
       "id": "a1",
-      "narration": "In your grandmother's attic you find a locket that won't open — and the room fills with people only you can see.",
+      "narration": "In your grandmother's attic you find a locket that won't open \u2014 and the room fills with people only you can see.",
       "objective": "Learn the lullaby that runs in your family.",
-      "characters": ["rose", "elias", "amara"],
-      "challenges": ["h1"],
-      "transitions": [{ "when": { "flags": ["heard_the_song"] }, "goto": "a2" }]
+      "characters": [
+        "rose",
+        "elias",
+        "amara"
+      ],
+      "challenges": [
+        "h1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "heard_the_song"
+            ]
+          },
+          "goto": "a2"
+        }
+      ]
     },
     {
       "id": "a2",
       "narration": "The locket hums when you hum the tune. There is something it wants you to know.",
       "objective": "Discover what the locket keeps.",
-      "characters": ["rose", "elias", "amara"],
-      "challenges": ["h2"]
+      "characters": [
+        "rose",
+        "elias",
+        "amara"
+      ],
+      "challenges": [
+        "h2"
+      ]
     }
   ],
   "challenges": [
@@ -69,24 +137,66 @@
       "type": "task",
       "prompt": "Learn the words of the lullaby Rose's mother used to sing.",
       "timeLimitSeconds": 240,
-      "onSuccess": { "setFlags": ["heard_the_song"], "unlockClues": ["lullaby"] },
-      "onFailure": { "setFlags": ["heard_the_song"] }
+      "onSuccess": {
+        "setFlags": [
+          "heard_the_song"
+        ],
+        "unlockClues": [
+          "lullaby"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "heard_the_song"
+        ]
+      }
     },
     {
       "id": "h2",
       "type": "task",
       "prompt": "Find out from your ancestors what the locket protects.",
       "timeLimitSeconds": 240,
-      "onSuccess": { "setFlags": ["knows_secret"], "unlockClues": ["locket_truth"] },
+      "onSuccess": {
+        "setFlags": [
+          "knows_secret"
+        ],
+        "unlockClues": [
+          "locket_truth"
+        ]
+      },
       "onFailure": {}
     }
   ],
   "clues": [
-    { "id": "lullaby", "title": "The lullaby", "text": "\"Low tide, slow tide, carry her home…\" — every generation changed one word." },
-    { "id": "locket_truth", "title": "What the locket keeps", "text": "A portrait of the first of your line — and proof the family never really left each other." }
+    {
+      "id": "lullaby",
+      "title": "The lullaby",
+      "text": "\"Low tide, slow tide, carry her home\u2026\" \u2014 every generation changed one word."
+    },
+    {
+      "id": "locket_truth",
+      "title": "What the locket keeps",
+      "text": "A portrait of the first of your line \u2014 and proof the family never really left each other."
+    }
   ],
   "endings": [
-    { "id": "keeper", "when": { "flags": ["knows_secret"] }, "title": "The Keeper", "text": "The locket clicks open. Now it's your turn to remember them." },
-    { "id": "drifted", "when": { "clockExpired": true }, "title": "Dust settles", "text": "The attic empties. The locket stays shut — for now. They'll wait. They're good at waiting." }
+    {
+      "id": "keeper",
+      "when": {
+        "flags": [
+          "knows_secret"
+        ]
+      },
+      "title": "The Keeper",
+      "text": "The locket clicks open. Now it's your turn to remember them."
+    },
+    {
+      "id": "drifted",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "Dust settles",
+      "text": "The attic empties. The locket stays shut \u2014 for now. They'll wait. They're good at waiting."
+    }
   ]
 }

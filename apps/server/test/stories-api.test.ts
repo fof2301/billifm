@@ -43,10 +43,10 @@ describe('GET /api/stories/:id', () => {
 })
 
 describe('GET /stories/:id/assets/:file', () => {
-  it('serves an SVG asset', async () => {
-    const res = await app.request('/stories/kidnapping-escape/assets/cellar-night.svg')
+  it('serves an image asset', async () => {
+    const res = await app.request('/stories/kidnapping-escape/assets/night.jpg')
     expect(res.status).toBe(200)
-    expect(res.headers.get('content-type')).toContain('image/svg+xml')
+    expect(res.headers.get('content-type')).toContain('image/jpeg')
   })
 
   it('blocks path traversal', async () => {

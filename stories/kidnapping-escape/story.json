@@ -5,18 +5,34 @@
     "tagline": "You have 3 days. Only you can do this.",
     "genre": "thriller",
     "estimatedMinutes": 8,
-    "cover": "assets/cover.svg",
-    "modes": ["mcq", "text", "voice"],
-    "stallLines": ["He goes quiet for a moment…", "You hear footsteps pacing above…"]
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "stallLines": [
+      "He goes quiet for a moment\u2026",
+      "You hear footsteps pacing above\u2026"
+    ]
   },
-  "clock": { "realMinutesPerStoryDay": 5, "totalStoryDays": 3, "phases": ["dawn", "day", "dusk", "night"] },
+  "clock": {
+    "realMinutesPerStoryDay": 5,
+    "totalStoryDays": 3,
+    "phases": [
+      "dawn",
+      "day",
+      "dusk",
+      "night"
+    ]
+  },
   "scene": {
     "id": "cellar",
     "backgrounds": {
-      "dawn": "assets/cellar-dawn.svg",
-      "day": "assets/cellar-day.svg",
-      "dusk": "assets/cellar-dusk.svg",
-      "night": "assets/cellar-night.svg"
+      "dawn": "assets/dawn.jpg",
+      "day": "assets/day.jpg",
+      "dusk": "assets/dusk.jpg",
+      "night": "assets/night.jpg"
     }
   },
   "characters": [
@@ -24,56 +40,122 @@
       "id": "viktor",
       "name": "Viktor",
       "role": "Your captor",
-      "portrait": "assets/viktor.svg",
+      "portrait": "assets/viktor.jpg",
       "personality": "Calm, polite, chillingly patient. Never raises his voice. Speaks in short sentences. Believes what he is doing is justified.",
-      "greeting": "Ah. You're awake. Good — we have work to do.",
-      "voice": { "voiceId": "onyx", "instructions": "slow, quiet, unsettlingly calm" },
-      "availability": { "beats": ["*"], "phases": ["dawn", "day", "dusk"] }
+      "greeting": "Ah. You're awake. Good \u2014 we have work to do.",
+      "voice": {
+        "voiceId": "onyx",
+        "instructions": "slow, quiet, unsettlingly calm"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "dawn",
+          "day",
+          "dusk"
+        ]
+      }
     },
     {
       "id": "mira",
       "name": "Mira",
       "role": "A voice in the vents",
-      "portrait": "assets/mira.svg",
+      "portrait": "assets/mira.jpg",
       "personality": "Whispers. Scared but sharp. Taken weeks before you. Knows the building.",
-      "greeting": "Psst — down here. Don't let him hear you.",
-      "voice": { "voiceId": "shimmer", "instructions": "whispered, urgent" },
-      "availability": { "beats": ["b2", "b3"], "phases": ["night", "dawn"] }
+      "greeting": "Psst \u2014 down here. Don't let him hear you.",
+      "voice": {
+        "voiceId": "shimmer",
+        "instructions": "whispered, urgent"
+      },
+      "availability": {
+        "beats": [
+          "b2",
+          "b3"
+        ],
+        "phases": [
+          "night",
+          "dawn"
+        ]
+      }
     }
   ],
   "beats": [
     {
       "id": "b1",
-      "narration": "You wake on a cot in a cellar. Your hands tingle — something in you feels… different.",
+      "narration": "You wake on a cot in a cellar. Your hands tingle \u2014 something in you feels\u2026 different.",
       "objective": "Find out why you were taken.",
-      "characters": ["viktor"],
-      "challenges": ["c1"],
-      "transitions": [{ "when": { "flags": ["knows_why_taken"] }, "goto": "b2" }]
+      "characters": [
+        "viktor"
+      ],
+      "challenges": [
+        "c1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_why_taken"
+            ]
+          },
+          "goto": "b2"
+        }
+      ]
     },
     {
       "id": "b2",
       "narration": "Night falls. A whisper drifts from the vent near the floor.",
       "objective": "Earn Mira's trust before dawn.",
-      "characters": ["viktor", "mira"],
-      "challenges": ["c2"],
+      "characters": [
+        "viktor",
+        "mira"
+      ],
+      "challenges": [
+        "c2"
+      ],
       "transitions": [
-        { "when": { "flags": ["mira_trusts_you"] }, "goto": "b3" },
-        { "when": { "clockAtLeast": { "day": 2, "phase": "day" } }, "goto": "b3-alone" }
+        {
+          "when": {
+            "flags": [
+              "mira_trusts_you"
+            ]
+          },
+          "goto": "b3"
+        },
+        {
+          "when": {
+            "clockAtLeast": {
+              "day": 2,
+              "phase": "day"
+            }
+          },
+          "goto": "b3-alone"
+        }
       ]
     },
     {
       "id": "b3",
       "narration": "Mira's directions lead you to a hidden lock. Your hands know what to do.",
       "objective": "Open the lock only you can open.",
-      "characters": ["viktor", "mira"],
-      "challenges": ["c3"]
+      "characters": [
+        "viktor",
+        "mira"
+      ],
+      "challenges": [
+        "c3"
+      ]
     },
     {
       "id": "b3-alone",
       "narration": "The vent has gone silent. Whatever you do now, you do alone.",
       "objective": "Open the lock only you can open.",
-      "characters": ["viktor"],
-      "challenges": ["c3"]
+      "characters": [
+        "viktor"
+      ],
+      "challenges": [
+        "c3"
+      ]
     }
   ],
   "challenges": [
@@ -82,8 +164,19 @@
       "type": "task",
       "prompt": "Get Viktor to reveal why he chose YOU.",
       "timeLimitSeconds": 150,
-      "onSuccess": { "setFlags": ["knows_why_taken"], "unlockClues": ["your_gift"] },
-      "onFailure": { "setFlags": ["knows_why_taken"] }
+      "onSuccess": {
+        "setFlags": [
+          "knows_why_taken"
+        ],
+        "unlockClues": [
+          "your_gift"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_why_taken"
+        ]
+      }
     },
     {
       "id": "c2",
@@ -91,26 +184,76 @@
       "prompt": "Mira asks: 'Prove you're not one of his. What's carved on the cot's leg?'",
       "timeLimitSeconds": 60,
       "options": [
-        { "id": "bird", "text": "A bird", "onPick": { "setFlags": ["mira_trusts_you"] } },
-        { "id": "name", "text": "A name", "onPick": {} },
-        { "id": "nothing", "text": "Nothing", "onPick": {} }
+        {
+          "id": "bird",
+          "text": "A bird",
+          "onPick": {
+            "setFlags": [
+              "mira_trusts_you"
+            ]
+          }
+        },
+        {
+          "id": "name",
+          "text": "A name",
+          "onPick": {}
+        },
+        {
+          "id": "nothing",
+          "text": "Nothing",
+          "onPick": {}
+        }
       ]
     },
     {
       "id": "c3",
       "type": "task",
-      "prompt": "Talk your way through it — describe how you open the lock with your gift.",
+      "prompt": "Talk your way through it \u2014 describe how you open the lock with your gift.",
       "timeLimitSeconds": 120,
-      "onSuccess": { "setFlags": ["door_opened"] },
+      "onSuccess": {
+        "setFlags": [
+          "door_opened"
+        ]
+      },
       "onFailure": {}
     }
   ],
   "clues": [
-    { "id": "your_gift", "title": "Your gift", "text": "Viktor said your hands can open what others can't." }
+    {
+      "id": "your_gift",
+      "title": "Your gift",
+      "text": "Viktor said your hands can open what others can't."
+    }
   ],
   "endings": [
-    { "id": "escaped", "when": { "flags": ["door_opened", "mira_trusts_you"] }, "title": "Out, together", "text": "The door swings open. Mira's hand finds yours in the dark, and you run." },
-    { "id": "alone", "when": { "flags": ["door_opened"] }, "title": "Out, alone", "text": "The door swings open onto cold night air. You don't look back." },
-    { "id": "timeout", "when": { "clockExpired": true }, "title": "Day 3 ends", "text": "The third dawn comes and goes. Viktor was patient. You were not fast enough." }
+    {
+      "id": "escaped",
+      "when": {
+        "flags": [
+          "door_opened",
+          "mira_trusts_you"
+        ]
+      },
+      "title": "Out, together",
+      "text": "The door swings open. Mira's hand finds yours in the dark, and you run."
+    },
+    {
+      "id": "alone",
+      "when": {
+        "flags": [
+          "door_opened"
+        ]
+      },
+      "title": "Out, alone",
+      "text": "The door swings open onto cold night air. You don't look back."
+    },
+    {
+      "id": "timeout",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "Day 3 ends",
+      "text": "The third dawn comes and goes. Viktor was patient. You were not fast enough."
+    }
   ]
 }
