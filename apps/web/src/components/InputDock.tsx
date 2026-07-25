@@ -43,7 +43,7 @@ export function InputDock({
   }
 
   return (
-    <div className="absolute inset-x-0 bottom-0 z-20 p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <div className="pointer-events-auto">
       {!online && (
         <p className="mb-2 rounded-xl bg-amber-950/70 px-3 py-2 text-center text-xs text-amber-200">
           You're offline — hang tight.

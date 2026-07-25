@@ -35,6 +35,8 @@ describe('TopBar', () => {
         bundle={bundle}
         state={{ ...baseState, activeChallenge: { id: 'x', deadlineMs: 95_000 } }}
         time={{ day: 1, phase: 'day' }}
+        clueCount={0}
+        onOpenJournal={() => {}}
         onOpenSettings={() => {}}
       />,
     )

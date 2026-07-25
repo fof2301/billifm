@@ -1,6 +1,6 @@
 import type { SessionState, StoryBundle } from '@story/schema'
 
-function mmss(ms: number): string {
+export function mmss(ms: number): string {
   const s = Math.max(0, Math.ceil(ms / 1000))
   return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`
 }
@@ -13,17 +13,21 @@ export function TopBar({
   bundle,
   state,
   time,
+  clueCount,
+  onOpenJournal,
   onOpenSettings,
 }: {
   bundle: StoryBundle
   state: SessionState
   time: { day: number; phase: string }
+  clueCount: number
+  onOpenJournal: () => void
   onOpenSettings: () => void
 }) {
   const beat = bundle.beats.find((b) => b.id === state.beatId)
   const remaining = state.activeChallenge ? state.activeChallenge.deadlineMs - state.elapsedRealMs : null
   return (
-    <div className="pointer-events-none absolute inset-x-0 top-0 z-20 p-3 pt-[max(0.75rem,env(safe-area-inset-top))]">
+    <div className="pointer-events-none">
       <div className="flex items-center justify-between gap-2">
         <span className="rounded-full bg-black/50 px-3 py-1 text-xs text-slate-100">
           {PHASE_ICON[time.phase] ?? '🕐'} Day {time.day} · {time.phase}
@@ -34,7 +38,20 @@ export function TopBar({
               {`⏱ ${mmss(remaining)}`}
             </span>
           )}
-          <button onClick={onOpenSettings} className="pointer-events-auto rounded-full bg-black/50 px-3 py-1 text-xs">⚙︎</button>
+          <button
+            onClick={onOpenJournal}
+            aria-label="Journal"
+            className="pointer-events-auto rounded-full bg-black/50 px-3 py-1 text-xs"
+          >
+            📖 {clueCount}
+          </button>
+          <button
+            onClick={onOpenSettings}
+            aria-label="Settings"
+            className="pointer-events-auto rounded-full bg-black/50 px-3 py-1 text-xs"
+          >
+            ⚙︎
+          </button>
         </div>
       </div>
       {beat && (

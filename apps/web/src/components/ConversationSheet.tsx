@@ -27,11 +27,11 @@ export function ConversationSheet({
 
   if (!charId) return null
   return (
-    <div className="absolute inset-x-2 bottom-20 z-10 max-h-[45%] rounded-2xl border border-white/10 bg-slate-950/80">
+    <div className="pointer-events-auto mb-2 flex max-h-[42dvh] min-h-0 flex-col rounded-2xl border border-white/10 bg-slate-950/80">
       <p className="px-4 pt-3 text-[11px] uppercase tracking-wide text-slate-400">
         {character?.name} — {character?.role}
       </p>
-      <div ref={scrollRef} className="max-h-[calc(45dvh-3rem)] overflow-y-auto p-3">
+      <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-3">
         {entries.map((e, i) => (
           <p
             key={i}

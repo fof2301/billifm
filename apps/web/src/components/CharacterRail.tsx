@@ -14,7 +14,7 @@ export function CharacterRail({
   const beat = bundle.beats.find((b) => b.id === state.beatId)
   const chars = bundle.characters.filter((c) => beat?.characters.includes(c.id))
   return (
-    <div className="absolute left-3 top-24 z-20 flex flex-col gap-2">
+    <div className="pointer-events-auto flex flex-col gap-2 self-start">
       {chars.map((c) => {
         const available = isCharacterAvailable(bundle, state, c.id)
         const active = state.activeCharacterId === c.id
