@@ -26,3 +26,6 @@ server/audio/*.wav
 
 # Rendered TTS takes - regenerate with content/gen_audio_openai.py
 content/takes/
+
+# Synthetic behaviour corpus - regenerate with genome/make_sessions.py
+genome/sessions.jsonl

@@ -1,5 +1,24 @@
 # TEAM.md — who builds what
 
+## Current status (read first)
+
+| Stream | State |
+|---|---|
+| **M7 annotation agent** | **Done and verified against the live API.** 88% agreement with the human-authored track, 3/3 unseen transcripts playable, 7/7 beat recall. See [director/README.md](director/README.md). |
+| **App** | Scaffolded, typechecks clean, engine harness 9/9. **Never run on a phone.** Torch is the open risk. |
+| **Server** | All 9 endpoints exercised over HTTP. Villain prompt + summarizer verified (6/6 outcome cases). Twilio leg for M6 deliberately unwired. |
+| **Content** | Script fits the timeline, 0 overruns, verified against measured audio. Scratch TTS render of all 22 lines exists. Real ElevenLabs takes still needed. |
+| **M10 Genome + Director v2** | **Unassigned — see [genome/README.md](genome/README.md).** One file (the synthetic corpus) exists as a starting point; clustering, profiles and Director v2 are open. |
+
+Two bugs found by verification that would have cost the demo:
+
+1. **`mic_listen` fired at t=300 while Meera's instruction line ran to 315.8s.** On speaker in a demo room the mic hears the phone's own output, measures noise, and takes the CAUGHT branch every time — M5 could never have passed. Moved to t=317, now measures RMS 0.
+2. **`Camera.setTorchAsync` does not exist in expo-camera 16.** Torch is a prop on a mounted `<CameraView>`. Would have silently killed M2.
+
+Neither was findable by reading the code. Measure things.
+
+---
+
 Four people. 18 hours. One person knows React Native.
 
 **That last fact drives every decision below.** The app is the only stream that
