@@ -54,7 +54,7 @@ A story is a folder: `stories/<id>/story.json` (public), `stories/<id>/secrets.j
 
 ### 4.1 Public bundle (`story.json`)
 
-- **meta** — `id`, `title`, `tagline`, `genre`, `estimatedMinutes`, `cover`, `modes` (subset of `["mcq","text","voice"]` the story supports).
+- **meta** — `id`, `title`, `tagline`, `genre`, `estimatedMinutes`, `cover`, `modes` (subset of `["mcq","text","voice"]` the story supports), optional `stallLines[]` (in-fiction lines shown while a delayed reply retries; framework defaults used if absent).
 - **clock** — `realMinutesPerStoryDay`, `totalStoryDays` (story force-ends when exceeded), `phases` (e.g. `["dawn","day","dusk","night"]`; each story day is divided evenly across them).
 - **scene** — the base setting: per-phase background assets (`backgrounds`: looping video or static image per phase), `ambientAudio`. Scenes rarely change; a beat may override the scene, but the format treats that as the exception.
 - **characters[]** — `id`, `name`, `role`, `portrait`, `personality` (persona prompt), `voice` (`voiceId` + `instructions`), `greeting`, `availability` (`beats` list or `"*"`, `phases` list). Unavailable characters render dimmed/unreachable.
@@ -76,7 +76,7 @@ Never served to the client. Merged in server-side during prompt assembly and jud
 
 ### 4.3 Effects vocabulary
 
-Everything that "happens" is one effects object, used by challenge outcomes and MCQ picks: `setFlags[]`, `unlockClues[]`, `unlockCharacters[]`, `goto` (beat). Small on purpose; grows only when a real story needs more.
+Everything that "happens" is one effects object, used by challenge outcomes and MCQ picks: `setFlags[]`, `unlockClues[]`, `goto` (beat). Small on purpose; grows only when a real story needs more. (Character availability is driven entirely by beats/phases — no separate unlock mechanism.)
 
 ## 5. The engine (`packages/engine`)
 
@@ -89,6 +89,8 @@ Pure TypeScript state machine, zero DOM/network dependencies — importable late
 - Actions: `TICK`, `SELECT_CHARACTER`, `PLAYER_MESSAGE`, `CHARACTER_REPLY`, `MCQ_PICK`, `CHALLENGE_RESOLVED`, `SET_MODE`, `PAUSE` / `RESUME`.
 - Effects: `REQUEST_DIALOGUE`, `REQUEST_JUDGE`, `PLAY_AUDIO`, `PHASE_CHANGED` (UI crossfades background), `BEAT_CHANGED`, `SNAPSHOT` (persist), `STORY_ENDED`.
 
+The engine evaluates beat transitions and ending conditions after **every** action, including `TICK` — so clock-based branches and the `clockExpired` ending fire on time, not only when the player acts.
+
 **Story clock:** the shell dispatches `TICK` once per second; the engine converts `elapsedRealMs` into story day + phase from the clock config. The clock **pauses** when: the tab is hidden (mobile reality), an AI request is in flight during an active challenge (network latency never eats the player's time), or the player opens settings. Challenge countdowns run on the same tick; expiry dispatches failure effects.
 
 **Three modes, one pipeline:** every input normalizes to `PlayerMessage { text, source: 'mcq'|'text'|'voice' }`; the engine is source-agnostic.
@@ -96,7 +98,9 @@ Pure TypeScript state machine, zero DOM/network dependencies — importable late
 - **MCQ mode, challenges:** options come pre-authored from the bundle; picks resolve deterministically with no AI call.
 - **MCQ mode, free conversation:** the dialogue response includes 2–3 LLM-generated suggested replies rendered as tappable chips (see §7). This is the "generated dynamically based on mode" behavior — MCQ players still get living conversations without typing.
 - **Text mode:** typed message → `REQUEST_DIALOGUE`.
-- **Voice mode:** hold-to-talk → audio → STT → same path; the reply comes back with TTS audio.
+- **Voice mode:** hold-to-talk → audio → STT → same path; the reply comes back with TTS audio. Character audio plays in voice mode only (`wantAudio = mode === 'voice'`); text and MCQ modes are silent.
+
+`task` challenges remain solvable in every mode: in MCQ mode the conversation simply advances through suggested-reply chips, and the judge evaluates the same transcript.
 
 **Persistence:** after every action, the session serializes to `localStorage` (refresh-proof resume mid-story). On `BEAT_CHANGED` and `STORY_ENDED`, a snapshot POSTs to the server (SQLite) under an anonymous device id (UUID in `localStorage`) — this powers reviewing past conversations after a story ends.
 
@@ -134,7 +138,7 @@ Hono on Node 20, better-sqlite3, mostly stateless (state lives in the session sn
 
 **Prompt assembly (server-side only):** character personality + secrets + hard limits + current beat narration/objective + flags/clues the player has + transcript tail + a framework preamble (stay in character, stay in the story, keep replies short and speakable — they may be voiced).
 
-**Cost guardrails:** per-device rate limit (in-memory token bucket), transcript tail capped (last N turns; summary of earlier turns kept client-side in session state), TTS only when voice output is on.
+**Cost guardrails:** per-device rate limit (in-memory token bucket), transcript tail capped (last 12 turns by default, configurable; flags and clues carry longer-term story state), TTS only in voice mode.
 
 ## 8. Error handling
 
