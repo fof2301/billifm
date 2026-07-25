@@ -1,4 +1,14 @@
-# AAKHRI AWAAZ — Story Bible & Episode 8 Script
+# ⚠️ DROPPED — DO NOT USE
+
+> **This story (Aakhri Awaaz) is dropped as of 2026-07-26 (decision D22).**
+> The canonical demo story is now **RIYA CALLING** — see [`story/`](../story/)
+> (bible, branch-map, full episode scripts, story_graph.json). Nothing below
+> should be built on, referenced in prompts, or used for audio generation.
+> This file is kept only for git history.
+
+---
+
+# AAKHRI AWAAZ — Story Bible & Episode 8 Script *(DROPPED)*
 *A Sutradhar Original · Team Billi Janta Party · Hinglish audio thriller*
 
 ---

@@ -1,0 +1,526 @@
+{
+  "meta": {
+    "title": "Riya Calling",
+    "language": "hinglish",
+    "episodes": 5,
+    "checkpoints_per_playthrough": 4,
+    "total_paths": 30,
+    "path_math": "CP1(3) x CP2(2) x [TrackA: CP4a(3) + TrackB: CP4b(2)] = 3 x 2 x 5 = 30",
+    "endings": [
+      "E1_SHIKANJA",
+      "E2_BHARI_MEHFIL",
+      "E3_BHAAG",
+      "E4_WAHI_RAAT",
+      "E5_1158"
+    ],
+    "default_path": [
+      "CP1:SABOOT",
+      "CP2:CHAARA",
+      "CP3:TRACK_B",
+      "CP4b:SACH_KI_DAAK"
+    ],
+    "default_ending": "E4_WAHI_RAAT",
+    "invariants": [
+      "Rohan killed Sana; the coverup and the bail-hearing deadline never change",
+      "Dev's leak happened before Ep1 and cannot be undone on any path",
+      "The lure message arrives at 23:41 from Ramdin's number on every path",
+      "The original death moment is 23:58; records rewrite only when Diwali re-occurs",
+      "Every meaningful past-change costs Arjun one memory of Riya",
+      "No character references the listener's real-world identity"
+    ]
+  },
+  "flags": {
+    "trust": {
+      "set_at": "CP1",
+      "values": [
+        "scared",
+        "shaky",
+        "allied"
+      ]
+    },
+    "watcher": {
+      "set_at": "CP2",
+      "values": [
+        "seen_bike",
+        "knows_moves"
+      ]
+    },
+    "track": {
+      "set_at": "CP3",
+      "values": [
+        "dev",
+        "showroom"
+      ]
+    },
+    "evidence": {
+      "set_at": "EP4_OUTCOME",
+      "values": [
+        "confession",
+        "documents"
+      ]
+    },
+    "reveal_death": {
+      "set_at": "E5 (partial at CP1:SACH)",
+      "values": [
+        true,
+        false
+      ]
+    },
+    "memory_debt": {
+      "set_at": "auto",
+      "values": "0-5"
+    },
+    "fl1_word": {
+      "set_at": "FL1",
+      "values": [
+        "AB2026",
+        "BUDDHU"
+      ],
+      "cosmetic": true
+    },
+    "fl2_text": {
+      "set_at": "FL2",
+      "values": [
+        "chup",
+        "main_hoon"
+      ],
+      "cosmetic": true
+    },
+    "fl3_text": {
+      "set_at": "FL3",
+      "values": [
+        "phone_mat_chhodna",
+        "i_love_you_riyu"
+      ],
+      "cosmetic": true
+    },
+    "dev": {
+      "set_at": "EP4A (Track A only)",
+      "values": [
+        "unknown",
+        "turned"
+      ]
+    }
+  },
+  "nodes": [
+    {
+      "id": "ep1",
+      "type": "episode",
+      "title": "Missed Call",
+      "script": "episodes/ep1.md",
+      "night": 1,
+      "riya_clock": "D-3",
+      "effects": [
+        "message_overlay",
+        "fake_call",
+        "haptic:heartbeat_rising",
+        "volume_duck",
+        "screen_dim"
+      ],
+      "next": "cp1"
+    },
+    {
+      "id": "cp1",
+      "type": "checkpoint",
+      "prompt": "Woh teen din baad marne wali hai. Usse kaise yakeen dilaoge?",
+      "options": [
+        {
+          "id": "SACH",
+          "ui": "Sab sach bata do — 'teen din baad tu nahi rahegi'",
+          "sets": {
+            "trust": "scared",
+            "reveal_death": "partial"
+          },
+          "next": "ep2",
+          "variant_scene": "ep2.md#variant-sach"
+        },
+        {
+          "id": "KASAM",
+          "ui": "Bina wajah bataye kasam do — 'Diwali raat ghar se mat nikalna'",
+          "sets": {
+            "trust": "shaky"
+          },
+          "next": "ep2",
+          "variant_scene": "ep2.md#variant-kasam"
+        },
+        {
+          "id": "SABOOT",
+          "ui": "Agle ek ghante ki har cheez predict karke dikha do",
+          "sets": {
+            "trust": "allied"
+          },
+          "next": "ep2",
+          "variant_scene": "ep2.md#variant-saboot"
+        }
+      ],
+      "reconvergence": "All variants converge at the 21:40 transformer blast; belief established by Ep2 scene 2."
+    },
+    {
+      "id": "ep2",
+      "type": "episode",
+      "title": "Teen Din, Teen Raat",
+      "script": "episodes/ep2.md",
+      "night": 2,
+      "riya_clock": "D-2",
+      "flavor_checkpoints": [
+        {
+          "id": "FL1",
+          "prompt": "Terrace ki deewar pe kya likhe?",
+          "options": [
+            "AB2026",
+            "BUDDHU"
+          ],
+          "sets": "fl1_word",
+          "branching": false
+        }
+      ],
+      "effects": [
+        "checkpoint_menu:flavor",
+        "message_overlay:photo_received",
+        "outgoing_call:zoya"
+      ],
+      "beats": [
+        "cp1_variant_open",
+        "transformer_blast_convergence",
+        "proof_game_wall",
+        "brake_line_cut_reveal",
+        "zoya_intro",
+        "memory_price_nainital",
+        "sana_confession",
+        "watcher_spotted"
+      ],
+      "next": "cp2"
+    },
+    {
+      "id": "cp2",
+      "type": "checkpoint",
+      "prompt": "Koi Riya pe nazar rakh raha hai. Aaj raat ka plan?",
+      "options": [
+        {
+          "id": "CHAARA",
+          "ui": "Riya bait banegi — usse dikhne do, hum uska chehra chahiye",
+          "sets": {
+            "watcher": "seen_bike"
+          },
+          "next": "ep3",
+          "variant_scene": "ep3.md#variant-chaara"
+        },
+        {
+          "id": "OJHAL",
+          "ui": "Riya gayab ho jaye — Ashoka Garden, Mausi ke ghar, aaj hi",
+          "sets": {
+            "watcher": "knows_moves"
+          },
+          "next": "ep3",
+          "variant_scene": "ep3.md#variant-ojhal"
+        }
+      ],
+      "reconvergence": "Dev's leak means the Chaddha side always finds her; the midnight intruder set-piece happens wherever she is."
+    },
+    {
+      "id": "ep3",
+      "type": "episode",
+      "title": "Parchhaai",
+      "script": "episodes/ep3.md",
+      "night": 2,
+      "riya_clock": "D-2 midnight",
+      "flavor_checkpoints": [
+        {
+          "id": "FL2",
+          "prompt": "Woh chhup ke baithi hai. Kya type karoge?",
+          "options": [
+            "chup. saans mat le.",
+            "main hoon. darr mat."
+          ],
+          "sets": "fl2_text",
+          "branching": false
+        }
+      ],
+      "effects": [
+        "screen_blackout",
+        "flashlight:flicker_then_on",
+        "haptic:knock_x3",
+        "volume_duck",
+        "mic_listen:tension_only",
+        "outgoing_call:riya_unanswered",
+        "message_overlay:typed_live"
+      ],
+      "beats": [
+        "cp2_variant_half",
+        "power_cut",
+        "storeroom_hide",
+        "intruder_search_recorder",
+        "mic_silence_test",
+        "laptop_taken",
+        "dev_realization"
+      ],
+      "next": "cp3",
+      "note": "mic_listen here is tension-only: quiet and noise resolve to the same next scene."
+    },
+    {
+      "id": "cp3",
+      "type": "checkpoint",
+      "fork": true,
+      "prompt": "Aakhri poora din bacha hai. Kaunsa dhaaga khichoge?",
+      "options": [
+        {
+          "id": "DEV_KA_SAAMNA",
+          "ui": "Pehle ghar ka bhedi. Riya Dev se sach ugalwaegi",
+          "sets": {
+            "track": "dev"
+          },
+          "next": "ep4a"
+        },
+        {
+          "id": "KAANCH_KA_MAHAL",
+          "ui": "Proof pura karo — Chaddha showroom ke records raat mein",
+          "sets": {
+            "track": "showroom"
+          },
+          "next": "ep4b"
+        }
+      ],
+      "reconvergence": "Both tracks arrive at Diwali morning with the same invariants: she knows who/why, he knows she knows, the deadline stands, the SD card exists."
+    },
+    {
+      "id": "ep4a",
+      "type": "episode",
+      "title": "Vishwasghat",
+      "script": "episodes/ep4a.md",
+      "night": 3,
+      "riya_clock": "D-1",
+      "track": "A",
+      "effects": [
+        "persona_freetalk:riya",
+        "outgoing_call:zoya",
+        "interaction_scene:dev_confrontation"
+      ],
+      "beats": [
+        "dev_confrontation",
+        "dev_flips",
+        "kalia_drunk_confession",
+        "zoya_finds_hearing_date",
+        "last_normal_conversation"
+      ],
+      "sets": {
+        "evidence": "confession"
+      },
+      "next": "cp4a"
+    },
+    {
+      "id": "cp4a",
+      "type": "checkpoint",
+      "prompt": "Diwali raat. Dev tumhare saath hai. Kya karna hai?",
+      "options": [
+        {
+          "id": "SHIKANJA",
+          "ui": "Dev wire pehnega. Showroom mein Rohan se sach kabulwao, record karo",
+          "next": "e1"
+        },
+        {
+          "id": "BHARI_MEHFIL",
+          "ui": "MLA ki Diwali sabha mein, sab ke saamne, speaker pe chala do sab kuch",
+          "next": "e2"
+        },
+        {
+          "id": "BHAAG",
+          "ui": "Koi hero-giri nahi. Riya aaj raat sheher chhod degi — zinda rehna jeet hai",
+          "next": "e3"
+        }
+      ]
+    },
+    {
+      "id": "ep4b",
+      "type": "episode",
+      "title": "Kaanch Ka Mahal",
+      "script": "episodes/ep4b.md",
+      "night": 3,
+      "riya_clock": "D-1",
+      "track": "B",
+      "effects": [
+        "volume_duck",
+        "screen_dim",
+        "haptic:heartbeat_rising",
+        "message_overlay:dev_unanswered",
+        "outgoing_call:zoya"
+      ],
+      "beats": [
+        "sd_card_retrieved_from_lab",
+        "break_in",
+        "ledger_and_repair_record",
+        "rohan_first_appearance",
+        "cctv_catches_her",
+        "terrace_quiet_scene"
+      ],
+      "sets": {
+        "evidence": "documents"
+      },
+      "next": "cp4b"
+    },
+    {
+      "id": "cp4b",
+      "type": "checkpoint",
+      "prompt": "SD card poora hai. Rohan ko pata hai. Aakhri chaal?",
+      "options": [
+        {
+          "id": "SACH_KI_DAAK",
+          "ui": "Aaj raat kuch mat karo. Teen parcel banao — court, press, crime branch. Subah pahunchenge",
+          "next": "e4"
+        },
+        {
+          "id": "GYARAH_ATTHAVAN",
+          "ui": "Bhaago mat, chhupo mat. Main line pe hoon — poori raat. Hum 11:58 ke paar nikalenge, saath",
+          "next": "e5"
+        }
+      ]
+    },
+    {
+      "id": "ep5_spine",
+      "type": "episode_segment",
+      "title": "11:58 — common spine",
+      "script": "episodes/ep5.md#common-spine",
+      "night": 3,
+      "riya_clock": "D-0 Diwali",
+      "flavor_checkpoints": [
+        {
+          "id": "FL3",
+          "prompt": "11:40 PM. Aakhri text — kya bhejoge?",
+          "options": [
+            "jo bhi ho, phone mat chhodna",
+            "I love you, Riyu"
+          ],
+          "sets": "fl3_text",
+          "branching": false
+        }
+      ],
+      "effects": [
+        "memory_debt:readout",
+        "checkpoint_menu:flavor",
+        "message_overlay:lure_2341",
+        "haptic:heartbeat_rising_sustained"
+      ],
+      "note": "Plays identically on all 30 paths up to 23:41, then hands off to the ending chosen at CP4a/CP4b."
+    },
+    {
+      "id": "e1",
+      "type": "ending",
+      "name": "SHIKANJA",
+      "script": "episodes/ep5.md#ending-e1",
+      "riya_survives": true,
+      "rohan_falls": true,
+      "cost": "Dev wounded",
+      "tone": "bittersweet triumph",
+      "via": "cp4a"
+    },
+    {
+      "id": "e2",
+      "type": "ending",
+      "name": "BHARI MEHFIL",
+      "script": "episodes/ep5.md#ending-e2",
+      "riya_survives": true,
+      "rohan_falls": true,
+      "cost": "the empire stands; the war is not over",
+      "tone": "victory with a shadow",
+      "via": "cp4a"
+    },
+    {
+      "id": "e3",
+      "type": "ending",
+      "name": "BHAAG",
+      "script": "episodes/ep5.md#ending-e3",
+      "riya_survives": true,
+      "rohan_falls": false,
+      "cost": "justice unfiled; a life in hiding; the link dies",
+      "tone": "safe, hollow, haunted",
+      "via": "cp4a"
+    },
+    {
+      "id": "e4",
+      "type": "ending",
+      "name": "WAHI RAAT",
+      "script": "episodes/ep5.md#ending-e4",
+      "riya_survives": false,
+      "rohan_falls": true,
+      "cost": "her",
+      "tone": "fate + justice — the default ending",
+      "via": "cp4b",
+      "default": true
+    },
+    {
+      "id": "e5",
+      "type": "ending",
+      "name": "11:58",
+      "script": "episodes/ep5.md#ending-e5",
+      "riya_survives": true,
+      "rohan_falls": true,
+      "cost": "every memory Arjun has of the three nights — he will never know he saved her",
+      "tone": "the golden save",
+      "via": "cp4b"
+    }
+  ],
+  "personas": {
+    "zoya": {
+      "role": "advice_agent",
+      "callable": "between beats, any episode >= 2",
+      "context": [
+        "flags",
+        "evidence collected",
+        "checkpoint history",
+        "canon <= episode_progress"
+      ],
+      "prompt_file": "server/prompts/zoya.md (to be written)",
+      "hard_rules": [
+        "present-timeline only",
+        "never spoils future episodes",
+        "gives reads, not answers"
+      ]
+    },
+    "riya": {
+      "role": "emotional_persona",
+      "callable": "set moments: ep2 terrace call, ep4a last-normal-conversation, ep5 spine",
+      "prompt_file": "server/prompts/riya.md (to be written)",
+      "hard_rules": [
+        "knows nothing past her own clock (D-x)",
+        "never learns manner of her death unless reveal_death=true",
+        "in-character graceful fallback per interaction-agent schema"
+      ]
+    }
+  },
+  "new_effect_types_needed": [
+    {
+      "type": "message_overlay",
+      "desc": "chat/notification UI popup; supports typed-live text, received photos, and E5's history-rewrite animation",
+      "app_status": "NOT in the current 7 effects — needs a new handler in app/src/effects/"
+    },
+    {
+      "type": "outgoing_call",
+      "desc": "listener-initiated or scripted outgoing call UI (to Zoya for advice; to Riya unanswered in ep3)",
+      "app_status": "NOT in the current 7 — FakeCallScreen covers incoming only"
+    },
+    {
+      "type": "checkpoint_menu",
+      "desc": "visible predefined options at checkpoints (new demo direction, supersedes invisible-only rule for checkpoint moments)",
+      "app_status": "NEW screen/overlay needed"
+    },
+    {
+      "type": "memory_debt",
+      "desc": "readout overlay listing memories lost (flag-driven); used in ep5 spine",
+      "app_status": "NEW overlay"
+    },
+    {
+      "type": "memory_burn",
+      "desc": "single-memory-loss overlay fired repeatedly during E5's guided night-run",
+      "app_status": "NEW overlay"
+    },
+    {
+      "type": "persona_freetalk",
+      "desc": "open live-conversation moment with a persona (Riya) — server-side interaction mode, not a device effect",
+      "app_status": "server feature; app opens the call UI"
+    },
+    {
+      "type": "interaction_scene",
+      "desc": "constrained-outcome conversation (A/B/FALLBACK schema) — server-side; scripted playthrough is the default render",
+      "app_status": "server feature"
+    }
+  ]
+}
