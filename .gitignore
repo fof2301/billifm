@@ -29,3 +29,6 @@ content/takes/
 
 # Synthetic behaviour corpus - regenerate with genome/make_sessions.py
 genome/sessions.jsonl
+
+# Voice auditions - regenerate with content/audition_voices.py
+content/auditions/
