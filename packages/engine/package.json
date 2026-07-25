@@ -1,0 +1,14 @@
+{
+  "name": "@story/engine",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": { "@story/schema": "workspace:*" },
+  "devDependencies": { "typescript": "^5.5.4", "vitest": "^2.1.0" }
+}
