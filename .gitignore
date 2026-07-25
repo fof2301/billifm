@@ -32,3 +32,7 @@ genome/sessions.jsonl
 
 # Voice auditions - regenerate with content/audition_voices.py
 content/auditions/
+
+# takes_11/ is deliberately NOT ignored: the ElevenLabs takes cost 2,629 of a
+# non-renewable 10,000-character free-tier budget. Regenerating them is not free,
+# so they are committed. The OpenAI scratch takes below ARE free to regenerate.

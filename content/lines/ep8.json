@@ -5,7 +5,7 @@
     "t": 0,
     "dir": "Close, breathy, right against the mic. Her breath shakes once, then steadies.",
     "text": "Haan. Chal raha hai. Theek hai. Theek hai... Mujhe nahi pata yeh line kahan jaati hai. Purana phone hai — Dada ji ka. Bas ek number saved tha isme. Tumhara.",
-    "measured_s": 14.1
+    "measured_s": 12.2
   },
   {
     "id": "002",
@@ -13,7 +13,7 @@
     "t": 22,
     "dir": "Dry, even now. This is the joke she makes because she is terrified.",
     "text": "Congratulations. Tum meri aakhri awaaz ke... aakhri listener ho.",
-    "measured_s": 6.2
+    "measured_s": 4.3
   },
   {
     "id": "003",
@@ -21,7 +21,7 @@
     "t": 38,
     "dir": "Whisper. The realisation of 'Neem' should land quietly and horribly.",
     "text": "Jagah? Godown lagta hai. Purana. Deewaron se... neem ki smell aa rahi hai. Neem. Yeh uska ghar hai. Saluja house. Woh mujhe wahan laya hai jahan sab shuru hua tha.",
-    "measured_s": 14.8
+    "measured_s": 14.1
   },
   {
     "id": "004",
@@ -29,7 +29,7 @@
     "t": 58,
     "dir": "She imitates his calm on the quoted line, then drops it.",
     "text": "Usne mera phone le liya. SIM nikal li. Bola — ab jo bhi call aayegi, kisi aur ke paas jaayegi. Matlab... tumhare paas. Agar woh call kare — kuch mat batana. Kuch bhi.",
-    "measured_s": 15.6
+    "measured_s": 14.1
   },
   {
     "id": "005",
@@ -37,7 +37,7 @@
     "t": 80,
     "dir": "Whisper. Cut off mid-word at 'baare mein—' by the door above.",
     "text": "Iqbal chacha dhoondh rahe honge. Unhe pata hai main kahan gayi thi — maine unhe Sehore ke baare mein—",
-    "measured_s": 8.9
+    "measured_s": 6.9
   },
   {
     "id": "006",
@@ -53,7 +53,7 @@
     "t": 112,
     "dir": "Exhale, ragged. Relief that is not really relief.",
     "text": "...Gaya. Filhaal.",
-    "measured_s": 2.1
+    "measured_s": 1.3
   },
   {
     "id": "008",
@@ -61,15 +61,15 @@
     "t": 122,
     "dir": "Pure fear, the first time in eight episodes she sounds like this. Screen is fully black here.",
     "text": "Light... light gayi. Kuch nahi dikh raha. Kuch bhi nahi— Ruko—ruko—yahan kuch tha—",
-    "measured_s": 7.9
+    "measured_s": 9.7
   },
   {
     "id": "009",
     "voice": "meera",
-    "t": 131,
+    "t": 133,
     "dir": "Shaky laugh, almost a sob. The torch is physically on in the listener's hand as this plays. The laugh dies on 'Nahi.'",
     "text": "Torch. Purani torch. Dada ji jaise... Nahi. Dada ji jaise kuch nahi.",
-    "measured_s": 8.1
+    "measured_s": 7.3
   },
   {
     "id": "010",
@@ -77,7 +77,7 @@
     "t": 152,
     "dir": "Whisper, moving. She freezes at the end — leave 1s of held breath before the knocks.",
     "text": "Darwaza andar se band hai. Khidki... plywood. Ek hi raasta hai aur woh uske paas—",
-    "measured_s": 8.4
+    "measured_s": 5.7
   },
   {
     "id": "011",
@@ -85,7 +85,7 @@
     "t": 164,
     "dir": "Through a door, muffled, warm. Genuinely kind-sounding. Never menacing on the surface.",
     "text": "Meera beta. Neend nahi aa rahi?",
-    "measured_s": 3.4
+    "measured_s": 2.6
   },
   {
     "id": "012",
@@ -93,15 +93,15 @@
     "t": 173,
     "dir": "Pleasant, unhurried. The horror is that he means it as hospitality.",
     "text": "Torch mil gayi? Wahi rakhi thi maine. Is ghar mein andhera bahut purana hai. Mehmaan ko taqleef nahi honi chahiye.",
-    "measured_s": 9.8
+    "measured_s": 7.3
   },
   {
     "id": "013",
     "voice": "meera",
-    "t": 190,
+    "t": 187,
     "dir": "Wrecked whisper, then steel returning on 'Suno.' The last sentence is the instruction the listener must remember during the live call — land it hard.",
     "text": "Usne torch rakhi thi. Yeh sab... likha hai. Uski script. Hum bas... kirdaar. Suno. Dhyaan se. Woh tumhe call karega. Usse baat karo. Time do mujhe. Yaad rakhna—usko teen cheezein chahiye: tumhara darr, naam, bharosa. Teeno mat dena.",
-    "measured_s": 18.3
+    "measured_s": 20.9
   },
   {
     "id": "014a",
@@ -109,7 +109,7 @@
     "t": 250,
     "dir": "VARIANT A — the listener revealed nothing. Fierce, then hollow. Plays after the live call.",
     "text": "Tumne kuch nahi bataya. Shukriya. Sach mein. Usne... Dada ji ka naam liya, na? Maine suna. Deewar patli hai. Poora parivaar. Mujhe lagta hai main jaanti hoon woh kaun hai. Aur mujhe lagta hai... woh galat nahi hai. Sirf... der se hai. Tees saal der se.",
-    "measured_s": 24.0
+    "measured_s": 22.0
   },
   {
     "id": "014b",
@@ -117,7 +117,7 @@
     "t": 250,
     "dir": "VARIANT B — the listener let something slip. Not angry. Worse: resigned.",
     "text": "...Tumne bata diya. Koi baat nahi. Woh sabse ugalwa leta hai. Yehi uska hunar hai — hamesha se tha. Ab suno. Kyunki ab time kam hai.",
-    "measured_s": 13.8
+    "measured_s": 9.6
   },
   {
     "id": "014c",
@@ -125,7 +125,7 @@
     "t": 250,
     "dir": "VARIANT C — the listener never answered the call. Needed because a missed call is canon, not a failure.",
     "text": "Tumne nahi uthaya?! ...Shayad theek kiya. Woh sirf sunna chahta tha ki tum kaun ho. Ab woh jaanta hai ki koi hai. Bas itna hi kaafi hai uske liye.",
-    "measured_s": 16.6
+    "measured_s": 10.4
   },
   {
     "id": "015",
@@ -133,7 +133,7 @@
     "t": 277,
     "dir": "Whisper, fast, low. She does not finish 'main...' — let it hang.",
     "text": "Kal raat usne kaha — aakhri episode Sunday. Podcast. Meri awaaz. Record chahiye — Dada ji ka sach, meri awaaz. Aur uske baad main... Iqbal ko bata dena. Sehore. Saluja. Neem wala ghar. Woh aa raha hai—",
-    "measured_s": 22.0
+    "measured_s": 19.2
   },
   {
     "id": "016",
@@ -141,7 +141,7 @@
     "t": 300,
     "dir": "THE SILENCE TEST. Mouth against the mic, almost no voice at all. Each of the last four words is a separate held breath. After this line: exactly 10 seconds of room tone only — the drip and nothing else. Do not score it. Do not fade it.",
     "text": "Woh darwaze pe hai. Aur is baar woh andar aane ke liye nahi ruka hai — woh sun raha hai. Tumhe bhi. Is line ko bhi. Dus second. Koi. Awaaz. Nahi.",
-    "measured_s": 15.8
+    "measured_s": 14.7
   },
   {
     "id": "017",
@@ -149,7 +149,7 @@
     "t": 310,
     "dir": "PATH A (ep8_safe.mp3) — exhale like surfacing from water. Half-laugh, half-tears. Ends on the ask.",
     "text": "...Gaya. Tum... tumne saans bhi nahi li, na? Pagal ho tum. Shukriya, pagal insaan. Khidki ka plywood — kona loose hai. Main aaj raat yahan se nikal rahi hoon. Aur agar nahi nikal paayi— Nikal jaaungi. Kal. Episode nau. Wahi time. Line mat kaatna.",
-    "measured_s": 23.5
+    "measured_s": 21.0
   },
   {
     "id": "018",
@@ -157,7 +157,7 @@
     "t": 312,
     "dir": "PATH B (ep8_caught.mp3) — the warmth is GONE. What is underneath is a boy from 1994. This is the only time he is loud.",
     "text": "Kaun hai andar tumhare saath, Meera?",
-    "measured_s": 4.7
+    "measured_s": 2.2
   },
   {
     "id": "019",
@@ -165,7 +165,7 @@
     "t": 316,
     "dir": "PATH B — no whisper left, just truth, straight into the phone. Then the phone falls.",
     "text": "Suno—suno—Iqbal ko bolo SALUJA. NEEM WALA GHAR—",
-    "measured_s": 5.4
+    "measured_s": 5.0
   },
   {
     "id": "020",
@@ -173,6 +173,6 @@
     "t": 324,
     "dir": "PATH B — he has picked up her phone. Close now. To YOU. Soft as a lullaby. Then CLICK.",
     "text": "...Toh yeh hai woh awaaz jo meri kahaani mein ghus aayi. Kal baat karte hain.",
-    "measured_s": 6.0
+    "measured_s": 4.9
   }
 ]

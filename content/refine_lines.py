@@ -83,11 +83,19 @@ def measured(line: dict) -> float | None:
     the difference between fitting a slot and talking over the silence test. Once
     takes exist, always trust them.
     """
-    take = HERE / "takes" / f"{line['id']}_{line['voice']}.mp3"
+    # `measured_s` in the line data is authoritative: it is refreshed from the
+    # SHIPPING takes (currently ElevenLabs, in takes_11/) and it is committed, so
+    # this check reproduces for anyone who has not rendered anything.
+    #
+    # It deliberately wins over probing a takes dir. Earlier this probed takes/
+    # first and silently reported the old OpenAI scratch durations - which read as
+    # "ok" while the real ElevenLabs takes overran by 0.9s into the villain call.
+    if line.get("measured_s") is not None:
+        return float(line["measured_s"])
+
+    take = HERE / "takes_11" / f"{line['id']}_{line['voice']}.wav"
     if not take.exists():
-        # takes/ is gitignored, so fall back to the duration recorded in the line
-        # data. That keeps this check reproducible for anyone who has not rendered.
-        return line.get("measured_s")
+        return None
     try:
         out = subprocess.run(["afinfo", str(take)], capture_output=True, text=True, timeout=10).stdout
         m = re.search(r"estimated duration: ([\d.]+)", out)

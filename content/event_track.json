@@ -1,7 +1,7 @@
 {
   "episode": 8,
   "title": "Sutradhar",
-  "audio": "ep8.mp3",
+  "audio": "ep8.wav",
   "duration_s": 360,
   "_comment": "Hand-authored from files/story.md Part 3 timestamps. This is DL3 (the spec slide) and the file the app plays. The annotation agent in director/ must be able to reproduce something equivalent from the raw transcript - that comparison IS the M7 demo.",
   "events": [
@@ -78,8 +78,8 @@
       "duration_s": 10,
       "threshold_db": -35,
       "branch": {
-        "quiet": "ep8_safe.mp3",
-        "noise": "ep8_caught.mp3"
+        "quiet": "ep8_safe.wav",
+        "noise": "ep8_caught.wav"
       },
       "cue": "'Dus second. Koi. Awaaz. Nahi.' - fires AFTER her line ends at 315.8s, not when it starts.",
       "why": "Measured: her line runs 300->315.8s. Metering at 300 makes the phone hear its own speaker and always take the caught branch. Opens at 317 - 1.2s after she stops - so the mic opens into real silence, and that held beat is the tension."
