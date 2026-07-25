@@ -1,230 +1,119 @@
-# Billifm — Interactive Story Evaluation Framework
+# Sutradhar Data Layer — Genome + Director + Sequencer
 
-An evaluation harness for interactive stories on Billifm. It simulates
-audience personas walking through a branching story graph and produces
-retention, drop-off, and trait-fit metrics — before the story ever
-ships to real users.
+The data-layer piece of Sutradhar (see [/files/agents.md](../files/agents.md) for
+the full pipeline spec, and [/files/scope.md M10a](../files/scope.md) for
+the scope constraint).
 
-The event schema is intentionally shared between simulation and
-production, so anything you learn from eval works just as well on
-post-launch analytics.
+**Owner:** Shreyansh. Also owns Databricks deployment. Others own `app/`,
+`server/`, the M7 annotator in `director/`, and `content/`.
 
----
+**Model:** `gpt-4o-mini` everywhere. Ollama has been dropped.
 
-## What it evaluates
+## What lives here
 
-For a given story + audience, you get:
+| File | Purpose |
+| --- | --- |
+| `schemas.py` | `Persona`, `Event` pydantic models (the OG `Story` type is legacy — the new pipeline uses `content/directed_story_v0.json` as a raw dict) |
+| `openai_client.py` | Single LLM backend. Reads key from Databricks Secrets on cluster, `OPENAI_API_KEY` env var locally |
+| `generate_personas.py` | Sample N personas across two declared cohorts |
+| `sim.py` | Walk one persona through a `directed_story` → emit Sutradhar-specific events (call_answered, silence_test_result, cliffhanger_hooked, effect_fired, …) |
+| `genome.py` | events → per-persona behavior vectors → k-means k=2 → Genome Profile JSON (agents.md §1 shape) |
+| `aggregate.py` | Legacy per-run report (retention curve, drop-off, choice distribution). The Databricks notebooks are the authoritative aggregation layer |
+| `delta_sync.py` | Upload local JSONL / persona CSV to Delta via the SQL warehouse (kept for the local → cloud workflow) |
+| `run_eval.py` | Local CLI: `simulate` + `report` |
+| `databricks/` | Portable SQL + legacy analysis notebook. New notebooks live in top-level `../databricks/` |
 
-- **Completion rate** — what % of listeners reach an ending
-- **Retention curve** — fraction of runs that reach each node
-- **Drop-off hotspots** — where personas quit
-- **Choice distribution** — how a decision splits the audience
-- **Callback label distribution** — for virtual-call nodes, which
-  intent classes users land on
-- **Trait-fit by drop-off** — the average personality profile of
-  personas who bailed at each node ("extraverts are dropping at n7")
+Sibling directories:
 
----
+- [`../director/`](../director/) — the M7 annotator (owned by someone else)
+  **plus** `director_v2.py` + `directed_story_schema.py` + `prompts/director.md`
+  (this repo's Director agent, owned by us)
+- [`../sequencer/`](../sequencer/) — the iteration loop
+- [`../databricks/`](../databricks/) — Databricks notebooks (this is the
+  production path — read `../databricks/README.md`)
+- [`../content/directed_story_v0.json`](../content/directed_story_v0.json) —
+  hand-authored manual baseline the Sequencer improves against
 
-## Installation
+## Local dev flow
 
 ```bash
 pip install -r eval/requirements.txt
-```
+export OPENAI_API_KEY=sk-...
 
-You also need [Ollama](https://ollama.com) with at least one model pulled:
+# 1. Generate a small persona corpus
+python -m eval.generate_personas -n 50
 
-```bash
-# Local (fast, cheap)
-ollama pull qwen3:4b        # or gemma3:4b, phi4-mini
-
-# Cloud (better quality; needs `ollama signin`)
-ollama pull gemma4:cloud
-```
-
----
-
-## Quick start
-
-From the repo root:
-
-```bash
-# 1. Simulate 10 personas x 3 rollouts against the sample story
+# 2. Simulate against the manual v0
 python -m eval.run_eval simulate \
-    --story eval/examples/story.json \
-    --personas eval/examples/personas.csv \
-    --model qwen3:4b \
-    --rollouts 3 \
+    --story content/directed_story_v0.json \
+    --personas eval/out/personas.csv \
+    --cohort-map eval/out/cohort_map.json \
     --out eval/out/events.jsonl
 
-# 2. Produce a report
-python -m eval.run_eval report \
-    --events eval/out/events.jsonl \
-    --personas eval/examples/personas.csv
+# 3. Build genome profiles (k=2)
+python -m eval.genome --events eval/out/events.jsonl
+
+# 4. Direct once per profile
+python -m director.director_v2 \
+    --linear-script files/story.md \
+    --genome eval/out/genome_profiles.json \
+    --out eval/out/directed_v1.json
+
+# 5. Full sequencer (2 iterations)
+python -m sequencer.run \
+    --linear-script files/story.md \
+    --genome eval/out/genome_profiles.json \
+    --personas eval/out/personas.csv \
+    --baseline content/directed_story_v0.json \
+    --cohort-map eval/out/cohort_map.json \
+    --max-iter 2
 ```
 
-Add `--json` to `report` to get machine-readable output for a
-dashboard.
+Local runs cost cents. Do NOT run 10k personas locally — that's a
+Databricks job.
 
----
+## Databricks (production) flow
 
-## Story format
+Read [`../databricks/README.md`](../databricks/README.md).
 
-Stories are directed graphs of typed nodes. Full schema in
-[`schemas.py`](schemas.py). Node types:
+Short version:
+1. Repos → Add Repo → `https://github.com/fof2301/billifm`
+2. Run `databricks/notebooks/00_setup.py` once per new cluster
+3. `10 → 20 → 30 → 40 → 50` runs the full pipeline; `99` is the test suite
 
-| Type        | Purpose                                                              |
-| ----------- | -------------------------------------------------------------------- |
-| `narrative` | Plain audio/prose. Advances to `next`.                               |
-| `decision`  | Presents choices; each choice has its own `next`.                    |
-| `callback`  | Character "calls" the user; user replies free-text; a classifier maps the reply to a label; the label is looked up in `next_map` to pick the next node. |
-| `merge`     | Convergence point where branches rejoin.                             |
-| `end`       | Terminal node (an ending).                                           |
+## Event schema (Sutradhar-specific)
 
-Every story starts at `root` and travels through nodes until it hits an
-`end` — or the persona drops off.
+Every event has `{ts, user_id, story_id, run_id, event_type, node_id, payload}`.
+Sutradhar-specific `event_type` values:
 
-See [`examples/story.json`](examples/story.json) for a complete
-12-node story called "Missed Call".
+| event_type | Emitted when | Payload |
+| --- | --- | --- |
+| `story_started` | Persona starts a run | `{cohort_hint}` |
+| `segment_entered` | Persona enters a segment | `{t_start, beat}` |
+| `effect_fired` | Any sensory effect | `{effect_type, effect_id, t}` |
+| `sensory_reaction` | Persona reacts to the effect(s) | `{reaction, engagement}` |
+| `call_answered` | Persona picks up the villain call | `{response_class, engagement, why}` |
+| `call_declined` | Persona lets it ring | `{engagement, why}` |
+| `silence_test_result` | Silence test finishes | `{outcome, engagement, reason}` |
+| `cliffhanger_hooked` | Cliffhanger delivered | `{returned, hook_strength, cliffhanger_kind}` |
+| `ending_reached` | Persona hits an ending seg | `{ending_seg, flags}` |
+| `session_ended` | Any terminal state | `{reason, engagement?}` |
 
----
+Table target: `billifm.eval.events_log`, column `event_type STRING`,
+`payload STRING(JSON)`. No schema migration needed as new event types are
+added.
 
-## Persona CSV format
+## Cohort profile shape (agents.md §1)
 
-Columns (in order):
-
-```
-persona_id, age_band, gender, region,
-big5_o, big5_c, big5_e, big5_a, big5_n,   # 0-1 floats
-nature_tags,                               # pipe-separated
-content_pref_vec,                          # JSON array (quote the field!)
-past_watches,                              # pipe-separated (may be empty)
-watch_completion_rate,                     # 0-1 (may be empty)
-avg_session_min,                           # float (may be empty)
-preferred_mode,                            # interactive|standard|minimal (may be empty)
-call_response_style                        # text|voice|skip (may be empty)
-```
-
-Fields after `content_pref_vec` are optional — the simulator reasons
-with whatever's present. See
-[`examples/personas.csv`](examples/personas.csv) for 10 sample rows
-(2 have watch history filled, matching the "~20% populated" starting
-point).
-
----
-
-## Event schema
-
-Emitted by the simulator to a JSONL file. Also the shape you should
-send to PostHog / your event lake in production.
-
-```
-story_started    (user_id, story_id, ts)
-node_entered     (node_id)
-decision_made    (node_id, choice_id, engagement)
-callback_answered(node_id, text, classified_label, engagement)
-session_ended    (node_id, reason: complete|dropoff|max_steps_exceeded,
-                             engagement?, ending_label?)
-```
-
-`run_id` distinguishes multiple rollouts of the same persona.
-
----
-
-## Databricks (persistent event lake + shared analytics)
-
-Local sims stay local (fast iteration with Ollama Cloud); Databricks
-owns the persistent Delta tables so eval data and post-launch prod
-events live in one place with one schema.
-
-Everything lives in the `billifm.eval` schema:
-
-- `events_log` — every event, both `source='sim'` and `source='prod'`
-- `personas` — persona registry (dim table)
-- `stories`  — story registry with the full DAG as JSON
-
-Setup DDL is in [`databricks/setup.sql`](databricks/setup.sql).
-Portable analysis queries are in
-[`databricks/analyze.sql`](databricks/analyze.sql) and mirrored in a
-notebook at [`databricks/analyze_notebook.py`](databricks/analyze_notebook.py).
-
-```bash
-export DATABRICKS_HOST=https://dbc-XXXX.cloud.databricks.com
-export DATABRICKS_TOKEN=dapiXXXX
-export DATABRICKS_WAREHOUSE_ID=<serverless_warehouse_id>
-
-# after a local sim run:
-python -m eval.delta_sync events   --file eval/out/events.jsonl --source sim
-python -m eval.delta_sync personas --file eval/examples/personas.csv
-python -m eval.delta_sync story    --file eval/examples/story.json
-```
-
-`delta_sync` uses only the Python stdlib — no extra deps. See
-[`databricks/README.md`](databricks/README.md) for the full flow.
-
----
-
-## Model split (recommended)
-
-| Role                          | Model                          | Why                                            |
-| ----------------------------- | ------------------------------ | ---------------------------------------------- |
-| Story writer (external)       | `gemma4:cloud` or Claude       | JSON reliability at graph scale                |
-| Persona sim (×N rollouts)     | `qwen3:4b` / `gemma3:4b` local | Fast, cheap, good enough for persona choices   |
-| Callback intent classifier    | `qwen3:4b` local               | Small-text intent classification               |
-| Judge / rewrite suggester     | `gemma4:cloud`                 | Nuanced critique on drop-off hotspots          |
-
-Small models are noisy at 4B — that's why we do 3–5 rollouts per
-persona. Majority behavior stabilizes with more runs.
-
----
-
-## Extending
-
-- **Add a node type** — subclass a Pydantic model in `schemas.py`,
-  extend the `Union`, then handle it in `sim.simulate_once`.
-- **Change drop-off logic** — tweak `dropoff_threshold` or replace
-  `_ask_engagement` with something deterministic (e.g. a trait-vs-genome
-  match score).
-- **Custom aggregations** — add functions to `aggregate.py` that read
-  the JSONL stream. Everything downstream is dict-shaped.
-- **Real-user events** — mirror the event schema in your app, ship to
-  PostHog / DuckDB. All aggregators here work unchanged.
-
----
-
-## What's not built yet (by design)
-
-- **Story writer** — the LLM that generates `story.json` from a
-  premise. Deliberately deferred until the writer model is picked
-  (Claude vs. `gemma4:cloud` vs. something else).
-- **Return-loop / push-notification sim** — the virtual-call-back
-  feature. Paper design lives in the top-level PRD; add a
-  `notification_sent` / `notification_responded` handler to `sim.py`
-  when ready.
-- **Judge / rewrite recommender** — takes drop-off hotspots and
-  suggests story edits. Straightforward to add once we know the writer.
-
----
-
-## Layout
-
-```
-eval/
-├── README.md                # this file
-├── requirements.txt
-├── __init__.py
-├── schemas.py               # Pydantic: Story, Persona, Event
-├── ollama_client.py         # thin JSON-mode wrapper
-├── sim.py                   # persona traversal + event emission
-├── aggregate.py             # local metrics + text report
-├── run_eval.py              # CLI entry point
-├── delta_sync.py            # push local JSONL/CSV/JSON to Delta
-├── databricks/
-│   ├── setup.sql            # catalog / schema / volume / table DDL
-│   ├── analyze.sql          # portable SQL versions of every metric
-│   ├── analyze_notebook.py  # Databricks notebook (SQL against Delta)
-│   └── README.md            # Databricks flow overview
-└── examples/
-    ├── story.json           # 12-node sample story
-    └── personas.csv         # 10 sample personas
+```json
+{
+  "cohort": "...",
+  "n_personas": 100,
+  "attention_curve": {"safe_zone_s": 45, "risk_after_s": 90},
+  "responds_to": ["silence_tension", "direct_address", "haptic_sync"],
+  "numb_to": ["jump_scares", "long_exposition"],
+  "cliffhanger_efficacy": {"return_promise": 0.81, "threat_to_listener": 0.63},
+  "decision_point_tolerance": 1,
+  "best_break_pattern": "5min_segments_hard_out"
+}
 ```

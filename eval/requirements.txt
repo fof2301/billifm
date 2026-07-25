@@ -1,2 +1,4 @@
 pydantic>=2.5
-ollama>=0.3.0
+openai>=1.40
+numpy>=1.26
+scikit-learn>=1.4
