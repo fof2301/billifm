@@ -7,11 +7,13 @@ import { buildCharacterSystemPrompt, buildJudgeSystemPrompt } from './prompt'
 import type { Providers } from './providers/types'
 import type { RateLimiter } from './ratelimit'
 import type { StoryRegistry } from './stories'
+import type { SessionsDb } from './db'
 
 export interface AppDeps {
   stories: StoryRegistry
   providers?: Providers
   rateLimiter?: RateLimiter
+  db?: SessionsDb
 }
 
 const TranscriptTailSchema = z.array(
@@ -38,6 +40,12 @@ const JudgeBodySchema = z.object({
   storyId: z.string(),
   challengeId: z.string(),
   transcriptTail: TranscriptTailSchema.max(24),
+})
+
+const SnapshotBodySchema = z.object({
+  sessionId: z.string().min(1),
+  storyId: z.string().min(1),
+  state: z.record(z.unknown()),
 })
 
 const MIME: Record<string, string> = {
@@ -172,6 +180,37 @@ export function createApp(deps: AppDeps): Hono {
     if (!(audio instanceof File)) return c.json({ error: 'audio file required' }, 400)
     const text = await deps.providers.stt.transcribe(Buffer.from(await audio.arrayBuffer()), audio.type)
     return c.json({ text })
+  })
+
+  app.post('/api/sessions/snapshot', async (c) => {
+    if (!deps.db) return c.json({ error: 'no db configured' }, 500)
+    const parsed = SnapshotBodySchema.safeParse(await c.req.json())
+    if (!parsed.success) return c.json({ error: parsed.error.message }, 400)
+    const { sessionId, storyId, state } = parsed.data
+    deps.db.upsert({
+      sessionId,
+      deviceId: c.req.header('x-device-id')!,
+      storyId,
+      stateJson: JSON.stringify(state),
+      endingId: typeof state.endingId === 'string' ? state.endingId : null,
+    })
+    return c.json({ ok: true })
+  })
+
+  app.get('/api/sessions', (c) => {
+    if (!deps.db) return c.json({ error: 'no db configured' }, 500)
+    const deviceId = c.req.header('x-device-id')
+    if (!deviceId) return c.json({ error: 'x-device-id header required' }, 400)
+    return c.json({ sessions: deps.db.listByDevice(deviceId) })
+  })
+
+  app.get('/api/sessions/:id', (c) => {
+    if (!deps.db) return c.json({ error: 'no db configured' }, 500)
+    const deviceId = c.req.header('x-device-id')
+    if (!deviceId) return c.json({ error: 'x-device-id header required' }, 400)
+    const row = deps.db.get(c.req.param('id'), deviceId)
+    if (!row) return c.json({ error: 'not found' }, 404)
+    return c.json({ state: JSON.parse(row.stateJson) })
   })
 
   return app
