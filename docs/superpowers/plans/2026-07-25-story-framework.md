@@ -4267,9 +4267,16 @@ export function createRecorder(): { start(): Promise<void>; stop(): Promise<Blob
   return {
     async start() {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      recorder = new MediaRecorder(stream as MediaStream)
-      recorder.ondataavailable = (e) => chunks.push(e.data)
-      recorder.start()
+      try {
+        recorder = new MediaRecorder(stream)
+        recorder.ondataavailable = (e) => chunks.push(e.data)
+        recorder.start()
+      } catch (err) {
+        // MediaRecorder construction can throw after the mic is live —
+        // release the tracks or the mic indicator stays on until reload.
+        stream.getTracks().forEach((t) => t.stop())
+        throw err
+      }
     },
     stop() {
       return new Promise<Blob>((resolve, reject) => {
@@ -4304,7 +4311,9 @@ export function PushToTalkButton({ session }: { session: SessionApi }) {
   const disabled = session.busy || !session.state.activeCharacterId
 
   const begin = async () => {
-    if (disabled || phase !== 'idle') return
+    // 'error' must be a valid starting phase — otherwise one failed
+    // transcription permanently disables push-to-talk.
+    if (disabled || (phase !== 'idle' && phase !== 'error')) return
     try {
       rec.current = createRecorder()
       await rec.current.start()
