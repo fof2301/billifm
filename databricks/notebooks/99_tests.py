@@ -35,8 +35,8 @@ for t in ["events_log", "personas", "stories"]:
 # COMMAND ----------
 from eval.openai_client import chat_json
 try:
-    r = chat_json("Reply {\"ok\":true}. Nothing else.", model="gpt-4o-mini",
-                  max_tokens=20, temperature=0)
+    r = chat_json("Return this exact json: {\"ok\":true}. Nothing else.",
+                  model="gpt-4o-mini", max_tokens=20, temperature=0)
     T("openai gpt-4o-mini reachable", r.get("ok") is True, str(r))
 except Exception as e:
     T("openai gpt-4o-mini reachable", False, str(e))

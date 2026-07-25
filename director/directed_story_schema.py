@@ -112,6 +112,18 @@ class DirectedStory(BaseModel):
     endings: list[Ending]
 
 
+# `from __future__ import annotations` defers all type hints; force pydantic
+# to resolve them now so validate_directed_story() works regardless of
+# import order / pydantic version.
+InteractionAgentDecision.model_rebuild()
+MicAmplitudeDecision.model_rebuild()
+Cliffhanger.model_rebuild()
+Segment.model_rebuild()
+Ending.model_rebuild()
+DirectorReasoning.model_rebuild()
+DirectedStory.model_rebuild()
+
+
 # ---------- OpenAI JSON schema (structured output) ----------
 # Kept flat enough for `response_format=json_schema`. The Director prompt
 # leans on the field descriptions, so keep those tight and instructive.
@@ -156,8 +168,14 @@ DIRECTED_STORY_JSON_SCHEMA = {
                     "t_end": {"type": "number"},
                     "beat": {"type": "string"},
                     "event_track": {"type": "array", "items": {"type": "object"}},
-                    "decision_point": {"type": ["object", "null"]},
-                    "cliffhanger": {"type": ["object", "null"]},
+                    "decision_point": {
+                        "type": ["object", "null"],
+                        "description": "One of two shapes. `interaction_agent`: {decision_id, kind='interaction_agent', in_character, objective, outcomes:{A|B|C|FALLBACK:{label,intent,flag,consequence_seg}}, turn_limit, max_seconds, reasoning}. `mic_amplitude`: {decision_id, kind='mic_amplitude', objective, outcomes:{quiet|noise:{label,flag,consequence_seg}}, duration_s, threshold_db, reasoning}.",
+                    },
+                    "cliffhanger": {
+                        "type": ["object", "null"],
+                        "description": "Fields: kind (one of: return_promise, threat_to_listener, unresolved_stakes, character_peril, revelation_pending), line (str), returns_next_episode (bool). Do NOT use `type` instead of `kind`.",
+                    },
                     "reasoning": {"type": "string"},
                 },
             },
