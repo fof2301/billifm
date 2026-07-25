@@ -158,8 +158,69 @@ export function reduce(bundle: StoryBundle, state: SessionState, action: Action)
       }
       return { state: next, effects }
     }
+    case 'SELECT_CHARACTER': {
+      if (!isCharacterAvailable(bundle, state, action.characterId)) return { state, effects }
+      let next: SessionState = { ...state, activeCharacterId: action.characterId, suggestedReplies: [] }
+      if (!next.transcripts[action.characterId]) {
+        const ch = bundle.characters.find((c) => c.id === action.characterId)!
+        next = {
+          ...next,
+          transcripts: {
+            ...next.transcripts,
+            [action.characterId]: [{ role: 'character', text: ch.greeting, atMs: next.elapsedRealMs }],
+          },
+        }
+      }
+      return { state: next, effects }
+    }
+    case 'PLAYER_MESSAGE': {
+      const charId = state.activeCharacterId
+      if (!charId) return { state, effects }
+      const entry = { role: 'player' as const, text: action.text, atMs: state.elapsedRealMs }
+      let next: SessionState = {
+        ...state,
+        suggestedReplies: [],
+        transcripts: { ...state.transcripts, [charId]: [...(state.transcripts[charId] ?? []), entry] },
+      }
+      if (next.activeChallenge && !next.pauseReasons.includes('request')) {
+        next = { ...next, pauseReasons: [...next.pauseReasons, 'request'] }
+      }
+      effects.push({ type: 'REQUEST_DIALOGUE', characterId: charId, playerMessage: action.text })
+      return { state: next, effects }
+    }
+    case 'CHARACTER_REPLY': {
+      const entry = { role: 'character' as const, text: action.text, atMs: state.elapsedRealMs }
+      let next: SessionState = {
+        ...state,
+        suggestedReplies: action.suggestedReplies ?? [],
+        pauseReasons: state.pauseReasons.filter((r) => r !== 'request'),
+        transcripts: {
+          ...state.transcripts,
+          [action.characterId]: [...(state.transcripts[action.characterId] ?? []), entry],
+        },
+      }
+      if (next.activeChallenge) {
+        const ch = bundle.challenges.find((c) => c.id === next.activeChallenge!.id)
+        if (ch?.type === 'task') effects.push({ type: 'REQUEST_JUDGE', challengeId: ch.id })
+      }
+      return { state: next, effects }
+    }
+    case 'CHALLENGE_RESOLVED': {
+      if (!action.success) return { state, effects }
+      if (state.activeChallenge?.id !== action.challengeId) return { state, effects }
+      const ch = bundle.challenges.find((c) => c.id === action.challengeId)
+      if (!ch || ch.type !== 'task') return { state, effects }
+      return { state: resolveChallenge(bundle, state, effects, ch.id, ch.onSuccess), effects }
+    }
+    case 'MCQ_PICK': {
+      if (state.activeChallenge?.id !== action.challengeId) return { state, effects }
+      const ch = bundle.challenges.find((c) => c.id === action.challengeId)
+      if (!ch || ch.type !== 'mcq') return { state, effects }
+      const opt = ch.options.find((o) => o.id === action.optionId)
+      if (!opt) return { state, effects }
+      return { state: resolveChallenge(bundle, state, effects, ch.id, opt.onPick), effects }
+    }
     default:
-      // Conversation actions are implemented in Task 5.
       return { state, effects }
   }
 }
