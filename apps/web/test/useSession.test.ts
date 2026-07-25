@@ -86,6 +86,47 @@ describe('useSession', () => {
     expect(result.current.state.pauseReasons).not.toContain('request')
   })
 
+  it('retry during an active challenge re-pauses the clock before the dialogue call goes out', async () => {
+    dialogueMock.mockRejectedValue(new Error('boom'))
+    const { result } = renderHook(() => useSession(bundle, 'text', false, () => {}))
+    act(() => result.current.selectCharacter('ann'))
+    act(() => result.current.send('hello'))
+    await act(async () => { await vi.runOnlyPendingTimersAsync() })
+    await waitFor(() => expect(result.current.failedMessage).toBe('hello'))
+    expect(result.current.state.pauseReasons).not.toContain('request')
+    expect(result.current.state.activeChallenge?.id).toBe('t1')
+
+    let release: (v: { text: string }) => void
+    dialogueMock.mockReturnValue(new Promise((r) => { release = r }))
+    act(() => result.current.retry())
+    // PAUSE dispatches synchronously, before the retried requestDialogue call resolves.
+    expect(result.current.state.pauseReasons).toContain('request')
+    await act(async () => { release!({ text: 'hi' }); await vi.runOnlyPendingTimersAsync() })
+  })
+
+  it('judge failure verdict still releases the pause but leaves the challenge active', async () => {
+    dialogueMock.mockResolvedValue({ text: 'oh really' })
+    judgeMock.mockResolvedValue({ success: false, feedback: 'not yet' })
+    const { result } = renderHook(() => useSession(bundle, 'text', false, () => {}))
+    act(() => result.current.selectCharacter('ann'))
+    act(() => result.current.send('I did the thing'))
+    await act(async () => { await vi.runOnlyPendingTimersAsync() })
+    await waitFor(() => expect(judgeMock).toHaveBeenCalled())
+    await waitFor(() => expect(result.current.state.pauseReasons).not.toContain('request'))
+    expect(result.current.state.activeChallenge?.id).toBe('t1')
+  })
+
+  it('resumes the clock when the judge call itself errors', async () => {
+    dialogueMock.mockResolvedValue({ text: 'oh really' })
+    judgeMock.mockRejectedValue(new Error('judge unavailable'))
+    const { result } = renderHook(() => useSession(bundle, 'text', false, () => {}))
+    act(() => result.current.selectCharacter('ann'))
+    act(() => result.current.send('I did the thing'))
+    await act(async () => { await vi.runOnlyPendingTimersAsync() })
+    await waitFor(() => expect(judgeMock).toHaveBeenCalled())
+    await waitFor(() => expect(result.current.state.pauseReasons).not.toContain('request'))
+  })
+
   it('keeps busy true through the retry window after the first dialogue attempt fails', async () => {
     dialogueMock
       .mockRejectedValueOnce(new Error('boom'))

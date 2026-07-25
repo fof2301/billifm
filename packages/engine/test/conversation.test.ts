@@ -81,18 +81,34 @@ describe('PLAYER_MESSAGE / CHARACTER_REPLY', () => {
     expect(r.state.pauseReasons).toContain('request')
   })
 
-  it('reply unpauses, stores suggestions, and requests judging for task challenges', () => {
+  it('reply keeps the clock paused for judging, stores suggestions, and requests judging for task challenges', () => {
+    // Spec: the clock stays paused across the judge call too, since it's another AI
+    // request in flight during an active challenge. Only CHALLENGE_RESOLVED releases it.
     const bundle = fixture()
     let { state } = createSession(bundle, 'text')
     state = reduce(bundle, state, { type: 'SELECT_CHARACTER', characterId: 'ann' }).state
     state = reduce(bundle, state, { type: 'PLAYER_MESSAGE', text: 'hi', source: 'text' }).state
+    expect(state.pauseReasons).toContain('request')
     const r = reduce(bundle, state, {
       type: 'CHARACTER_REPLY', characterId: 'ann', text: 'well…', suggestedReplies: ['Ask why', 'Stay quiet'],
     })
     expect(r.state.transcripts['ann']!.at(-1)).toMatchObject({ role: 'character', text: 'well…' })
     expect(r.state.suggestedReplies).toEqual(['Ask why', 'Stay quiet'])
-    expect(r.state.pauseReasons).not.toContain('request')
+    expect(r.state.pauseReasons).toContain('request')
     expect(r.effects).toContainEqual({ type: 'REQUEST_JUDGE', challengeId: 'task1' })
+  })
+
+  it('reply releases the pause when no judge will follow (mcq challenge active)', () => {
+    const bundle = fixture()
+    let { state } = createSession(bundle, 'text')
+    state = reduce(bundle, state, { type: 'CHALLENGE_RESOLVED', challengeId: 'task1', success: true }).state
+    expect(state.activeChallenge?.id).toBe('quiz1')
+    state = reduce(bundle, state, { type: 'SELECT_CHARACTER', characterId: 'ann' }).state
+    state = reduce(bundle, state, { type: 'PLAYER_MESSAGE', text: 'pick?', source: 'text' }).state
+    expect(state.pauseReasons).toContain('request')
+    const r = reduce(bundle, state, { type: 'CHARACTER_REPLY', characterId: 'ann', text: 'hmm' })
+    expect(r.state.pauseReasons).not.toContain('request')
+    expect(r.effects.some((e) => e.type === 'REQUEST_JUDGE')).toBe(false)
   })
 
   it('does nothing without an active character', () => {
@@ -113,11 +129,26 @@ describe('CHALLENGE_RESOLVED', () => {
     expect(r.effects).toContainEqual({ type: 'CHALLENGE_STARTED', challengeId: 'quiz1' })
   })
 
-  it('failure verdicts leave the challenge running', () => {
+  it('failure verdicts leave the challenge running and release the request pause', () => {
     const bundle = fixture()
-    const { state } = createSession(bundle, 'text')
+    let { state } = createSession(bundle, 'text')
+    state = reduce(bundle, state, { type: 'SELECT_CHARACTER', characterId: 'ann' }).state
+    state = reduce(bundle, state, { type: 'PLAYER_MESSAGE', text: 'hi', source: 'text' }).state
+    expect(state.pauseReasons).toContain('request')
     const r = reduce(bundle, state, { type: 'CHALLENGE_RESOLVED', challengeId: 'task1', success: false })
     expect(r.state.activeChallenge?.id).toBe('task1')
+    expect(r.state.pauseReasons).not.toContain('request')
+  })
+
+  it('releases the request pause even when the resolved challenge id does not match the active one', () => {
+    const bundle = fixture()
+    let { state } = createSession(bundle, 'text')
+    state = reduce(bundle, state, { type: 'SELECT_CHARACTER', characterId: 'ann' }).state
+    state = reduce(bundle, state, { type: 'PLAYER_MESSAGE', text: 'hi', source: 'text' }).state
+    expect(state.pauseReasons).toContain('request')
+    const r = reduce(bundle, state, { type: 'CHALLENGE_RESOLVED', challengeId: 'not-real', success: true })
+    expect(r.state.activeChallenge?.id).toBe('task1')
+    expect(r.state.pauseReasons).not.toContain('request')
   })
 })
 

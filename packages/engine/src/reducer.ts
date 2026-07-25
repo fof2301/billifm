@@ -190,27 +190,37 @@ export function reduce(bundle: StoryBundle, state: SessionState, action: Action)
     }
     case 'CHARACTER_REPLY': {
       const entry = { role: 'character' as const, text: action.text, atMs: state.elapsedRealMs }
+      // A judge call is another AI request in flight, so the clock must stay paused
+      // through it — only drop 'request' here when no judge call will follow.
+      const activeCh = state.activeChallenge
+        ? bundle.challenges.find((c) => c.id === state.activeChallenge!.id)
+        : undefined
+      const willJudge = activeCh?.type === 'task'
       let next: SessionState = {
         ...state,
         suggestedReplies: action.suggestedReplies ?? [],
-        pauseReasons: state.pauseReasons.filter((r) => r !== 'request'),
+        pauseReasons: willJudge ? state.pauseReasons : state.pauseReasons.filter((r) => r !== 'request'),
         transcripts: {
           ...state.transcripts,
           [action.characterId]: [...(state.transcripts[action.characterId] ?? []), entry],
         },
       }
-      if (next.activeChallenge) {
-        const ch = bundle.challenges.find((c) => c.id === next.activeChallenge!.id)
-        if (ch?.type === 'task') effects.push({ type: 'REQUEST_JUDGE', challengeId: ch.id })
-      }
+      if (willJudge) effects.push({ type: 'REQUEST_JUDGE', challengeId: activeCh!.id })
       return { state: next, effects }
     }
     case 'CHALLENGE_RESOLVED': {
-      if (!action.success) return { state, effects }
-      if (state.activeChallenge?.id !== action.challengeId) return { state, effects }
+      // The judge call that produced this verdict is done, so the clock's 'request'
+      // pause always releases here — regardless of the verdict or whether it still
+      // matches the active challenge (it may have timed out or changed meanwhile).
+      const resumed: SessionState = {
+        ...state,
+        pauseReasons: state.pauseReasons.filter((r) => r !== 'request'),
+      }
+      if (!action.success) return { state: resumed, effects }
+      if (resumed.activeChallenge?.id !== action.challengeId) return { state: resumed, effects }
       const ch = bundle.challenges.find((c) => c.id === action.challengeId)
-      if (!ch || ch.type !== 'task') return { state, effects }
-      return { state: resolveChallenge(bundle, state, effects, ch.id, ch.onSuccess), effects }
+      if (!ch || ch.type !== 'task') return { state: resumed, effects }
+      return { state: resolveChallenge(bundle, resumed, effects, ch.id, ch.onSuccess), effects }
     }
     case 'MCQ_PICK': {
       if (state.activeChallenge?.id !== action.challengeId) return { state, effects }

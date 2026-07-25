@@ -124,9 +124,13 @@ export function useSession(
         challengeId,
         transcriptTail: charId ? (s.transcripts[charId] ?? []).slice(-TAIL * 2) : [],
       })
-      if (res.success) dispatch({ type: 'CHALLENGE_RESOLVED', challengeId, success: true })
+      // Dispatch on both verdicts: the reducer no-ops the resolve step on false, but the
+      // clock's 'request' pause — held through this judge call — only releases here.
+      dispatch({ type: 'CHALLENGE_RESOLVED', challengeId, success: res.success })
     } catch {
-      /* judge failures are silent; the deadline is the backstop */
+      // The judge request itself failed (not a verdict) — release the pause explicitly;
+      // the deadline is still the backstop for the challenge itself.
+      dispatch({ type: 'RESUME', reason: 'request' })
     }
   }
 
@@ -153,7 +157,12 @@ export function useSession(
     retry: () => {
       const msg = failedMessage
       const charId = stateRef.current.activeCharacterId
-      if (msg && charId) void requestDialogue(charId, msg)
+      if (msg && charId) {
+        // Re-entering flight during an active challenge must re-pause the clock;
+        // PAUSE is idempotent so this is safe even if it's already paused.
+        if (stateRef.current.activeChallenge) dispatch({ type: 'PAUSE', reason: 'request' })
+        void requestDialogue(charId, msg)
+      }
     },
     pick: (optionId) => {
       const ch = stateRef.current.activeChallenge
