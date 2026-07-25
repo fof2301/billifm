@@ -130,4 +130,13 @@ print(f"\n{passed}/{n} tests passed")
 for name, ok, note in results:
     if not ok:
         print(f"  ✗ {name}  {note}")
-assert passed == n, f"{n - passed} tests failed"
+
+summary = json.dumps({
+    "passed": passed, "total": n,
+    "failed": [{"name": name, "note": note}
+               for name, ok, note in results if not ok],
+    "results": [{"name": name, "ok": ok, "note": note}
+                for name, ok, note in results],
+})
+# Emit via notebook.exit so the job API can read it, regardless of pass/fail
+dbutils.notebook.exit(summary)
