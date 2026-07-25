@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { SecretsSchema, StoryBundleSchema, Effects } from '../src/index'
+import { SecretsSchema, StoryBundleSchema, Effects, When } from '../src/index'
 
 export function makeMinimalBundle() {
   return {
@@ -74,6 +74,29 @@ describe('StoryBundleSchema', () => {
       challenge.options[0].onPick = effect
     }
     expect(() => StoryBundleSchema.parse(bad)).toThrow(/clue 'missing'/)
+  })
+
+  it('rejects a beat transition clockAtLeast phase that is not in clock.phases', () => {
+    const bad = makeMinimalBundle()
+    const beat = bad.beats[0]
+    if (beat && beat.transitions && beat.transitions[0]) {
+      const when: When = { flags: [], clockAtLeast: { day: 1, phase: 'nope' } }
+      beat.transitions[0].when = when
+    }
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/phase 'nope'/)
+  })
+
+  it('rejects an ending clockAtLeast phase that is not in clock.phases', () => {
+    const bad = makeMinimalBundle()
+    const when: When = { flags: [], clockAtLeast: { day: 1, phase: 'nope' } }
+    bad.endings[0]!.when = when
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/phase 'nope'/)
+  })
+
+  it('rejects a character availability phase that is not in clock.phases', () => {
+    const bad = makeMinimalBundle()
+    bad.characters[0]!.availability = { beats: ['*'], phases: ['nope'] }
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/phase 'nope'/)
   })
 })
 

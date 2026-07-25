@@ -162,6 +162,11 @@ export const StoryBundleSchema = z
         if (!clueIds.has(c)) fail(`${where}: clue '${c}' not defined`)
     }
 
+    const checkWhen = (w: When, where: string) => {
+      if (w.clockAtLeast && !b.clock.phases.includes(w.clockAtLeast.phase))
+        fail(`${where}: clockAtLeast phase '${w.clockAtLeast.phase}' not defined`)
+    }
+
     for (const p of b.clock.phases)
       if (!b.scene.backgrounds[p]) fail(`scene.backgrounds missing phase '${p}'`)
 
@@ -170,9 +175,13 @@ export const StoryBundleSchema = z
         if (!charIds.has(c)) fail(`beat '${beat.id}': character '${c}' not defined`)
       for (const c of beat.challenges)
         if (!chalIds.has(c)) fail(`beat '${beat.id}': challenge '${c}' not defined`)
-      for (const t of beat.transitions)
+      for (const t of beat.transitions) {
         if (!beatIds.has(t.goto)) fail(`beat '${beat.id}': goto '${t.goto}' is not a beat`)
+        checkWhen(t.when, `beat '${beat.id}'`)
+      }
     }
+
+    for (const e of b.endings) checkWhen(e.when, `ending '${e.id}'`)
 
     for (const ch of b.challenges) {
       if (ch.type === 'mcq') {
@@ -188,6 +197,9 @@ export const StoryBundleSchema = z
       if (c.availability.beats[0] !== '*')
         for (const bid of c.availability.beats)
           if (!beatIds.has(bid)) fail(`character '${c.id}': availability beat '${bid}' not defined`)
+      if (c.availability.phases[0] !== '*')
+        for (const p of c.availability.phases)
+          if (!b.clock.phases.includes(p)) fail(`character '${c.id}': availability phase '${p}' not defined`)
     }
   })
 export type StoryBundle = z.infer<typeof StoryBundleSchema>
