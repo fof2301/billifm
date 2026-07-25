@@ -2,10 +2,17 @@
   "name": "story-framework",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "test": "pnpm -r test",
     "typecheck": "pnpm -r typecheck"
   },
-  "devDependencies": { "typescript": "^5.5.4" }
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "zod": "3.23.8"
+  }
 }
