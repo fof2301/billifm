@@ -1,5 +1,7 @@
 import type { Mode, StoryBundle } from '@story/schema'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { playBase64Mp3 } from '../audio'
+import { PushToTalkButton } from '../components/PushToTalkButton'
 import { useSession } from '../useSession'
 import { BackgroundLayer } from '../components/BackgroundLayer'
 import { ChallengeBanner } from '../components/ChallengeBanner'
@@ -26,6 +28,10 @@ export function Stage({
   const { state, time } = session
   const [settingsOpen, setSettingsOpen] = useState(false)
 
+  useEffect(() => {
+    session.onAudio.current = playBase64Mp3
+  }, [session.onAudio])
+
   return (
     <div className="relative mx-auto h-dvh max-w-md overflow-hidden bg-slate-950">
       <BackgroundLayer bundle={bundle} phase={time.phase} />
@@ -42,7 +48,7 @@ export function Stage({
         failedMessage={session.failedMessage}
         onRetry={session.retry}
       />
-      <InputDock bundle={bundle} session={session} />
+      <InputDock bundle={bundle} session={session} voiceSlot={<PushToTalkButton session={session} />} />
       <SettingsSheet bundle={bundle} session={session} open={settingsOpen} onClose={() => setSettingsOpen(false)} />
     </div>
   )
