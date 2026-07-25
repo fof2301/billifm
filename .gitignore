@@ -4,3 +4,7 @@ node_modules/
 *.db
 .superpowers/
 dist/
+coverage/
+playwright-report/
+test-results/
+*.local
