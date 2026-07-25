@@ -43,7 +43,7 @@ describe('Journal', () => {
       <Journal
         bundle={bundle}
         state={state}
-        time={{ day: 1, phase: 'day', expired: false }}
+        time={{ day: 1, phase: 'day' }}
         session={makeSession()}
         open
         onClose={() => {}}
@@ -65,20 +65,20 @@ describe('Journal', () => {
     const session = makeSession()
     const onClose = vi.fn()
     const { rerender } = render(
-      <Journal bundle={bundle} state={state} time={{ day: 1, phase: 'day', expired: false }} session={session} open onClose={onClose} />,
+      <Journal bundle={bundle} state={state} time={{ day: 1, phase: 'day' }} session={session} open onClose={onClose} />,
     )
     expect(session.pause).toHaveBeenCalledWith('settings')
     await userEvent.click(screen.getByRole('button', { name: /close/i }))
     expect(onClose).toHaveBeenCalled()
     rerender(
-      <Journal bundle={bundle} state={state} time={{ day: 1, phase: 'day', expired: false }} session={session} open={false} onClose={onClose} />,
+      <Journal bundle={bundle} state={state} time={{ day: 1, phase: 'day' }} session={session} open={false} onClose={onClose} />,
     )
     expect(session.resume).toHaveBeenCalledWith('settings')
   })
 
   it('renders nothing when closed', () => {
     const { container } = render(
-      <Journal bundle={bundle} state={state} time={{ day: 1, phase: 'day', expired: false }} session={makeSession()} open={false} onClose={() => {}} />,
+      <Journal bundle={bundle} state={state} time={{ day: 1, phase: 'day' }} session={makeSession()} open={false} onClose={() => {}} />,
     )
     expect(container.querySelector('[data-journal]')).toBeNull()
   })
