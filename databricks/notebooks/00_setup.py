@@ -20,7 +20,8 @@ print("OPENAI_API_KEY is present in the sutradhar scope")
 # COMMAND ----------
 import sys, os
 os.environ["OPENAI_API_KEY"] = key
-repo_root = "/Workspace/Repos/" + spark.sql("SELECT current_user()").collect()[0][0] + "/billifm"
+nb_path = dbutils.notebook.entry_point.getDbutils().notebook().getContext().notebookPath().get()
+repo_root = "/".join(nb_path.split("/")[:-3])  # strip /databricks/notebooks/<file>
 if repo_root not in sys.path:
     sys.path.insert(0, repo_root)
 
