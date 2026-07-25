@@ -5,9 +5,14 @@ export function createRecorder(): { start(): Promise<void>; stop(): Promise<Blob
   return {
     async start() {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true })
-      recorder = new MediaRecorder(stream as MediaStream)
-      recorder.ondataavailable = (e) => chunks.push(e.data)
-      recorder.start()
+      try {
+        recorder = new MediaRecorder(stream)
+        recorder.ondataavailable = (e) => chunks.push(e.data)
+        recorder.start()
+      } catch (err) {
+        stream.getTracks().forEach((t) => t.stop())
+        throw err
+      }
     },
     stop() {
       return new Promise<Blob>((resolve, reject) => {

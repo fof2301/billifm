@@ -11,7 +11,8 @@ export function PushToTalkButton({ session }: { session: SessionApi }) {
   const disabled = session.busy || !session.state.activeCharacterId
 
   const begin = async () => {
-    if (disabled || phase !== 'idle') return
+    // 'error' must be a valid starting phase — otherwise one failed transcription permanently disables push-to-talk
+    if (disabled || (phase !== 'idle' && phase !== 'error')) return
     try {
       rec.current = createRecorder()
       await rec.current.start()

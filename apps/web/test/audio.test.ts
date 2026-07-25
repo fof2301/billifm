@@ -29,4 +29,19 @@ describe('createRecorder', () => {
     expect(stop).toHaveBeenCalled()
     vi.unstubAllGlobals()
   })
+
+  it('releases the mic if MediaRecorder construction fails', async () => {
+    const stop = vi.fn()
+    const FailingMediaRecorder = vi.fn(() => {
+      throw new Error('recorder init failed')
+    })
+    vi.stubGlobal('MediaRecorder', FailingMediaRecorder)
+    vi.stubGlobal('navigator', {
+      mediaDevices: { getUserMedia: vi.fn(async () => ({ getTracks: () => [{ stop }] })) },
+    })
+    const rec = createRecorder()
+    await expect(rec.start()).rejects.toThrow('recorder init failed')
+    expect(stop).toHaveBeenCalled()
+    vi.unstubAllGlobals()
+  })
 })
