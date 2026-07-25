@@ -1,0 +1,88 @@
+{
+  "episode": 8,
+  "title": "Sutradhar",
+  "audio": "ep8.mp3",
+  "duration_s": 360,
+  "_comment": "Hand-authored from files/story.md Part 3 timestamps. This is DL3 (the spec slide) and the file the app plays. The annotation agent in director/ must be able to reproduce something equivalent from the raw transcript - that comparison IS the M7 demo.",
+  "events": [
+    {
+      "id": "e1",
+      "t": 94,
+      "type": "volume_duck",
+      "to": 0.15,
+      "ramp_ms": 800,
+      "hold_s": 16,
+      "restore_ms": 1200,
+      "cue": "Footsteps overhead. 'Woh aa raha hai... awaaz neeche.'",
+      "why": "The listener must physically lean in. Gain on our own player only - never system volume."
+    },
+    {
+      "id": "e2",
+      "t": 94,
+      "type": "screen_dim",
+      "opacity": 0.85,
+      "hold_s": 25,
+      "fade_ms": 200,
+      "cue": "Same beat as e1 - the room and the screen recede together.",
+      "why": "Paired with the duck so the world contracts on both senses at once. Never fired alone - a dim with no audio reason is just a dark screen."
+    },
+    {
+      "id": "e3",
+      "t": 96,
+      "type": "haptic",
+      "pattern": "heartbeat_rising",
+      "cue": "Under the scene while the footsteps cross and stop.",
+      "why": "Starts 2s after the duck so it reads as her pulse, not as a device buzz. Accelerating pattern carries the 'silence that lasts too long'."
+    },
+    {
+      "id": "e4",
+      "t": 121,
+      "type": "screen_blackout",
+      "duration_s": 6,
+      "cue": "CLUNK - the main switch. 'Light gayi. Kuch nahi dikh raha.'",
+      "why": "True dark. Touches blocked; any press >=3s exits (safety)."
+    },
+    {
+      "id": "e5",
+      "t": 127,
+      "type": "flashlight",
+      "pattern": "flicker_then_on",
+      "hold_s": 20,
+      "cue": "CLICK. Click-click. CLICK - she finds Dada ji's old torch.",
+      "why": "Diegetic: the torch turns on because she found a torch."
+    },
+    {
+      "id": "e6",
+      "t": 160,
+      "type": "haptic",
+      "pattern": "knock_x3",
+      "cue": "KNOCK ... KNOCK ... KNOCK on the storeroom door.",
+      "why": "Sync to audio position, not wall clock. +/-50ms or it reads as a bug."
+    },
+    {
+      "id": "e7",
+      "t": 210,
+      "type": "fake_call",
+      "from": "UNKNOWN NUMBER",
+      "agent": "villain",
+      "pause_audio": true,
+      "ring_timeout_s": 25,
+      "decision_id": "ep8_villain_call",
+      "cue": "'Woh ab tumhe call karega.' Full-screen incoming call.",
+      "why": "Decision point 1. Missed call is canon, not a failure - Meera has a panic variant."
+    },
+    {
+      "id": "e8",
+      "t": 317,
+      "type": "mic_listen",
+      "duration_s": 10,
+      "threshold_db": -35,
+      "branch": {
+        "quiet": "ep8_safe.mp3",
+        "noise": "ep8_caught.mp3"
+      },
+      "cue": "'Dus second. Koi. Awaaz. Nahi.' - fires AFTER her line ends at 315.8s, not when it starts.",
+      "why": "Measured: her line runs 300->315.8s. Metering at 300 makes the phone hear its own speaker and always take the caught branch. Opens at 317 - 1.2s after she stops - so the mic opens into real silence, and that held beat is the tension."
+    }
+  ]
+}

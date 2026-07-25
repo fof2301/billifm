@@ -10,3 +10,25 @@ eval/out/
 .DS_Store
 databricks_mcp.log
 
+# Expo / React Native
+node_modules/
+app/.expo/
+app/android/
+app/ios/
+*.keystore
+
+# Generated audio - too big for git.
+# mp3: regenerate with content/gen_audio.py
+# wav: regenerate with content/make_timing_track.py
+server/audio/*.mp3
+server/audio/*.wav
+
+
+# Rendered TTS takes - regenerate with content/gen_audio_openai.py
+content/takes/
+
+# Synthetic behaviour corpus - regenerate with genome/make_sessions.py
+genome/sessions.jsonl
+
+# Voice auditions - regenerate with content/audition_voices.py
+content/auditions/

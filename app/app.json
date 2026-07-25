@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Aakhri Awaaz",
+    "slug": "sutradhar",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "android": {
+      "package": "com.billijantaparty.sutradhar",
+      "permissions": ["CAMERA", "RECORD_AUDIO", "VIBRATE", "WRITE_SETTINGS"]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Yeh kahaani aapki torch istemaal karna chahti hai."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Yeh kahaani aapke kamre ki khamoshi sunegi. Yeh aapko kabhi record nahin karegi."
+        }
+      ]
+    ],
+    "_note": "Android only (rules.md 2). Torch needs expo-camera; there is no torch API in Expo Go, so a dev build is mandatory - this is the Phase 0 gate."
+  }
+}

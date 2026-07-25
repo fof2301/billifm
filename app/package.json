@@ -1,0 +1,30 @@
+{
+  "name": "sutradhar-app",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "prebuild": "expo prebuild --platform android --clean",
+    "typecheck": "tsc --noEmit",
+    "test:engine": "node harness/engine.test.mjs"
+  },
+  "dependencies": {
+    "expo": "~52.0.0",
+    "expo-av": "~15.0.1",
+    "expo-brightness": "~13.0.3",
+    "expo-camera": "~16.0.7",
+    "expo-file-system": "~18.0.4",
+    "expo-haptics": "~14.0.0",
+    "expo-keep-awake": "~14.0.1",
+    "expo-status-bar": "~2.0.0",
+    "react": "18.3.1",
+    "react-native": "0.76.5",
+    "react-native-webview": "13.12.5"
+  },
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "typescript": "^5.3.3"
+  }
+}
