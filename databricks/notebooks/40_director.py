@@ -26,9 +26,17 @@ if repo_root not in sys.path:
     sys.path.insert(0, repo_root)
 os.environ["OPENAI_API_KEY"] = dbutils.secrets.get(scope="sutradhar", key="OPENAI_API_KEY")
 
-sys.path.insert(0, f"{repo_root}/director")
-from director_v2 import direct
-from directed_story_schema import validate_directed_story
+import importlib.util
+def _load(mod_name, file_rel):
+    spec = importlib.util.spec_from_file_location(
+        mod_name, f"{repo_root}/{file_rel}"
+    )
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m
+_dss = _load("directed_story_schema", "director/directed_story_schema.py")
+_dv2 = _load("director_v2", "director/director_v2.py")
+direct = _dv2.direct
+validate_directed_story = _dss.validate_directed_story
 
 # COMMAND ----------
 # MAGIC %sql

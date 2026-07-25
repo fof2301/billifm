@@ -43,10 +43,19 @@ except Exception as e:
 # MAGIC %md ## T3 · Manual v0 directed_story validates
 
 # COMMAND ----------
-sys.path.insert(0, f"{repo_root}/director")
-from directed_story_schema import validate_directed_story
+# director/ isn't a Python package (annotate.py relies on flat imports),
+# so we load its files via importlib rather than adding it to sys.path.
+import importlib.util
+def _load(mod_name, file_rel):
+    spec = importlib.util.spec_from_file_location(
+        mod_name, f"{repo_root}/{file_rel}"
+    )
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    return m
+
+dss = _load("directed_story_schema", "director/directed_story_schema.py")
 v0 = json.load(open(f"{repo_root}/content/directed_story_v0.json"))
-errs = validate_directed_story(v0)
+errs = dss.validate_directed_story(v0)
 T("directed_story_v0.json validates", len(errs) == 0,
   f"segments={len(v0['segments'])} endings={len(v0['endings'])} errors={errs}")
 
@@ -99,12 +108,12 @@ for p in profiles:
 # MAGIC %md ## T7 · Director agent produces schema-valid output for one genome
 
 # COMMAND ----------
-from director_v2 import direct
+dv2 = _load("director_v2", "director/director_v2.py")
 try:
     script = open(f"{repo_root}/files/story.md").read()[:6000]  # slim for cost
-    ds = direct(script, profiles[0], baseline=v0, model="gpt-4o-mini",
-                iteration=1)
-    errs = validate_directed_story(ds)
+    ds = dv2.direct(script, profiles[0], baseline=v0, model="gpt-4o-mini",
+                    iteration=1)
+    errs = dss.validate_directed_story(ds)
     T("director → schema-valid directed_story", len(errs) == 0,
       f"segments={len(ds.get('segments',[]))} errors={errs[:2]}")
 except Exception as e:
