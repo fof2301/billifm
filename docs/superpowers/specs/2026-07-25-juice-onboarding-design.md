@@ -28,7 +28,7 @@ New modules under `apps/web/src/fx/`:
 | `STORY_ENDED` | muffled bell |
 | deadline < 30 real seconds | quiet metronome tick (1/s), stops on resolve |
 
-**Ambient loop**: `scene.ambientAudio` (already in the schema, previously descoped) gets one curated CC0 room-tone per story (freesound.org, credited in `assets/CREDITS.md`), looped via an `<audio>` element at ~0.25 volume, brief fade on phase change.
+**Ambient loop**: synthesized generative room-tone per scene (filtered noise keyed off `scene.id` — dark hum for the cellar, warm airy tone for the attic) at low volume with a brief dip on phase change. When `scene.ambientAudio` names a file (schema field, previously descoped), the framework plays that loop instead — the drop-in point for future real loops (e.g. ElevenLabs SFX or CC0 recordings). Rationale for synthesis-first: audio files can't be auditioned during this build; synthesis is licensing-proof and consistent.
 
 **Success detection**: the engine emits no success effect (success arrives as a `CHALLENGE_RESOLVED` *action*). The Stage dispatcher infers it: it tracks the active challenge id; when that challenge leaves `state.activeChallenge` in a dispatch whose effects contain no `CHALLENGE_TIMED_OUT`, it synthesizes a local `challenge-succeeded` fx event for the sound/visual layers. Same signal drives the banner's green flip (§5).
 
