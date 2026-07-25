@@ -3856,6 +3856,7 @@ git commit -m "feat: immersive stage chrome (background, clock, rail, narration,
 - Produces:
   - `<ConversationSheet bundle state busy stallLine failedMessage onRetry />` — translucent bottom sheet with the active character's transcript.
   - `<InputDock bundle session voiceSlot? />` — renders per mode: MCQ chips (active mcq challenge options take priority over `state.suggestedReplies`), text field + send, or `voiceSlot` (Task 15 passes the push-to-talk button; until then voice mode shows a disabled mic placeholder).
+  - **MCQ bootstrap:** suggestions only arrive with a character reply, so with a character selected and no suggestions yet, MCQ mode shows three framework-default starter chips (`STARTERS = ['Who are you?', 'What is this place?', 'What do you want from me?']`). After the first reply, LLM suggestions take over.
   - `<SettingsSheet bundle session open onClose />` — mode switcher limited to `meta.modes`; dispatches `pause('settings')`/`resume('settings')` on open/close.
 
 - [ ] **Step 1: Write the failing tests**
@@ -3913,6 +3914,13 @@ describe('InputDock', () => {
     expect(session.send).toHaveBeenCalledWith('Ask why')
   })
 
+  it('mcq mode with a character but no suggestions yet shows starter chips', async () => {
+    const session = makeSession({})
+    render(<InputDock bundle={bundle} session={session} />)
+    await userEvent.click(screen.getByRole('button', { name: 'Who are you?' }))
+    expect(session.send).toHaveBeenCalledWith('Who are you?')
+  })
+
   it('text mode sends typed messages and clears the field', async () => {
     const session = makeSession({ state: { ...baseState, mode: 'text' as const } })
     render(<InputDock bundle={bundle} session={session} />)
@@ -3961,6 +3969,9 @@ export function InputDock({
       ? bundle.challenges.find((c) => c.id === state.activeChallenge!.id && c.type === 'mcq')
       : undefined
 
+  const STARTERS = ['Who are you?', 'What is this place?', 'What do you want from me?']
+  const chips = state.suggestedReplies.length > 0 ? state.suggestedReplies : noCharacter ? [] : STARTERS
+
   const submit = () => {
     const text = draft.trim()
     if (!text || busy || noCharacter) return
@@ -3983,7 +3994,7 @@ export function InputDock({
                   {o.text}
                 </button>
               ))
-            : state.suggestedReplies.map((s) => (
+            : chips.map((s) => (
                 <button
                   key={s}
                   disabled={busy || noCharacter}
@@ -3993,10 +4004,8 @@ export function InputDock({
                   {s}
                 </button>
               ))}
-          {!mcqChallenge && state.suggestedReplies.length === 0 && (
-            <p className="text-center text-xs text-slate-400">
-              {noCharacter ? 'Pick someone to talk to' : busy ? '…' : 'Tap a character to get options'}
-            </p>
+          {!mcqChallenge && chips.length === 0 && (
+            <p className="text-center text-xs text-slate-400">Pick someone to talk to</p>
           )}
         </div>
       )}
@@ -4646,20 +4655,19 @@ test('plays kidnapping-escape start to finish in MCQ mode', async ({ page }) => 
   await page.getByRole('button', { name: 'Choices' }).click()
   await page.getByRole('button', { name: 'Begin' }).click()
 
-  // beat 1: dismiss narration, talk to Viktor, use a suggested reply; judge passes c1
+  // beat 1: dismiss narration, talk to Viktor via a starter chip; judge passes c1
   await page.getByText('tap to continue').click()
   await page.getByRole('button', { name: 'Viktor' }).click()
   await expect(page.getByText("Ah. You're awake. Good — we have work to do.")).toBeVisible()
-  await page.getByRole('button', { name: 'Why my hands?' }).click()
+  await page.getByRole('button', { name: 'Who are you?' }).click() // framework starter chip
 
-  // judge success -> beat 2 -> mcq challenge c2 options appear
+  // judge success -> beat 2 -> mcq challenge c2 options appear (suggestions cleared on beat change)
   await page.getByText('tap to continue').click()
   await page.getByRole('button', { name: 'A bird' }).click()
 
-  // beat 3 -> task c3: talk again, judge passes -> escaped ending
+  // beat 3 -> task c3: starters show again, judge passes -> escaped ending
   await page.getByText('tap to continue').click()
-  await page.getByRole('button', { name: 'Viktor' }).click()
-  await page.getByRole('button', { name: 'Why my hands?' }).click()
+  await page.getByRole('button', { name: 'What is this place?' }).click()
 
   await expect(page.getByText('Out, together')).toBeVisible({ timeout: 15_000 })
 })
