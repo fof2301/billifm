@@ -19,15 +19,17 @@ from pydantic import BaseModel, Field
 # ---------- Decision points ----------
 
 class OutcomeBranch(BaseModel):
-    label: str
-    intent: str = ""
+    # label and intent are human-readable helpers; the outcome-map key
+    # (A / B / C / FALLBACK) is the actual identifier.
+    label: Optional[str] = None
+    intent: Optional[str] = None
     flag: str
     consequence_seg: str
     behavior: Optional[str] = None
 
 
 class MicOutcomeBranch(BaseModel):
-    label: str
+    label: Optional[str] = None
     flag: str
     consequence_seg: str
 
