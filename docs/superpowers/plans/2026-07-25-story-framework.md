@@ -3048,15 +3048,25 @@ export function Intro({
 }) {
   const [bundle, setBundle] = useState<StoryBundle | null>(null)
   const [mode, setMode] = useState<Mode | null>(null)
+  const [error, setError] = useState(false)
   const hasSave = Boolean(localStorage.getItem(`sf-session-${storyId}`))
 
   useEffect(() => {
-    getStory(storyId).then((b) => {
-      setBundle(b)
-      setMode(b.meta.modes[0])
-    })
+    getStory(storyId)
+      .then((b) => {
+        setBundle(b)
+        setMode(b.meta.modes[0])
+      })
+      .catch(() => setError(true))
   }, [storyId])
 
+  if (error)
+    return (
+      <div className="p-8 text-center">
+        <p className="text-slate-400">Couldn't load this story.</p>
+        <button onClick={onBack} className="mt-4 rounded-full bg-slate-800 px-4 py-2 text-sm">← Back</button>
+      </div>
+    )
   if (!bundle || !mode) return <p className="p-8 text-center text-slate-400">Loading…</p>
 
   const start = async (resume: boolean) => {
