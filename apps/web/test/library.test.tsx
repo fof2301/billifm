@@ -10,6 +10,9 @@ vi.mock('../src/api', () => ({
     },
   ]),
   assetUrl: (id: string, p: string) => `http://x/stories/${id}/${p}`,
+  getStory: vi.fn(),
+  listSessions: vi.fn(async () => []),
+  getSession: vi.fn(),
 }))
 
 import { Library } from '../src/screens/Library'

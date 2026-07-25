@@ -1,10 +1,13 @@
-import type { StoryBundle } from '@story/schema'
+import type { SessionState, StoryBundle } from '@story/schema'
 import { useEffect, useState } from 'react'
-import { assetUrl, listStories } from '../api'
+import { assetUrl, getStory, listStories } from '../api'
+import { PastSessions } from '../components/PastSessions'
+import { TranscriptViewer } from '../components/TranscriptViewer'
 
 export function Library({ onPick }: { onPick: (storyId: string) => void }) {
   const [stories, setStories] = useState<StoryBundle['meta'][] | null>(null)
   const [error, setError] = useState(false)
+  const [review, setReview] = useState<{ bundle: StoryBundle; state: SessionState } | null>(null)
 
   useEffect(() => {
     listStories().then(setStories).catch(() => setError(true))
@@ -34,6 +37,28 @@ export function Library({ onPick }: { onPick: (storyId: string) => void }) {
           </button>
         ))}
       </div>
+
+      <PastSessions
+        onOpen={(state, storyId) => {
+          getStory(storyId)
+            .then((bundle) => setReview({ bundle, state }))
+            .catch(() => {})
+        }}
+      />
+
+      {review && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950 p-4">
+          <div className="mx-auto max-w-md pb-12">
+            <div className="flex items-center justify-between py-4">
+              <h1 className="text-xl font-bold">{review.bundle.meta.title}</h1>
+              <button onClick={() => setReview(null)} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm">
+                Close
+              </button>
+            </div>
+            <TranscriptViewer bundle={review.bundle} state={review.state} />
+          </div>
+        </div>
+      )}
     </div>
   )
 }

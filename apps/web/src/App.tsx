@@ -1,5 +1,6 @@
 import type { Mode, StoryBundle } from '@story/schema'
 import { useState } from 'react'
+import { Ending } from './screens/Ending'
 import { Intro } from './screens/Intro'
 import { Library } from './screens/Library'
 import { Stage } from './screens/Stage'
@@ -34,6 +35,13 @@ export default function App() {
         />
       )
     case 'ending':
-      return <p className="p-8">Ending: coming in Task 16</p>
+      return (
+        <Ending
+          bundle={route.bundle}
+          endingId={route.endingId}
+          onReplay={() => setRoute({ name: 'intro', storyId: route.bundle.meta.id })}
+          onLibrary={() => setRoute({ name: 'library' })}
+        />
+      )
   }
 }
