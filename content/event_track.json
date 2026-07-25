@@ -73,7 +73,7 @@
     },
     {
       "id": "e8",
-      "t": 300,
+      "t": 317,
       "type": "mic_listen",
       "duration_s": 10,
       "threshold_db": -35,
@@ -81,8 +81,8 @@
         "quiet": "ep8_safe.mp3",
         "noise": "ep8_caught.mp3"
       },
-      "cue": "'Dus second. Koi. Awaaz. Nahi.'",
-      "why": "Amplitude only. Nothing recorded, stored or transmitted. Threshold lives here so it is calibrated on-site without a rebuild."
+      "cue": "'Dus second. Koi. Awaaz. Nahi.' - fires AFTER her line ends at 315.8s, not when it starts.",
+      "why": "Measured: her line runs 300->315.8s. Metering at 300 makes the phone hear its own speaker and always take the caught branch. Opens at 317 - 1.2s after she stops - so the mic opens into real silence, and that held beat is the tension."
     }
   ]
 }

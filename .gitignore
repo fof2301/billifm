@@ -23,3 +23,6 @@ app/ios/
 server/audio/*.mp3
 server/audio/*.wav
 
+
+# Rendered TTS takes - regenerate with content/gen_audio_openai.py
+content/takes/

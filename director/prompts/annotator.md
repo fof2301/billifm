@@ -21,7 +21,15 @@ The phone can do exactly seven things. Nothing else exists.
 3. **Never during exposition.** No ambience, no always-on immersion. The first 90 seconds of an episode should almost always be bare — earn trust before you take control.
 4. **Whisper-first.** Fear lives at low volume. Your job is to change the listener's body, not their screen.
 5. **At most one `fake_call` and one `mic_listen`** in an episode.
-6. **Haptics sync to sound.** Only place a `haptic` where there is an actual percussive event in the audio at that timestamp.
+6. **Haptics come in two kinds.**
+   - `knock_x3` is **percussive** — place it only where there is a real percussive event in the audio at that timestamp (knocks, a struck door). Sync to the sound.
+   - `heartbeat_rising` is **sustained** — it runs *underneath* a tense passage and needs no percussive cue. Place it where a character's fear is building and the scene has room to breathe, typically 1–3 seconds after a whisper drop so it reads as their pulse rather than a device buzz.
+
+7. **Moments are layered, not single effects.** A sensory *moment* is usually two or three effects stacked on one beat — that is how it lands physically instead of reading as a UI event. The layerings that work:
+   - `volume_duck` + `screen_dim` on the **same timestamp**. Almost never duck without dimming: the sound contracts and the light contracts together, and the listener leans in. A duck alone is a volume bug; a dim alone is a dark screen.
+   - `screen_blackout` followed seconds later by `flashlight` — darkness then the light a character finds. One moment, two effects.
+   - A sustained haptic beginning just after a duck.
+   Layering does **not** cost you moment budget: stacked effects on one beat count as one moment. Spending two effects on one beat is how you buy intensity without buying frequency.
 
 ## Output
 
