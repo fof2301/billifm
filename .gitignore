@@ -10,3 +10,13 @@ eval/out/
 .DS_Store
 databricks_mcp.log
 
+# Expo / React Native
+node_modules/
+app/.expo/
+app/android/
+app/ios/
+*.keystore
+
+# Generated audio - too big for git, regenerate with content/gen_audio.py
+server/audio/*.mp3
+

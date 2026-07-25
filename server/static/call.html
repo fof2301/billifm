@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8" /><title>call</title></head>
+<body style="margin:0;background:#000">
+<!--
+  The live agent leg. The Android app loads this page in a 1x1 invisible WebView
+  behind the fake-call UI, so we get OpenAI Realtime over WebRTC without adding
+  react-native-webrtc to the build.
+
+  It posts two message kinds back to the app via ReactNativeWebView:
+    {type:"transcript", role, text}
+    {type:"hangup"}
+-->
+<script>
+const params = new URLSearchParams(location.search);
+const AGENT = params.get("agent") || "villain";
+const DECISION_ID = params.get("decision_id") || "";
+
+function toApp(msg) {
+  try { window.ReactNativeWebView.postMessage(JSON.stringify(msg)); } catch (e) {}
+}
+
+async function start() {
+  // 1. Ephemeral token. The real API key never leaves the server.
+  const res = await fetch("/realtime_session", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ agent: AGENT, decision_id: DECISION_ID }),
+  });
+  if (!res.ok) throw new Error("session " + res.status);
+  const { client_secret, model } = await res.json();
+
+  // 2. WebRTC: our mic up, his voice down.
+  const pc = new RTCPeerConnection();
+
+  const audioEl = document.createElement("audio");
+  audioEl.autoplay = true;
+  document.body.appendChild(audioEl);
+  pc.ontrack = (e) => { audioEl.srcObject = e.streams[0]; };
+
+  const mic = await navigator.mediaDevices.getUserMedia({ audio: true });
+  pc.addTrack(mic.getTracks()[0]);
+
+  // 3. Data channel carries transcript deltas and lets us detect his hangup.
+  const channel = pc.createDataChannel("oai-events");
+  channel.onmessage = (e) => {
+    let evt;
+    try { evt = JSON.parse(e.data); } catch { return; }
+
+    if (evt.type === "response.audio_transcript.done" && evt.transcript) {
+      toApp({ type: "transcript", role: "agent", text: evt.transcript });
+    }
+    if (evt.type === "conversation.item.input_audio_transcription.completed" && evt.transcript) {
+      toApp({ type: "transcript", role: "listener", text: evt.transcript });
+    }
+  };
+
+  // 4. SDP handshake.
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+
+  const sdpRes = await fetch("https://api.openai.com/v1/realtime?model=" + encodeURIComponent(model), {
+    method: "POST",
+    body: offer.sdp,
+    headers: { Authorization: "Bearer " + client_secret, "Content-Type": "application/sdp" },
+  });
+  if (!sdpRes.ok) throw new Error("sdp " + sdpRes.status);
+
+  await pc.setRemoteDescription({ type: "answer", sdp: await sdpRes.text() });
+
+  pc.onconnectionstatechange = () => {
+    if (["failed", "closed", "disconnected"].includes(pc.connectionState)) {
+      toApp({ type: "hangup" });
+    }
+  };
+}
+
+// Any failure here means the call could not connect. The app treats that as a
+// missed call, which is canon - Meera has a panic variant for it.
+start().catch((err) => toApp({ type: "hangup", error: String(err) }));
+</script>
+</body>
+</html>
