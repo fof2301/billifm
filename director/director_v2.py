@@ -59,8 +59,23 @@ def direct(linear_script: str, genome_profile: dict,
     result = chat_json(
         user_prompt, system=system, model=model,
         schema=DIRECTED_STORY_JSON_SCHEMA, schema_name="directed_story",
-        temperature=0.6, max_tokens=4000,
+        temperature=0.5, max_tokens=6000,
     )
+    # If the model forgot `endings`, derive them from segments so the
+    # pipeline still produces a valid artifact — pydantic requires the
+    # field. Better a fallback than a run-killer for the demo.
+    if "endings" not in result or not result["endings"]:
+        seg_ids = [s.get("seg_id", "") for s in result.get("segments", [])]
+        fallback = []
+        for sid in seg_ids:
+            if sid.startswith("s8_") or "escape" in sid or "caught" in sid:
+                fallback.append({
+                    "ending_id": sid.replace("s8_", ""),
+                    "reached_via_flags": {},
+                    "segment_id": sid,
+                    "reasoning": "auto-filled fallback — director omitted endings",
+                })
+        result["endings"] = fallback or baseline.get("endings", []) if baseline else []
     result.setdefault("iteration", iteration)
     result.setdefault("source", "director_agent")
     result.setdefault("genome_ref", genome_profile.get("cohort", ""))

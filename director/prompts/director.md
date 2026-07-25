@@ -79,6 +79,17 @@ narrative choices are yours.
 
 Pick the one your `cliffhanger_efficacy` numbers say works for this cohort.
 
+## REQUIRED FIELDS — the JSON is REJECTED without any of these
+
+- `story_id`, `title`, `duration_s`, `linear_script_ref`, `iteration`
+- `reasoning.why_this_shape` (non-empty)
+- `segments` — array of Segment objects
+- **`endings`** — array of 2-3 Ending objects, EACH with `ending_id`,
+  `reached_via_flags` (dict of str→str), `segment_id`, and `reasoning`
+
+Skipping `endings` is the #1 way to break this pipeline. The baseline
+you were shown has three endings — output at least two.
+
 ## Direction quality bar (self-check before you emit)
 
 1. Would a Pocket FM engineer read this JSON and understand the episode?
@@ -88,5 +99,6 @@ Pick the one your `cliffhanger_efficacy` numbers say works for this cohort.
 4. Are all consequence_seg values defined as segments?
 5. Is at least ONE choice visibly different from the manual v0 baseline you
    were shown? (Otherwise the cohort isn't affecting your direction.)
+6. Is `endings` populated with 2-3 items?
 
 Output only the JSON. No prose. No explanations outside the `reasoning` fields.
