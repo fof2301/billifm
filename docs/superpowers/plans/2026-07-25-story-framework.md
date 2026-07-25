@@ -242,28 +242,30 @@ describe('StoryBundleSchema', () => {
     expect(parsed.beats[1]!.challenges).toEqual([])
   })
 
+  // NOTE: ZodError.message is JSON-serialized, so double quotes inside custom
+  // messages arrive escaped — error messages use single quotes for matchability.
   it('rejects a transition goto pointing at a missing beat', () => {
     const bad = makeMinimalBundle()
     bad.beats[0]!.transitions[0]!.goto = 'nope'
-    expect(() => StoryBundleSchema.parse(bad)).toThrow(/goto "nope"/)
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/goto 'nope'/)
   })
 
   it('rejects backgrounds that do not cover every clock phase', () => {
     const bad = makeMinimalBundle()
     delete (bad.scene.backgrounds as Record<string, string>).night
-    expect(() => StoryBundleSchema.parse(bad)).toThrow(/missing phase "night"/)
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/missing phase 'night'/)
   })
 
   it('rejects a beat referencing an unknown character or challenge', () => {
     const bad = makeMinimalBundle()
     bad.beats[0]!.characters = ['ghost']
-    expect(() => StoryBundleSchema.parse(bad)).toThrow(/character "ghost"/)
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/character 'ghost'/)
   })
 
   it('rejects effects unlocking an undefined clue', () => {
     const bad = makeMinimalBundle()
     bad.challenges[0]!.options[0]!.onPick = { unlockClues: ['missing'] }
-    expect(() => StoryBundleSchema.parse(bad)).toThrow(/clue "missing"/)
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/clue 'missing'/)
   })
 })
 
@@ -450,39 +452,41 @@ export const StoryBundleSchema = z
     const chalIds = new Set(b.challenges.map((x) => x.id))
     const clueIds = new Set(b.clues.map((x) => x.id))
 
+    // Single quotes in messages: ZodError.message is JSON-serialized, which
+    // escapes double quotes and breaks test regex matching.
     const checkEffects = (e: Effects | undefined, where: string) => {
       if (!e) return
-      if (e.goto && !beatIds.has(e.goto)) fail(`${where}: goto "${e.goto}" is not a beat`)
+      if (e.goto && !beatIds.has(e.goto)) fail(`${where}: goto '${e.goto}' is not a beat`)
       for (const c of e.unlockClues)
-        if (!clueIds.has(c)) fail(`${where}: clue "${c}" not defined`)
+        if (!clueIds.has(c)) fail(`${where}: clue '${c}' not defined`)
     }
 
     for (const p of b.clock.phases)
-      if (!b.scene.backgrounds[p]) fail(`scene.backgrounds missing phase "${p}"`)
+      if (!b.scene.backgrounds[p]) fail(`scene.backgrounds missing phase '${p}'`)
 
     for (const beat of b.beats) {
       for (const c of beat.characters)
-        if (!charIds.has(c)) fail(`beat "${beat.id}": character "${c}" not defined`)
+        if (!charIds.has(c)) fail(`beat '${beat.id}': character '${c}' not defined`)
       for (const c of beat.challenges)
-        if (!chalIds.has(c)) fail(`beat "${beat.id}": challenge "${c}" not defined`)
+        if (!chalIds.has(c)) fail(`beat '${beat.id}': challenge '${c}' not defined`)
       for (const t of beat.transitions)
-        if (!beatIds.has(t.goto)) fail(`beat "${beat.id}": goto "${t.goto}" is not a beat`)
+        if (!beatIds.has(t.goto)) fail(`beat '${beat.id}': goto '${t.goto}' is not a beat`)
     }
 
     for (const ch of b.challenges) {
       if (ch.type === 'mcq') {
-        for (const o of ch.options) checkEffects(o.onPick, `challenge "${ch.id}" option "${o.id}"`)
-        checkEffects(ch.onTimeout, `challenge "${ch.id}" onTimeout`)
+        for (const o of ch.options) checkEffects(o.onPick, `challenge '${ch.id}' option '${o.id}'`)
+        checkEffects(ch.onTimeout, `challenge '${ch.id}' onTimeout`)
       } else {
-        checkEffects(ch.onSuccess, `challenge "${ch.id}" onSuccess`)
-        checkEffects(ch.onFailure, `challenge "${ch.id}" onFailure`)
+        checkEffects(ch.onSuccess, `challenge '${ch.id}' onSuccess`)
+        checkEffects(ch.onFailure, `challenge '${ch.id}' onFailure`)
       }
     }
 
     for (const c of b.characters) {
       if (c.availability.beats[0] !== '*')
         for (const bid of c.availability.beats)
-          if (!beatIds.has(bid)) fail(`character "${c.id}": availability beat "${bid}" not defined`)
+          if (!beatIds.has(bid)) fail(`character '${c.id}': availability beat '${bid}' not defined`)
     }
   })
 export type StoryBundle = z.infer<typeof StoryBundleSchema>
