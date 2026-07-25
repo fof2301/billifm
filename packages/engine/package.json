@@ -10,5 +10,5 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": { "@story/schema": "workspace:*" },
-  "devDependencies": { "typescript": "^5.5.4", "vitest": "^2.1.0" }
+  "devDependencies": { "@types/node": "^20.0.0", "typescript": "^5.5.4", "vitest": "^2.1.0" }
 }
