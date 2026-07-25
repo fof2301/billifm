@@ -2,6 +2,7 @@ import type { Mode, StoryBundle } from '@story/schema'
 import { useState } from 'react'
 import { Intro } from './screens/Intro'
 import { Library } from './screens/Library'
+import { Stage } from './screens/Stage'
 
 export type Route =
   | { name: 'library' }
@@ -24,7 +25,14 @@ export default function App() {
         />
       )
     case 'stage':
-      return <p className="p-8">Stage: coming in Task 13</p>
+      return (
+        <Stage
+          bundle={route.bundle}
+          mode={route.mode}
+          resume={route.resume}
+          onEnded={(endingId) => setRoute({ name: 'ending', bundle: route.bundle, endingId })}
+        />
+      )
     case 'ending':
       return <p className="p-8">Ending: coming in Task 16</p>
   }
