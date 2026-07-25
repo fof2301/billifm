@@ -131,6 +131,39 @@ session_ended    (node_id, reason: complete|dropoff|max_steps_exceeded,
 
 ---
 
+## Databricks (persistent event lake + shared analytics)
+
+Local sims stay local (fast iteration with Ollama Cloud); Databricks
+owns the persistent Delta tables so eval data and post-launch prod
+events live in one place with one schema.
+
+Everything lives in the `billifm.eval` schema:
+
+- `events_log` — every event, both `source='sim'` and `source='prod'`
+- `personas` — persona registry (dim table)
+- `stories`  — story registry with the full DAG as JSON
+
+Setup DDL is in [`databricks/setup.sql`](databricks/setup.sql).
+Portable analysis queries are in
+[`databricks/analyze.sql`](databricks/analyze.sql) and mirrored in a
+notebook at [`databricks/analyze_notebook.py`](databricks/analyze_notebook.py).
+
+```bash
+export DATABRICKS_HOST=https://dbc-XXXX.cloud.databricks.com
+export DATABRICKS_TOKEN=dapiXXXX
+export DATABRICKS_WAREHOUSE_ID=<serverless_warehouse_id>
+
+# after a local sim run:
+python -m eval.delta_sync events   --file eval/out/events.jsonl --source sim
+python -m eval.delta_sync personas --file eval/examples/personas.csv
+python -m eval.delta_sync story    --file eval/examples/story.json
+```
+
+`delta_sync` uses only the Python stdlib — no extra deps. See
+[`databricks/README.md`](databricks/README.md) for the full flow.
+
+---
+
 ## Model split (recommended)
 
 | Role                          | Model                          | Why                                            |
@@ -183,8 +216,14 @@ eval/
 ├── schemas.py               # Pydantic: Story, Persona, Event
 ├── ollama_client.py         # thin JSON-mode wrapper
 ├── sim.py                   # persona traversal + event emission
-├── aggregate.py             # metrics + text report
+├── aggregate.py             # local metrics + text report
 ├── run_eval.py              # CLI entry point
+├── delta_sync.py            # push local JSONL/CSV/JSON to Delta
+├── databricks/
+│   ├── setup.sql            # catalog / schema / volume / table DDL
+│   ├── analyze.sql          # portable SQL versions of every metric
+│   ├── analyze_notebook.py  # Databricks notebook (SQL against Delta)
+│   └── README.md            # Databricks flow overview
 └── examples/
     ├── story.json           # 12-node sample story
     └── personas.csv         # 10 sample personas

@@ -8,3 +8,5 @@ venv/
 *.egg-info/
 eval/out/
 .DS_Store
+databricks_mcp.log
+
