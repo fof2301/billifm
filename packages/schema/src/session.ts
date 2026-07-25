@@ -12,6 +12,7 @@ export interface SessionState {
   storyId: string
   mode: Mode
   beatId: string
+  beatsVisited: string[]
   flags: string[]
   cluesFound: string[]
   resolvedChallenges: string[]

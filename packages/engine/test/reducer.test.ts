@@ -103,3 +103,14 @@ describe('SET_MODE', () => {
     expect(reduce(bundle, state, { type: 'SET_MODE', mode: 'voice' }).state.mode).toBe('text')
   })
 })
+
+describe('beatsVisited', () => {
+  it('records the first beat and each beat entered, once, in order', () => {
+    const bundle = fixture()
+    const { state } = createSession(bundle, 'text')
+    expect(state.beatsVisited).toEqual(['b1'])
+    // task c1 times out -> onFailure sets "done" -> transition to b2
+    const r = reduce(bundle, state, { type: 'TICK', deltaMs: 61_000 })
+    expect(r.state.beatsVisited).toEqual(['b1', 'b2'])
+  })
+})

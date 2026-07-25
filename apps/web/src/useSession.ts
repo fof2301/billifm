@@ -41,7 +41,15 @@ export function useSession(
         try {
           const saved = JSON.parse(raw) as { sessionId: string; state: SessionState }
           // never resume paused-by-stale-reasons
-          return { sessionId: saved.sessionId, state: { ...saved.state, pauseReasons: [] as PauseReason[] } }
+          return {
+            sessionId: saved.sessionId,
+            state: {
+              ...saved.state,
+              pauseReasons: [] as PauseReason[],
+              // saves from before beat tracking existed
+              beatsVisited: saved.state.beatsVisited ?? [saved.state.beatId],
+            },
+          }
         } catch {
           // corrupt save — fall through to a fresh session below instead of crashing
         }

@@ -9,6 +9,7 @@ export function createSession(bundle: StoryBundle, mode: Mode): ReduceResult {
     storyId: bundle.meta.id,
     mode,
     beatId: first.id,
+    beatsVisited: [first.id],
     flags: [],
     cluesFound: [],
     resolvedChallenges: [],
@@ -80,7 +81,13 @@ function changeBeat(
   beatId: string,
 ): SessionState {
   effects.push({ type: 'BEAT_CHANGED', beatId }, { type: 'SNAPSHOT' })
-  let next: SessionState = { ...state, beatId, activeChallenge: null, suggestedReplies: [] }
+  let next: SessionState = {
+    ...state,
+    beatId,
+    beatsVisited: [...new Set([...state.beatsVisited, beatId])],
+    activeChallenge: null,
+    suggestedReplies: [],
+  }
   next = activateChallenge(bundle, next, effects)
   return next
 }

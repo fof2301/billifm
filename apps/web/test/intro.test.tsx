@@ -28,7 +28,7 @@ const bundle = StoryBundleSchema.parse({
 })
 
 const savedState = {
-  storyId: 'kidnapping-escape', mode: 'text', beatId: 'b1', flags: [], cluesFound: [],
+  storyId: 'kidnapping-escape', mode: 'text', beatId: 'b1', beatsVisited: ['b1'], flags: [], cluesFound: [],
   resolvedChallenges: [], elapsedRealMs: 0, pauseReasons: [], activeChallenge: null,
   activeCharacterId: null, transcripts: {}, suggestedReplies: [], endingId: null as string | null,
 }

@@ -20,7 +20,7 @@ const bundle = StoryBundleSchema.parse({
 })
 
 const baseState = {
-  storyId: 'dx', mode: 'mcq' as const, beatId: 'b1', flags: [], cluesFound: [],
+  storyId: 'dx', mode: 'mcq' as const, beatId: 'b1', beatsVisited: ['b1'], flags: [], cluesFound: [],
   resolvedChallenges: [], elapsedRealMs: 0, pauseReasons: [], activeChallenge: null,
   activeCharacterId: 'ann', transcripts: {}, suggestedReplies: [], endingId: null,
 }

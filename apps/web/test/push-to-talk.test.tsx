@@ -17,7 +17,7 @@ vi.mock('../src/audio', () => ({
 const baseState = {
   storyId: 'test',
   mode: 'voice' as const,
-  beatId: 'b1',
+  beatId: 'b1', beatsVisited: ['b1'],
   flags: [],
   cluesFound: [],
   resolvedChallenges: [],

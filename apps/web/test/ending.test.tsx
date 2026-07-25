@@ -23,7 +23,7 @@ describe('Ending', () => {
       JSON.stringify({
         sessionId: 's1',
         state: {
-          storyId: 'ex', mode: 'text', beatId: 'b1', flags: ['x'], cluesFound: [],
+          storyId: 'ex', mode: 'text', beatId: 'b1', beatsVisited: ['b1'], flags: ['x'], cluesFound: [],
           resolvedChallenges: [], elapsedRealMs: 0, pauseReasons: [], activeChallenge: null,
           activeCharacterId: 'ann', suggestedReplies: [], endingId: 'good',
           transcripts: { ann: [{ role: 'character', text: 'g', atMs: 0 }] },
