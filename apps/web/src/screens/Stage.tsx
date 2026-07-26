@@ -171,8 +171,8 @@ export function Stage({
           journalRef={journalRef}
         />
         <ChallengeBanner bundle={bundle} state={state} outcome={challengeOutcome} lastPrompt={lastChallengePrompt} />
-        <div ref={(el) => (railRef.current = el)} className="mt-3 flex min-h-0 flex-1">
-          <CharacterRail bundle={bundle} state={state} onSelect={session.selectCharacter} />
+        <div className="mt-3 flex min-h-0 flex-1">
+          <CharacterRail bundle={bundle} state={state} onSelect={session.selectCharacter} railRef={railRef} />
         </div>
         <ConversationSheet
           bundle={bundle}

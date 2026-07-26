@@ -81,6 +81,26 @@ describe('CharacterRail', () => {
     rerender(<CharacterRail bundle={bundle} state={{ ...baseState, elapsedRealMs: 210_000 }} onSelect={() => {}} />)
     expect(screen.getByRole('button', { name: /Owl/ })).not.toHaveClass('animate-[pulse_1s_ease-in-out_2]')
   })
+
+  // Regression: Stage used to attach its coach-mark railRef to the full-width flex-1
+  // wrapper it renders CharacterRail inside, so the coach overlay's step-2 spotlight cut a
+  // hole around most of the screen instead of just the rail. CharacterRail must accept its
+  // own optional ref (same MutableRefObject + callback-attach pattern TopBar uses for
+  // clockRef/journalRef) on its OWN root element, so Stage can point the spotlight there.
+  it('attaches an optional railRef to its own root element (the div containing the avatar buttons), not null', () => {
+    const railRef = { current: null } as React.MutableRefObject<HTMLElement | null>
+    render(
+      <CharacterRail
+        bundle={bundle}
+        state={{ ...baseState, activeCharacterId: 'ann' }}
+        onSelect={() => {}}
+        railRef={railRef}
+      />,
+    )
+    expect(railRef.current).not.toBeNull()
+    expect(railRef.current).toContainElement(screen.getByRole('button', { name: /Ann/ }))
+    expect(railRef.current).toContainElement(screen.getByRole('button', { name: /Owl/ }))
+  })
 })
 
 const challengeBundle = StoryBundleSchema.parse({

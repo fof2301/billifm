@@ -7,10 +7,12 @@ export function CharacterRail({
   bundle,
   state,
   onSelect,
+  railRef,
 }: {
   bundle: StoryBundle
   state: SessionState
   onSelect: (id: string) => void
+  railRef?: React.MutableRefObject<HTMLElement | null>
 }) {
   const beat = bundle.beats.find((b) => b.id === state.beatId)
   const chars = bundle.characters.filter((c) => beat?.characters.includes(c.id))
@@ -27,7 +29,12 @@ export function CharacterRail({
   }, [state])
 
   return (
-    <div className="pointer-events-auto flex flex-col gap-2 self-start">
+    <div
+      ref={(el) => {
+        if (railRef) railRef.current = el
+      }}
+      className="pointer-events-auto flex flex-col gap-2 self-start"
+    >
       {chars.map((c) => {
         const available = availability.get(c.id) ?? false
         const active = state.activeCharacterId === c.id
