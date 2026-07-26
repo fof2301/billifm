@@ -15,6 +15,7 @@ export function TopBar({
   state,
   time,
   clueCount,
+  onPause,
   onOpenTree,
   onOpenJournal,
   onOpenSettings,
@@ -25,6 +26,7 @@ export function TopBar({
   state: SessionState
   time: { day: number; phase: string; hour: number; minute: number }
   clueCount: number
+  onPause?: () => void
   onOpenTree?: () => void
   onOpenJournal: () => void
   onOpenSettings: () => void
@@ -37,6 +39,15 @@ export function TopBar({
   return (
     <div className="pointer-events-none">
       <div className="flex items-center justify-between gap-2">
+        {onPause && (
+          <button
+            onClick={onPause}
+            aria-label="Pause"
+            className="pointer-events-auto rounded-full bg-black/50 px-3 py-1 text-xs"
+          >
+            ‹
+          </button>
+        )}
         <span
           ref={(el) => {
             if (clockRef) clockRef.current = el

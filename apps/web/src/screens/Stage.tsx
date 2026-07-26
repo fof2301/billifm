@@ -17,6 +17,7 @@ import { ConversationSheet } from '../components/ConversationSheet'
 import { FamilyTree, hasKin } from '../components/FamilyTree'
 import { InputDock } from '../components/InputDock'
 import { Journal } from '../components/Journal'
+import { PauseSheet } from '../components/PauseSheet'
 import { NarrationCard } from '../components/NarrationCard'
 import { SettingsSheet } from '../components/SettingsSheet'
 import { TopBar } from '../components/TopBar'
@@ -27,17 +28,22 @@ export function Stage({
   mode,
   resume,
   onEnded,
+  onLeave,
+  onRestart,
 }: {
   bundle: StoryBundle
   mode: Mode
   resume: boolean
   onEnded: (endingId: string) => void
+  onLeave: () => void
+  onRestart: () => void
 }) {
   const session = useSession(bundle, mode, resume, onEnded)
   const { state, time } = session
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [journalOpen, setJournalOpen] = useState(false)
   const [treeOpen, setTreeOpen] = useState(false)
+  const [paused, setPaused] = useState(false)
   const showTree = hasKin(bundle)
 
   // First-play coach marks: shown once per browser (localStorage flag), gating on the
@@ -178,6 +184,7 @@ export function Stage({
           state={state}
           time={time}
           clueCount={state.cluesFound.length}
+          onPause={() => setPaused(true)}
           onOpenTree={showTree ? () => setTreeOpen(true) : undefined}
           onOpenJournal={() => setJournalOpen(true)}
           onOpenSettings={() => setSettingsOpen(true)}
@@ -205,6 +212,14 @@ export function Stage({
 
       <PhaseToast toast={phaseToast} />
       <NarrationCard bundle={bundle} beatId={state.beatId} />
+      <PauseSheet
+        storyTitle={bundle.meta.title}
+        session={session}
+        open={paused}
+        onResume={() => setPaused(false)}
+        onLeave={onLeave}
+        onRestart={onRestart}
+      />
       <FamilyTree
         bundle={bundle}
         state={state}

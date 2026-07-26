@@ -130,20 +130,20 @@ describe('Stage — coach marks', () => {
   })
 
   it('shows the overlay and pauses with its own "coach" reason when the flag is absent', () => {
-    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} />)
+    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} onLeave={() => {}} onRestart={() => {}} />)
     expect(screen.getByText(COACH_STEPS[0].copy)).toBeInTheDocument()
     expect(session.pause).toHaveBeenCalledWith('coach')
   })
 
   it('does not show the overlay (and does not pause for it) when the coach flag is already set', () => {
     localStorage.setItem('sf-coached', '1')
-    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} />)
+    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} onLeave={() => {}} onRestart={() => {}} />)
     expect(screen.queryByText(COACH_STEPS[0].copy)).not.toBeInTheDocument()
     expect(session.pause).not.toHaveBeenCalledWith('coach')
   })
 
   it('writes the flag, resumes its "coach" reason, and hides on "Got it" at the last step', () => {
-    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} />)
+    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} onLeave={() => {}} onRestart={() => {}} />)
     fireEvent.click(screen.getByRole('button', { name: 'Next' }))
     fireEvent.click(screen.getByRole('button', { name: 'Next' }))
     fireEvent.click(screen.getByRole('button', { name: 'Next' }))
@@ -155,7 +155,7 @@ describe('Stage — coach marks', () => {
   })
 
   it('writes the flag, resumes its "coach" reason, and hides immediately on Skip', () => {
-    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} />)
+    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} onLeave={() => {}} onRestart={() => {}} />)
     fireEvent.click(screen.getByRole('button', { name: 'Skip' }))
 
     expect(localStorage.getItem('sf-coached')).toBe('1')
@@ -164,7 +164,7 @@ describe('Stage — coach marks', () => {
   })
 
   it('holds "coach" distinct from Settings\' own "settings" reason — opening and closing Settings on top of the coach overlay does not unpause it', () => {
-    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} />)
+    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} onLeave={() => {}} onRestart={() => {}} />)
     expect(session.pause).toHaveBeenCalledWith('coach')
 
     fireEvent.click(screen.getByRole('button', { name: 'Settings' }))
@@ -181,7 +181,7 @@ describe('Stage — coach marks', () => {
 
   it('"Replay tips" (via Settings) closes Settings and re-shows the coach overlay through the real Stage wiring', () => {
     localStorage.setItem('sf-coached', '1')
-    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} />)
+    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} onLeave={() => {}} onRestart={() => {}} />)
     expect(screen.queryByText(COACH_STEPS[0].copy)).not.toBeInTheDocument()
 
     fireEvent.click(screen.getByRole('button', { name: 'Settings' }))

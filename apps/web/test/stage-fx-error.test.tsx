@@ -82,7 +82,7 @@ describe('Stage — fx fan-out exception isolation', () => {
 
   it('catches a throwing fx handler instead of letting it escape, and keeps processing later fx events', () => {
     const errSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
-    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} />)
+    render(<Stage bundle={bundle} mode="text" resume={false} onEnded={() => {}} onLeave={() => {}} onRestart={() => {}} />)
 
     // Stage's own onEffect subscription (wired via useFxEvents) fans this event out to
     // sound.handle, which the mock above makes throw. Without the fix this propagates

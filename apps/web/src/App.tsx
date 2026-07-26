@@ -13,6 +13,8 @@ export type Route =
 
 export default function App() {
   const [route, setRoute] = useState<Route>({ name: 'library' })
+  // Bumping this remounts the Stage, which is how "start over" gets a fresh session.
+  const [runId, setRunId] = useState(0)
 
   switch (route.name) {
     case 'library':
@@ -28,10 +30,17 @@ export default function App() {
     case 'stage':
       return (
         <Stage
+          key={`${route.bundle.meta.id}-${runId}`}
           bundle={route.bundle}
           mode={route.mode}
           resume={route.resume}
           onEnded={(endingId) => setRoute({ name: 'ending', bundle: route.bundle, endingId })}
+          onLeave={() => setRoute({ name: 'library' })}
+          onRestart={() => {
+            localStorage.removeItem(`sf-session-${route.bundle.meta.id}`)
+            setRoute({ ...route, resume: false })
+            setRunId((n) => n + 1)
+          }}
         />
       )
     case 'ending':

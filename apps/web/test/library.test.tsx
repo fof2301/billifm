@@ -36,3 +36,23 @@ describe('Library layout', () => {
     expect(grid!.className).toContain('lg:grid-cols-3')
   })
 })
+
+describe('Library reset', () => {
+  it('wipes every saved session when confirmed', async () => {
+    const userEvent = (await import('@testing-library/user-event')).default
+    const user = userEvent.setup()
+    localStorage.setItem('sf-session-kidnapping-escape', '{"sessionId":"a","state":{}}')
+    localStorage.setItem('sf-session-lantern-line', '{"sessionId":"b","state":{}}')
+    localStorage.setItem('sf-device-id', 'keep-me')
+    render(<Library onPick={() => {}} />)
+    await screen.findByText('The Cellar')
+
+    await user.click(screen.getByRole('button', { name: /reset all progress/i }))
+    expect(localStorage.getItem('sf-session-lantern-line')).not.toBeNull() // not until confirmed
+    await user.click(screen.getByRole('button', { name: /yes, reset everything/i }))
+
+    expect(localStorage.getItem('sf-session-kidnapping-escape')).toBeNull()
+    expect(localStorage.getItem('sf-session-lantern-line')).toBeNull()
+    expect(localStorage.getItem('sf-device-id')).toBe('keep-me') // identity survives
+  })
+})

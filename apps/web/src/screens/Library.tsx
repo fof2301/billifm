@@ -8,6 +8,16 @@ export function Library({ onPick }: { onPick: (storyId: string) => void }) {
   const [stories, setStories] = useState<StoryBundle['meta'][] | null>(null)
   const [error, setError] = useState(false)
   const [review, setReview] = useState<{ bundle: StoryBundle; state: SessionState } | null>(null)
+  const [confirmReset, setConfirmReset] = useState(false)
+
+  /** Wipes saved progress and the first-play flag, but keeps the device identity. */
+  const resetEverything = () => {
+    for (const k of Object.keys(localStorage)) {
+      if (k.startsWith('sf-session-')) localStorage.removeItem(k)
+    }
+    localStorage.removeItem('sf-coached')
+    setConfirmReset(false)
+  }
 
   useEffect(() => {
     listStories().then(setStories).catch(() => setError(true))
@@ -49,6 +59,28 @@ export function Library({ onPick }: { onPick: (storyId: string) => void }) {
             </div>
           </button>
         ))}
+      </div>
+
+      <div className="mt-12 border-t border-slate-900 pt-6 text-center">
+        {!confirmReset ? (
+          <button onClick={() => setConfirmReset(true)} className="text-xs text-slate-500 underline underline-offset-4">
+            Reset all progress
+          </button>
+        ) : (
+          <div className="mx-auto max-w-xs rounded-xl border border-red-500/40 bg-red-950/30 p-3">
+            <p className="text-xs text-red-200">
+              Erases every story's saved progress and the first-play tips on this device.
+            </p>
+            <div className="mt-2 flex gap-2">
+              <button onClick={resetEverything} className="flex-1 rounded-lg bg-red-600 py-2 text-xs font-semibold">
+                Yes, reset everything
+              </button>
+              <button onClick={() => setConfirmReset(false)} className="flex-1 rounded-lg bg-slate-800 py-2 text-xs">
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
       </div>
 
       <PastSessions
