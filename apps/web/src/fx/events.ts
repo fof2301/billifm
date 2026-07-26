@@ -21,8 +21,13 @@ export function useFxEvents(session: SessionApi, onEvent: (e: FxEvent) => void):
 
   // The challenge id we're currently watching for a success/failure outcome, and the id
   // of the challenge that most recently timed out (so a subsequent activeChallenge clear
-  // isn't mistaken for a success).
-  const trackedIdRef = useRef<string | null>(null)
+  // isn't mistaken for a success). Seeded from the LIVE state, not null: useSession's
+  // createSession discards its initial effects (only .state survives), so a challenge
+  // already active when this hook first mounts — the first beat starting with a challenge,
+  // or a save resumed mid-challenge — never arrives as a CHALLENGE_STARTED effect. Without
+  // this seed, that challenge's eventual success would be dropped: trackedIdRef would still
+  // be null when its successor's CHALLENGE_STARTED fires, so nothing gets flushed for it.
+  const trackedIdRef = useRef<string | null>(session.state.activeChallenge?.id ?? null)
   const timedOutIdRef = useRef<string | null>(null)
 
   useEffect(() => {

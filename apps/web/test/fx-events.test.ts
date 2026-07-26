@@ -128,6 +128,28 @@ describe('useFxEvents', () => {
     expect(onEvent).toHaveBeenCalledTimes(2)
   })
 
+  // Regression: createSession's initial effects are discarded by useSession (only .state is
+  // taken), so a challenge already active in the session's INITIAL state — the first beat
+  // starting with a challenge, or a save resumed mid-challenge — never gets a CHALLENGE_STARTED
+  // effect delivered through onEffect. trackedIdRef must seed itself from that live state
+  // instead of starting null, or that first challenge's success cue never fires.
+  it('tracks a challenge that was already active in the session\'s INITIAL state, so its success cue still fires when the next challenge starts', () => {
+    const session: FakeSession = {
+      onEffect: { current: null },
+      state: { activeChallenge: { id: 'c1', deadlineMs: 0 } },
+    }
+    const onEvent = vi.fn()
+    renderHook(() => useFxEvents(session as unknown as SessionApi, onEvent))
+
+    session.state = { activeChallenge: { id: 'c2', deadlineMs: 0 } }
+    act(() => session.onEffect.current?.({ type: 'CHALLENGE_STARTED', challengeId: 'c2' }))
+
+    expect(onEvent.mock.calls.map((c) => c[0])).toEqual([
+      { type: 'challenge-succeeded', challengeId: 'c1' },
+      { type: 'challenge-started', challengeId: 'c2' },
+    ])
+  })
+
   it('timeout then chain: a challenge that timed out does not get a spurious success when the next challenge starts', () => {
     const session = makeSession()
     const onEvent = vi.fn()
