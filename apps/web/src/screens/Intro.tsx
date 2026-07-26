@@ -68,10 +68,14 @@ export function Intro({
   }
 
   return (
+    // min-h-dvh + mt-auto (not justify-end): the content sits at the bottom when
+    // there is room, and the page grows and scrolls normally when there isn't —
+    // justify-end would push the overflow off the top where it can't be reached.
     <div className="relative mx-auto min-h-dvh max-w-md">
       <img src={assetUrl(storyId, bundle.meta.cover)} alt="" className="absolute inset-0 h-full w-full object-cover opacity-40" />
-      <div className="relative flex min-h-dvh flex-col justify-end p-6 pb-10">
+      <div className="relative flex min-h-dvh flex-col p-6 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[max(4rem,env(safe-area-inset-top))]">
         <button onClick={onBack} className="absolute left-4 top-4 rounded-full bg-black/50 px-3 py-1 text-sm">← Back</button>
+        <div className="mt-auto" />
         <h1 className="text-3xl font-bold">{bundle.meta.title}</h1>
         <p className="mt-2 text-slate-300">{bundle.meta.tagline}</p>
         <p className="mt-1 text-xs text-slate-400">{bundle.meta.genre} · ~{bundle.meta.estimatedMinutes} min</p>
