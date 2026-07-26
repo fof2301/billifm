@@ -33,3 +33,6 @@ playwright-report/
 test-results/
 *.local
 apps/web/vite.config.ts.timestamp-*.mjs
+apps/web/public/demo-media/**/*.mp3
+apps/web/public/demo-media/*.mp3
+apps/web/public/demo-media/*.mp4

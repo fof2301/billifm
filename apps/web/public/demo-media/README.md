@@ -1,9 +1,13 @@
 # demo-media
 
-Drop the produced episode media here for the `#demo` split screen
-(http://localhost:5173/#demo):
+Episode audio for the `#demo` split screen (http://localhost:5173/#demo).
 
-- `riya-calling.mp4` — preferred (video player on the left pane), or
-- `riya-calling.mp3` — audio fallback (cover art + audio controls).
+Generate all five episodes (OpenAI TTS, per-character voices, ~$1):
 
-Nothing here is required for the phone module on the right to work.
+    node --env-file=.env scripts/generate-episode-audio.mjs
+
+Files land here as `riya-calling/ep1.mp3` … `ep5.mp3`. They are
+git-ignored (same policy as server/audio: generated audio is too big
+for git) — every teammate regenerates locally, or copy them over.
+
+The phone module on the right works with or without these files.
