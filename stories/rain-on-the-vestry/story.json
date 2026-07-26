@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "id": "rain-on-the-vestry",
+    "title": "Rain on the Vestry",
+    "tagline": "A man is dead in a room bolted from the inside. You have until the bridge clears.",
+    "genre": "noir mystery",
+    "estimatedMinutes": 8,
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "stallLines": [
+      "Rain hammers the lead roof, patient as a held breath…",
+      "Thunder rolls off toward the docks and does not answer…",
+      "Past the rood screen, a hassock creaks under no one…"
+    ]
+  },
+  "clock": {
+    "realMinutesPerStoryDay": 8,
+    "totalStoryDays": 1,
+    "phases": [
+      "downpour",
+      "slackening",
+      "drizzle",
+      "clearing"
+    ]
+  },
+  "scene": {
+    "id": "vestry-corridor",
+    "backgrounds": {
+      "downpour": "assets/downpour.jpg",
+      "slackening": "assets/slackening.jpg",
+      "drizzle": "assets/drizzle.jpg",
+      "clearing": "assets/clearing.jpg"
+    },
+    "ambientAudio": "assets/ambient.mp3"
+  },
+  "characters": [
+    {
+      "id": "fenn",
+      "name": "Aldous Fenn",
+      "role": "Curate of St. Anselm's — found the body",
+      "portrait": "assets/fenn.jpg",
+      "personality": "Twenty-six, a year into orders, more frightened of disappointing the Bishop than of the dead man on the floor. Over-explains, repeats himself when nervous, reaches for scripture half-remembered when cornered. Watches the vestry door as though it might swing open again. Softens completely if asked about his mother rather than about the body.",
+      "greeting": "I found him. That's the whole of it — I put my shoulder to the door, and there he was, and I've told the sergeant so twice already. I don't know why my hands won't stop.",
+      "voice": {
+        "voiceId": "echo",
+        "instructions": "young, breathless, words arriving faster than he means them to"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": []
+      }
+    },
+    {
+      "id": "colls",
+      "name": "Edith Colls",
+      "role": "Church organist — played through the hour in question",
+      "portrait": "assets/colls.jpg",
+      "personality": "Fifty-one, unmarried, has played for St. Anselm's choir for eleven years and guards her unbroken record the way another woman might guard a marriage. Speaks in exact minutes and hymn numbers, distrusts vagueness in herself and others. Keeps her hands out of sight, in her lap or her sleeves. Answers any question about her music readily; flinches from any question about her hands.",
+      "greeting": "I did not stop playing, if that's what this is about. Fifty-five minutes without a missed bar — ask the choir, ask anyone in the stalls. Eleven years I've played through worse storms than this one.",
+      "voice": {
+        "voiceId": "nova",
+        "instructions": "prim, exact, a tremor she is fighting to keep out of her voice"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "whipping-twine"
+        ]
+      }
+    },
+    {
+      "id": "bourne",
+      "name": "Silas Bourne",
+      "role": "Edwin Calloway's business partner — sheltering from the rain",
+      "portrait": "assets/bourne.jpg",
+      "personality": "Forty-four, a ship's chandler and Calloway's partner of nine years, used to talking his way past customs officers and creditors with the same easy charm. Refers to Calloway in the past tense a beat too soon and corrects himself. Generous with detail about the business, evasive to the minute about the clock. Never raises his voice; when cornered, he gets more agreeable, not less.",
+      "greeting": "Dreadful business, this. I only ducked in out of the rain, and now I find myself answering questions in a dead man's church. Ask away — I've nothing to hide and less patience for pretending I do.",
+      "voice": {
+        "voiceId": "onyx",
+        "instructions": "measured, affable, a hard edge under the charm"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "storm-timing"
+        ]
+      }
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "narration": "Twenty past eight, and the rain hasn't slackened in an hour. Edwin Calloway is on the vestry floor with his head against the corner of the almsbox and the big brass altar candlestick fallen an arm's length away. The door was bolted on the inside — an iron barrel bolt, thrown home — so that Curate Fenn had to put his shoulder to it twice before the wood gave. Through the wall, the organ hasn't stopped since six. The bridge into the city is under two feet of water and will stay that way until the rain lets up. Until then, whatever gets worked out here, you're the one working it out.",
+      "objective": "Get Fenn to admit he'd already been inside the vestry once before he 'found' the body.",
+      "characters": [
+        "fenn",
+        "colls",
+        "bourne"
+      ],
+      "challenges": [
+        "c1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "curate_confession"
+            ]
+          },
+          "goto": "b2"
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "narration": "Snagged in the crack where the door meets its swollen frame: a finger's length of blackened thread, waxed heavier than any needlewoman would use, and smelling faintly of pitch, not beeswax. Fenn swears it wasn't there when he first put his shoulder to the door. Through the vestry wall, Miss Colls is still at the console, the same four hymns turning over and over into the storm.",
+      "objective": "Get Colls to admit she stopped playing at some point in the hour, and why.",
+      "characters": [
+        "fenn",
+        "colls",
+        "bourne"
+      ],
+      "challenges": [
+        "c2"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "organist_admits_gap"
+            ]
+          },
+          "goto": "b3"
+        }
+      ]
+    },
+    {
+      "id": "b3",
+      "narration": "Miss Colls counts everything exactly, and she is exact about this: four minutes short of nine o'clock, between the second verse and the third, a small metal click from the vestry passage, timed to a crack of thunder — as if someone had waited for the sky to cover it. Bourne says he came in out of the rain at nine, not a minute before. The two accounts do not sit together.",
+      "objective": "Press Bourne until he admits he was in the church before the time he first claimed.",
+      "characters": [
+        "fenn",
+        "colls",
+        "bourne"
+      ],
+      "challenges": [
+        "c3"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "motive_found"
+            ]
+          },
+          "goto": "b4"
+        }
+      ]
+    },
+    {
+      "id": "b4",
+      "narration": "Folded small in the dead man's coat pocket: half a manifest page in his own hand, a shipment of tinned goods marked lost at sea, and beside the figures, underlined twice — B. knows I know. The water on the bridge hasn't dropped an inch. Whatever you say next, you'll be the one saying it first.",
+      "objective": "Explain how the vestry was bolted from outside, and name the man who did it.",
+      "characters": [
+        "fenn",
+        "colls",
+        "bourne"
+      ],
+      "challenges": [
+        "c4"
+      ],
+      "transitions": []
+    }
+  ],
+  "challenges": [
+    {
+      "id": "c1",
+      "type": "task",
+      "prompt": "Get Fenn to admit he'd already been inside the vestry once before he 'found' the body.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "curate_confession"
+        ],
+        "unlockClues": [
+          "whipping-twine"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "curate_confession"
+        ],
+        "unlockClues": [
+          "whipping-twine"
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "type": "task",
+      "prompt": "Get Colls to admit she stopped playing at some point in the hour, and why.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "organist_admits_gap"
+        ],
+        "unlockClues": [
+          "storm-timing"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "organist_admits_gap"
+        ],
+        "unlockClues": [
+          "storm-timing"
+        ]
+      }
+    },
+    {
+      "id": "c3",
+      "type": "task",
+      "prompt": "Press Bourne until he admits he was in the church before the time he first claimed.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "motive_found"
+        ],
+        "unlockClues": [
+          "manifest-fragment"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "motive_found"
+        ]
+      }
+    },
+    {
+      "id": "c4",
+      "type": "task",
+      "prompt": "Explain how the vestry was bolted from outside, and name the man who did it.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "case_solved"
+        ]
+      },
+      "onFailure": {}
+    }
+  ],
+  "clues": [
+    {
+      "id": "whipping-twine",
+      "title": "A Snapped Length of Twine",
+      "text": "Caught in the crack where the door meets the frame: an inch of blackened thread, waxed and thicker than any needle would take — tarred, and it smells of pitch. Not a bookbinder's thread. Not a seamstress's, either."
+    },
+    {
+      "id": "storm-timing",
+      "title": "Four Minutes to Nine",
+      "text": "Miss Colls remembers the exact bar of the hymn: a metal click from the vestry passage, timed precisely to a crack of thunder, as though someone had waited for the sky to cover it."
+    },
+    {
+      "id": "manifest-fragment",
+      "title": "The Torn Half-Page",
+      "text": "Folded small in Calloway's coat: half a manifest page in his own hand, a shipment of tinned goods marked 'lost at sea' — and a marginal note, underlined twice: 'B. knows I know.'"
+    }
+  ],
+  "endings": [
+    {
+      "id": "the-bolt-explained",
+      "when": {
+        "flags": [
+          "case_solved"
+        ]
+      },
+      "title": "The Bolt Explained",
+      "text": "You lay it out plainly: the tarred twine, the keyhole, the click Colls heard under the thunder, the four minutes Bourne can't account for. He doesn't shout, doesn't run — he only goes very still, the way a man does when the charm has finally run out of road. By the time the water drops enough for the city police to cross the bridge, there's nothing left for them to solve. You did that in the dark, with the rain still coming down."
+    },
+    {
+      "id": "an-open-verdict",
+      "when": {
+        "flags": [
+          "motive_found"
+        ],
+        "clockExpired": true
+      },
+      "title": "An Open Verdict",
+      "text": "You know enough to be certain and not enough to be believed. Bourne is still composed, still agreeable, still exactly as charming as he was an hour ago, and the manifest page proves a motive but not a hand on the candlestick. When the city detectives finally cross the bridge, you hand them a name and a theory, and watch them write it down as one more thing to be confirmed later. The rain has stopped. Nothing else has."
+    },
+    {
+      "id": "the-water-recedes",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "The Water Recedes",
+      "text": "The storm breaks before you do. By the time the bridge is passable, you have a locked door, a dead churchwarden, and three people who were all, technically, telling the truth about something. The city police arrive dry-shod and unhurried, and take statements from everyone, including you. Bourne shakes your hand on his way out. It is, you'll notice later, the only wet thing about him."
+    }
+  ]
+}

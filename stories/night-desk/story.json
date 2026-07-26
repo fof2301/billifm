@@ -1,0 +1,319 @@
+{
+  "meta": {
+    "id": "night-desk",
+    "title": "The Night Desk",
+    "tagline": "Room 400 is vacant. It still calls down at fourteen minutes past two.",
+    "genre": "supernatural horror",
+    "estimatedMinutes": 8,
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "stallLines": [
+      "The switchboard's pilot lamp flickers, though nothing is ringing…",
+      "Somewhere on the third floor, a floorboard settles that hasn't held weight in years…",
+      "Down the corridor, a door you were sure was locked clicks once, and goes quiet…"
+    ]
+  },
+  "clock": {
+    "realMinutesPerStoryDay": 8,
+    "totalStoryDays": 1,
+    "phases": [
+      "evening",
+      "witching",
+      "dead-hours",
+      "first-light"
+    ]
+  },
+  "scene": {
+    "id": "front-desk",
+    "backgrounds": {
+      "evening": "assets/evening.jpg",
+      "witching": "assets/witching.jpg",
+      "dead-hours": "assets/dead-hours.jpg",
+      "first-light": "assets/first-light.jpg"
+    },
+    "ambientAudio": "assets/ambient.mp3"
+  },
+  "characters": [
+    {
+      "id": "walter",
+      "name": "Walter",
+      "role": "Room 400 — the register says vacant",
+      "portrait": "assets/walter.jpg",
+      "personality": "Courtly and unhurried, mannered in the particular way of a travelling man who has stayed in good hotels his whole life. Speaks of the day's small business — the weather, the parade downtown, the desk's usual staff — as though decades have not passed, and grows only mildly, apologetically confused if the numbers don't add up, never suspicious of himself. Devoted entirely to one small nightly errand: a promise about six o'clock, and a message for his wife. Patient with a slow desk clerk, quietly wounded rather than angered by a rude one. Never once asks what year it is unless pushed there directly.",
+      "greeting": "There you are — I did wonder if anyone was minding the desk tonight. Ring me at six sharp, won't you. And if Iris calls down looking for me, tell her I'm coming along directly.",
+      "voice": {
+        "voiceId": "onyx",
+        "instructions": "elderly, formal, warm, unhurried"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": []
+      }
+    },
+    {
+      "id": "edith",
+      "name": "Edith",
+      "role": "Room 112 — forty years a resident, keeper of the rule",
+      "portrait": "assets/edith.jpg",
+      "personality": "Precise about mechanics, closed about feelings — she will explain a rule in exact, repeatable language before she will admit to a single emotion about it. Answers a direct, practical question generously; deflects anything shaped like sympathy with a joke about her knees or the price of tea. Fond of the new clerk in a brisk, unsentimental way that shows up as small kindnesses rather than warmth in her voice. Carries forty years of a specific guilt and will name it exactly once, if asked gently what it cost her rather than what she did wrong.",
+      "greeting": "So you found the card, then. Sit down before you ask me anything — this is a long answer for somebody still standing.",
+      "voice": {
+        "voiceId": "sage",
+        "instructions": "even, exact, a little tired, no wasted words"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "registration-card"
+        ]
+      }
+    },
+    {
+      "id": "priya",
+      "name": "Priya",
+      "role": "The clerk before you — left three weeks ago without notice",
+      "portrait": "assets/priya.jpg",
+      "personality": "Reaches the desk only through the old internal line, and only in pieces — fast, breathless, talking over her own sentences as though she's rehearsed this apology and lost her nerve every time before. Ashamed less of running than of what she said on her way out the door. More interested in stopping the new clerk from repeating her mistake than in being forgiven for it. The line drops mid-thought sometimes and picks up seconds later exactly where it left off, and she never remarks on it, as if she hasn't noticed.",
+      "greeting": "Oh — oh thank god, it's actually holding. Listen, I don't have long on this line, it never holds — whatever you do, don't tell him what year it is—",
+      "voice": {
+        "voiceId": "echo",
+        "instructions": "young, urgent, breaking up like a bad line"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "operator-log"
+        ]
+      }
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "narration": "Your first night alone on the desk, and the manager's already gone home. The register lists Room 400 as vacant — has for years, according to a laminated slip clipped inside the ledger: DO NOT ASSIGN. Not ten minutes into the shift, the switchboard panel lights up for it anyway, the little brass tab clicking down the way it must have a thousand times before you ever sat in this chair.",
+      "objective": "Answer the call from Room 400 without contradicting anything the caller believes.",
+      "characters": [
+        "walter",
+        "edith",
+        "priya"
+      ],
+      "challenges": [
+        "c1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "first_call_taken"
+            ]
+          },
+          "goto": "b2"
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "narration": "Room 400's registration card was filed where it shouldn't have been — under a tab marked PERMANENT, NON-TRANSFERABLE. W. NYE, arrival date smudged past reading, no departure date at all, and a margin note in someone's older hand: always the same minute, whatever the season. Down the hall, Room 112's light is on, same as it apparently always is at this hour.",
+      "objective": "Get Edith to explain the rule that keeps Room 400's line alive — and why she's the one who knows it.",
+      "characters": [
+        "walter",
+        "edith",
+        "priya"
+      ],
+      "challenges": [
+        "c2"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "rule_known"
+            ]
+          },
+          "goto": "b3"
+        }
+      ]
+    },
+    {
+      "id": "b3",
+      "narration": "The internal line — desk to housekeeping, desk to the manager's office, nothing that should reach past the building's own walls — crackles to life a little after four, unprompted. It takes you a moment to place the voice: the clerk whose handwriting is still in last month's logbook, three weeks gone without so much as a shift swap to explain it.",
+      "objective": "Get Priya to admit what she told Room 400's caller the night she left — and where the rest of the rule is written down.",
+      "characters": [
+        "walter",
+        "edith",
+        "priya"
+      ],
+      "challenges": [
+        "c3"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "warning_known"
+            ]
+          },
+          "goto": "b4"
+        }
+      ]
+    },
+    {
+      "id": "b4",
+      "narration": "Fourteen minutes past two, and the panel for Room 400 clicks down a full minute early, as if it no longer trusts you to be ready in time. You have the ledger's exact words in front of you now, taped inside the logbook's back cover in handwriting decades older than Priya's. There will not be a second try before the sun comes up.",
+      "objective": "Close Room 400's call the way it was supposed to be closed forty years ago.",
+      "characters": [
+        "walter",
+        "edith",
+        "priya"
+      ],
+      "challenges": [
+        "c4"
+      ],
+      "transitions": []
+    }
+  ],
+  "challenges": [
+    {
+      "id": "c1",
+      "type": "task",
+      "prompt": "Get through Walter's call without correcting his sense of the date, and learn what he's waiting to hear.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "first_call_taken"
+        ],
+        "unlockClues": [
+          "registration-card"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "first_call_taken"
+        ],
+        "unlockClues": [
+          "registration-card"
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "type": "task",
+      "prompt": "Get Edith to state the rule for Room 400's line — and why she's the one who knows it.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "rule_known"
+        ],
+        "unlockClues": [
+          "operator-log"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "rule_known"
+        ],
+        "unlockClues": [
+          "operator-log"
+        ]
+      }
+    },
+    {
+      "id": "c3",
+      "type": "task",
+      "prompt": "Get Priya to admit what she told Walter the night she left, and where the exact wording of the rule is kept.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "warning_known"
+        ],
+        "unlockClues": [
+          "switchboard-ledger"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "warning_known"
+        ]
+      }
+    },
+    {
+      "id": "c4",
+      "type": "task",
+      "prompt": "Close Walter's call the way it was supposed to be closed forty years ago — the sign-off, exactly, and nothing else.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "call_closed"
+        ]
+      },
+      "onFailure": {}
+    }
+  ],
+  "clues": [
+    {
+      "id": "registration-card",
+      "title": "Room 400's registration card",
+      "text": "Filed under PERMANENT, NON-TRANSFERABLE. W. NYE. Arrival date smudged past reading; no departure date at all. A margin note in an older hand: always the same minute, whatever the season."
+    },
+    {
+      "id": "operator-log",
+      "title": "The old switchboard logbook",
+      "text": "A column of initials and times running back decades, and one recent line in a different pen: 'P.O. — left mid-shift, no notice. 400 unresolved.'"
+    },
+    {
+      "id": "switchboard-ledger",
+      "title": "The exact wording",
+      "text": "Taped inside the logbook's back cover, in handwriting decades older than the rest: He says, tell Iris I'll be along directly. You say, straight to sleep now, Mr. Nye — I'll ring you at six. Nothing else. Never hang up first."
+    }
+  ],
+  "endings": [
+    {
+      "id": "the-line-closes",
+      "when": {
+        "flags": [
+          "call_closed"
+        ]
+      },
+      "title": "Straight To Sleep Now",
+      "text": "You say the whole of it, unhurried, the way Edith drilled into you before dawn: the promise about six o'clock, his name at the end of it, nothing about the date, nothing about the years in between. There's a pause on the line long enough that you think the connection dropped. Then — 'Thank you, miss' — and then an ordinary dial tone, the first one that extension has produced in forty years. In the morning the ledger shows Room 400 struck through in ink that wasn't there last night. Edith doesn't come down for tea; when you check on her she's asleep in her chair for the first time you've ever seen her sleep, the old headset still around her neck, finally off the clock."
+    },
+    {
+      "id": "a-kept-secret",
+      "when": {
+        "flags": [
+          "warning_known"
+        ],
+        "clockExpired": true
+      },
+      "title": "A Kept Secret",
+      "text": "You know now what Priya said to him, and what it cost her to say it to you — but the ledger's exact wording is still in your hand when the light outside the lobby doors turns grey and ordinary. Room 400 doesn't ring again tonight; it doesn't need to, not until tomorrow, same minute. Edith takes the logbook back without a word and locks it in the drawer where it's lived for forty years. 'Tomorrow,' she says, not unkindly, and puts the kettle on. You clock out at eight and lie awake all morning, because you already know you're coming back at eleven."
+    },
+    {
+      "id": "same-minute-tomorrow",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "Same Minute, Tomorrow",
+      "text": "You never do work out why Room 400 lights up, or why Edith keeps a second chair by her door, or where the clerk before you went in such a hurry. The manager calls at eight, brisk, already on to the next thing — good first night? — and you say fine, because there is no shorter true answer. Down the hall, unseen, the little brass tab for Room 400 sits dark and patient, unbothered, as anything can afford to be with all the time in the world. It will click down again tonight, fourteen minutes past two, whether you're the one who picks it up or somebody else is."
+    }
+  ]
+}

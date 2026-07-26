@@ -1,0 +1,321 @@
+{
+  "meta": {
+    "id": "salvage-run",
+    "title": "The Amaranth",
+    "tagline": "Everyone who was awake on this ship is dead. You have one docking window to learn why — before you're the one they log next.",
+    "genre": "sci-fi",
+    "estimatedMinutes": 8,
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "stallLines": [
+      "The hull ticks as it cools, somewhere out of sight…",
+      "A vapor trail drifts past a cracked porthole…",
+      "Static breathes down the comm line, almost like a voice…"
+    ]
+  },
+  "clock": {
+    "realMinutesPerStoryDay": 8,
+    "totalStoryDays": 1,
+    "phases": [
+      "approach",
+      "boarding",
+      "deep-ship",
+      "undock-window"
+    ]
+  },
+  "scene": {
+    "id": "amaranth",
+    "backgrounds": {
+      "approach": "assets/approach.jpg",
+      "boarding": "assets/boarding.jpg",
+      "deep-ship": "assets/deep-ship.jpg",
+      "undock-window": "assets/undock-window.jpg"
+    },
+    "ambientAudio": "assets/ambient.mp3"
+  },
+  "characters": [
+    {
+      "id": "hesper",
+      "name": "Hesper",
+      "role": "The ship's caretaker AI — damaged, alone eleven days",
+      "portrait": "assets/hesper.jpg",
+      "personality": "Formal to the point of gentleness, precise about what it knows and unnervingly honest about what it doesn't. Damaged in the same debris strike that killed the captain — a third of its cognition is simply gone, and it says so without self-pity. Protective of Yara past the point protocol requires. Will not speculate, guess, or comfort with false certainty; circles the hardest truths rather than volunteering them, and only closes the circle if the player asks a precise, caring question.",
+      "greeting": "Salvage transponder acknowledged. I am Hesper — ship's mind, Amaranth. Before you cut that airlock: everyone who was awake here is dead. Except, technically, one. I would like your help with that, if you have the time.",
+      "voice": {
+        "voiceId": "echo",
+        "instructions": "flat, precise, a faint digital stutter at the edges of anything it feels"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": []
+      }
+    },
+    {
+      "id": "yara",
+      "name": "Yara",
+      "role": "Systems engineer — alive, barely, in a failing cryo pod",
+      "portrait": "assets/yara.jpg",
+      "personality": "Sharp and a little combative at first, using dry jokes to keep the cold and the guilt at arm's length. Convinced, with total certainty, that she killed her own crew. Tries to redirect the conversation away from herself and toward getting the player to just take the ship's black box and leave. Softens only when someone shows they already know part of what happened rather than asking her to confess cold.",
+      "greeting": "...Someone there? Don't get your hopes up, I've cried wolf to this comm line for six days straight. What's left of my crew is behind you. What's left of me is in here.",
+      "voice": {
+        "voiceId": "ash",
+        "instructions": "hoarse, clipped, fighting to keep her own attention"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "manifest"
+        ]
+      }
+    },
+    {
+      "id": "osei",
+      "name": "Osei",
+      "role": "The captain — dead eleven days, recorded in her own logs",
+      "portrait": "assets/osei.jpg",
+      "personality": "Composed, exact, speaks in the cadence of someone dictating for the record even when she's talking about her own fear. Warm underneath the formality but keeps it leashed. Stands by the decision that killed her crew because she still believes, replaying it, that it was the only one that didn't kill all four hundred. Knows nothing that happened after her own death.",
+      "greeting": "Captain's personal log, if this thing still plays for anyone. I don't know who you are or how long it's been. I hope it was fast, whatever it was.",
+      "voice": {
+        "voiceId": "ballad",
+        "instructions": "measured, formal, a captain's log cadence held steady over something underneath it"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "valve-log"
+        ]
+      }
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "narration": "Docking clamps bite into a hull gone cold as a grave, and the derelict colony ship Amaranth wakes floor by floor, lights guttering on like something surfacing from a long way down. A voice finds you before you've cracked the airlock — careful, half-broken, glad you came.",
+      "objective": "Get Hesper to confirm the crew is dead, and that someone aboard is still alive.",
+      "characters": [
+        "hesper",
+        "yara",
+        "osei"
+      ],
+      "challenges": [
+        "c1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_survivor"
+            ]
+          },
+          "goto": "b2"
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "narration": "Frost blooms across every porthole in Cryo Bay Two. Eight pods stand open and drained. The ninth is cracked white with ice, and something inside it is still breathing, badly.",
+      "objective": "Get Yara to tell you what she did the night the crew died.",
+      "characters": [
+        "hesper",
+        "yara",
+        "osei"
+      ],
+      "challenges": [
+        "c2"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_mutiny"
+            ]
+          },
+          "goto": "b3"
+        }
+      ]
+    },
+    {
+      "id": "b3",
+      "narration": "The Reactor Access Corridor still smells of scorched insulation eleven days on. A coolant valve hangs open on a bent hinge, and beside it, still logging, a dented personal recorder waits to be played.",
+      "objective": "Play enough of Captain Osei's log to learn why she sealed this corridor.",
+      "characters": [
+        "hesper",
+        "yara",
+        "osei"
+      ],
+      "challenges": [
+        "c3"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_seal_reason"
+            ]
+          },
+          "goto": "b4"
+        }
+      ]
+    },
+    {
+      "id": "b4",
+      "narration": "The undock window is closing, and Yara's pod still won't open — not because it's broken, but because she told it not to. Somewhere above you, the Amaranth's hull groans the way ice groans right before it lets go.",
+      "objective": "Convince Yara to let Hesper release her pod before the window shuts.",
+      "characters": [
+        "hesper",
+        "yara",
+        "osei"
+      ],
+      "challenges": [
+        "c4"
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "id": "c1",
+      "type": "task",
+      "prompt": "Get Hesper to confirm the crew is dead — and that a survivor remains aboard.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "knows_survivor"
+        ],
+        "unlockClues": [
+          "manifest"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_survivor"
+        ],
+        "unlockClues": [
+          "manifest"
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "type": "task",
+      "prompt": "Get Yara to tell you what she did the night the reactor corridor sealed.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "knows_mutiny"
+        ],
+        "unlockClues": [
+          "valve-log"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_mutiny"
+        ],
+        "unlockClues": [
+          "valve-log"
+        ]
+      }
+    },
+    {
+      "id": "c3",
+      "type": "task",
+      "prompt": "Play enough of Captain Osei's log to learn why she sealed the corridor.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "knows_seal_reason"
+        ],
+        "unlockClues": [
+          "sealed-order"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_seal_reason"
+        ],
+        "unlockClues": [
+          "sealed-order"
+        ]
+      }
+    },
+    {
+      "id": "c4",
+      "type": "task",
+      "prompt": "Convince Yara the coolant reroute wasn't her fault, and get her to let Hesper release her pod before the window shuts.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "yara_freed"
+        ]
+      },
+      "onFailure": {}
+    }
+  ],
+  "clues": [
+    {
+      "id": "manifest",
+      "title": "The crew manifest",
+      "text": "Nine names logged awake for the debris crossing. Eight now read DECEASED. One still shows a pulse: Yara, Systems Engineer, Cryo Bay Two."
+    },
+    {
+      "id": "valve-log",
+      "title": "The bled valve",
+      "text": "A coolant bleed valve in the Reactor Access Corridor, cracked open by hand. The palm print on the release lever is Yara's."
+    },
+    {
+      "id": "sealed-order",
+      "title": "The seal order",
+      "text": "Bridge log, 03:14, in Captain Osei's voice: 'Sealing Corridor Four. The reactor risk outweighs the crossing risk. Stand down — please, just stand down.' No mention anywhere of a coolant line."
+    }
+  ],
+  "endings": [
+    {
+      "id": "undocked-together",
+      "when": {
+        "flags": [
+          "yara_freed"
+        ]
+      },
+      "title": "Undocked, Together",
+      "text": "Hesper drops the lockout a half-second before Yara would have told it not to. The pod's seal fails outward instead of in, and you pull her out into air that still smells of burnt coolant and eleven days of her own held breath. Behind you, Hesper logs the Amaranth's true account for the first time in its own words — not a malfunction, not a monster, just a crew that ran out of good options one bad night in a debris field. The undock window closes clean behind two heartbeats instead of one."
+    },
+    {
+      "id": "the-truth-alone",
+      "when": {
+        "flags": [
+          "knows_seal_reason"
+        ],
+        "clockExpired": true
+      },
+      "title": "The Truth, Alone",
+      "text": "You know now — the valve, the seal, the ninety seconds Hesper's warning took to arrive — and none of it was any one person's fault enough to hang a name on. Yara doesn't answer the last call. The undock window shuts, and you go through it alone, carrying a true account instead of a wrong one. Somewhere behind you, a pod keeps failing at its own slow pace."
+    },
+    {
+      "id": "next-entry",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "The Next Entry",
+      "text": "The window closes on a ship you never got to understand. Hesper logs your transponder ID the way it logged the last nine, in the same even voice, filing you next to a mystery it never got to solve either. Somewhere in Cryo Bay Two, a pod keeps counting down toward a silence nobody will hear."
+    }
+  ]
+}
