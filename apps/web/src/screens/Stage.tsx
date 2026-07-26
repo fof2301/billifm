@@ -83,29 +83,39 @@ export function Stage({
   const outcomeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   useFxEvents(session, (e) => {
-    sound.handle(e)
-    haptics.handle(e)
-    if (e.type === 'phase-changed') {
-      setPhaseToast({ day: e.day, phase: e.phase })
-      if (phaseToastTimeout.current) clearTimeout(phaseToastTimeout.current)
-      phaseToastTimeout.current = setTimeout(() => setPhaseToast(null), 2500)
-    }
-    if (e.type === 'challenge-started') {
-      // Chained challenges: the engine can resolve the previous challenge and activate
-      // this one in the same dispatch, so a still-pending outcome/timeout from the one
-      // that just resolved must not bleed onto this new challenge's banner.
-      setChallengeOutcome(null)
-      if (outcomeTimeout.current) {
-        clearTimeout(outcomeTimeout.current)
-        outcomeTimeout.current = null
+    // This callback runs synchronously inside useSession's runEffects loop, ahead of
+    // REQUEST_DIALOGUE/REQUEST_JUDGE handling for the same dispatch — an uncaught throw
+    // from any fx handler here (sound/haptics/toast/banner) would abort that loop and
+    // strand later effects in the same batch (message delivery, the clock's pause
+    // release). Isolate this fan-out from core dispatch so a bug in one presentation
+    // layer can't stick the whole session.
+    try {
+      sound.handle(e)
+      haptics.handle(e)
+      if (e.type === 'phase-changed') {
+        setPhaseToast({ day: e.day, phase: e.phase })
+        if (phaseToastTimeout.current) clearTimeout(phaseToastTimeout.current)
+        phaseToastTimeout.current = setTimeout(() => setPhaseToast(null), 2500)
       }
-    }
-    if (e.type === 'challenge-succeeded' || e.type === 'challenge-timed-out') {
-      const ch = bundle.challenges.find((c) => c.id === e.challengeId)
-      setLastChallengePrompt(ch?.prompt ?? null)
-      setChallengeOutcome(e.type === 'challenge-succeeded' ? 'success' : 'timeout')
-      if (outcomeTimeout.current) clearTimeout(outcomeTimeout.current)
-      outcomeTimeout.current = setTimeout(() => setChallengeOutcome(null), 1200)
+      if (e.type === 'challenge-started') {
+        // Chained challenges: the engine can resolve the previous challenge and activate
+        // this one in the same dispatch, so a still-pending outcome/timeout from the one
+        // that just resolved must not bleed onto this new challenge's banner.
+        setChallengeOutcome(null)
+        if (outcomeTimeout.current) {
+          clearTimeout(outcomeTimeout.current)
+          outcomeTimeout.current = null
+        }
+      }
+      if (e.type === 'challenge-succeeded' || e.type === 'challenge-timed-out') {
+        const ch = bundle.challenges.find((c) => c.id === e.challengeId)
+        setLastChallengePrompt(ch?.prompt ?? null)
+        setChallengeOutcome(e.type === 'challenge-succeeded' ? 'success' : 'timeout')
+        if (outcomeTimeout.current) clearTimeout(outcomeTimeout.current)
+        outcomeTimeout.current = setTimeout(() => setChallengeOutcome(null), 1200)
+      }
+    } catch (err) {
+      console.error(err)
     }
   })
 
