@@ -1,0 +1,48 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: BILLI FM
+    - generic [ref=e6]: Sutradhar · interactive story demo
+    - link "open full app ↗" [ref=e7] [cursor=pointer]:
+      - /url: /
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11]:
+        - img "Riya Calling" [ref=e12]
+        - paragraph [ref=e13]:
+          - text: Drop the produced episode as
+          - code [ref=e14]: apps/web/public/demo-media/riya-calling.mp4
+          - text: (or .mp3) to play it here.
+      - generic [ref=e15]:
+        - heading "Riya Calling" [level=1] [ref=e16]
+        - paragraph [ref=e17]: Jo teen din pehle chali gayi… uska phone aa raha hai.
+        - paragraph [ref=e18]: "5 episodes · 30 paths · 5 endings. Watch the produced episode here — then live it on the phone: talk to every character (each has its own persona), call the dead and the ancestors for their side of the story, and steer the plot at the checkpoints by choice, text or voice."
+    - iframe [active] [ref=e23]:
+      - generic [ref=f1e66]:
+        - generic:
+          - generic:
+            - generic:
+              - button "Pause" [ref=f1e68]: ‹
+              - generic: 🕐 Day 1 · 00:00
+              - generic:
+                - generic: ⏳ by 07:12
+                - button "Family tree" [ref=f1e69]: 🧭
+                - button "Journal" [ref=f1e70]: 📖 0
+                - button "Settings" [ref=f1e71]: ⚙︎
+            - paragraph: Answer it. Work out when she is.
+          - paragraph: Get Riya to do something in her present that you can verify in yours.
+          - generic [ref=f1e72]:
+            - button "Riya" [ref=f1e73]:
+              - img "Riya" [ref=f1e74]
+            - button "Zoya" [disabled] [ref=f1e75]:
+              - img "Zoya" [ref=f1e76]
+            - button "Dev" [disabled] [ref=f1e77]:
+              - img "Dev" [ref=f1e78]
+          - paragraph [ref=f1e81]: Pick someone to talk to
+        - button [ref=f1e82]:
+          - paragraph [ref=f1e83]: "Three missed calls, all from Diwali night: 11:41, 11:47, 11:53. Your phone was on silent in the edit bay. It is now 2:07 AM, three nights after the cremation, and the screen says Riya 💜."
+          - paragraph [ref=f1e84]: tap to continue
+        - generic [ref=f1e86]:
+          - paragraph [ref=f1e87]: A whole day passes every few minutes. Watch it.
+          - generic [ref=f1e88]:
+            - button "Skip" [ref=f1e89]
+            - button "Next" [ref=f1e90]

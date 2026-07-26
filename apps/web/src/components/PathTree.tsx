@@ -57,7 +57,7 @@ export function PathTree({
   const rows = [...new Set([...depths.values()])].sort((a, b) => a - b)
 
   return (
-    <div data-path-tree className="absolute inset-0 z-40 overflow-y-auto bg-black/85" onClick={onClose}>
+    <div data-path-tree className="absolute inset-0 z-40 overflow-y-auto bg-slate-950" onClick={onClose}>
       <div
         className="min-h-full animate-[slideup_0.25s_ease-out] p-5 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))]"
         onClick={(e) => e.stopPropagation()}
@@ -87,7 +87,7 @@ export function PathTree({
                             ? 'border-indigo-400 bg-indigo-950/60'
                             : visited
                               ? 'border-white/15 bg-white/5'
-                              : 'border-white/5 bg-black/40'
+                              : 'border-white/10 bg-slate-900'
                         }`}
                       >
                         <p

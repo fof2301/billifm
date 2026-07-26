@@ -49,7 +49,7 @@ export function FamilyTree({
   const generations = [...new Set(kin.map((c) => c.kin!.generation))].sort((a, b) => a - b)
 
   return (
-    <div data-family-tree className="absolute inset-0 z-40 overflow-y-auto bg-black/80" onClick={onClose}>
+    <div data-family-tree className="absolute inset-0 z-40 overflow-y-auto bg-slate-950" onClick={onClose}>
       <div
         className="min-h-full animate-[slideup_0.25s_ease-out] p-5 pb-[max(2.5rem,env(safe-area-inset-bottom))] pt-[max(1.5rem,env(safe-area-inset-top))]"
         onClick={(e) => e.stopPropagation()}

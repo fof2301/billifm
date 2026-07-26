@@ -18,7 +18,7 @@ const MEDIA_CANDIDATES = [
   { src: '/demo-media/riya-calling.mp3', kind: 'audio' as const },
 ]
 
-const COVER = '/stories/riya-calling/assets/cover.svg'
+const COVER = '/stories/riya-calling/assets/cover.jpg'
 
 type Media = { src: string; kind: 'video' | 'audio' } | 'none' | 'loading'
 

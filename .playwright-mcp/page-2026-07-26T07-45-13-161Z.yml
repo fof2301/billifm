@@ -1,0 +1,73 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]: BILLI FM
+    - generic [ref=e6]: Sutradhar · interactive story demo
+    - link "open full app ↗" [ref=e7] [cursor=pointer]:
+      - /url: /
+  - main [ref=e8]:
+    - generic [ref=e9]:
+      - generic [ref=e11]:
+        - img "Riya Calling" [ref=e12]
+        - paragraph [ref=e13]:
+          - text: Drop the produced episode as
+          - code [ref=e14]: apps/web/public/demo-media/riya-calling.mp4
+          - text: (or .mp3) to play it here.
+      - generic [ref=e15]:
+        - heading "Riya Calling" [level=1] [ref=e16]
+        - paragraph [ref=e17]: Jo teen din pehle chali gayi… uska phone aa raha hai.
+        - paragraph [ref=e18]: "5 episodes · 30 paths · 5 endings. Watch the produced episode here — then live it on the phone: talk to every character (each has its own persona), call the dead and the ancestors for their side of the story, and steer the plot at the checkpoints by choice, text or voice."
+    - iframe [ref=e23]:
+      - generic [ref=f1e3]:
+        - banner [ref=f1e4]:
+          - heading "Stories" [level=1] [ref=f1e5]
+          - paragraph [ref=f1e6]: Short interactive mysteries. Talk your way through them — by voice, by typing, or by choosing.
+        - generic [ref=f1e7]:
+          - button "10 min hinglish suspense Riya Calling Your sister died three days ago. At 2:07 AM, your phone rings. It's her." [ref=f1e8]:
+            - generic [ref=f1e9]: 10 min
+            - generic [ref=f1e11]:
+              - paragraph [ref=f1e12]: hinglish suspense
+              - heading "Riya Calling" [level=2] [ref=f1e13]
+              - paragraph [ref=f1e14]: Your sister died three days ago. At 2:07 AM, your phone rings. It's her.
+          - button "7 min mystery The Locket Everyone you came from is still here, if you know how to listen." [ref=f1e15]:
+            - generic [ref=f1e16]: 7 min
+            - generic [ref=f1e18]:
+              - paragraph [ref=f1e19]: mystery
+              - heading "The Locket" [level=2] [ref=f1e20]
+              - paragraph [ref=f1e21]: Everyone you came from is still here, if you know how to listen.
+          - button "8 min thriller The Cellar You have 3 days. Only you can do this." [ref=f1e22]:
+            - generic [ref=f1e23]: 8 min
+            - generic [ref=f1e25]:
+              - paragraph [ref=f1e26]: thriller
+              - heading "The Cellar" [level=2] [ref=f1e27]
+              - paragraph [ref=f1e28]: You have 3 days. Only you can do this.
+          - button "9 min mystery The Lantern Line Every third of November, this family loses someone. You have until dawn." [ref=f1e29]:
+            - generic [ref=f1e30]: 9 min
+            - generic [ref=f1e32]:
+              - paragraph [ref=f1e33]: mystery
+              - heading "The Lantern Line" [level=2] [ref=f1e34]
+              - paragraph [ref=f1e35]: Every third of November, this family loses someone. You have until dawn.
+          - button "8 min supernatural horror The Night Desk Room 400 is vacant. It still calls down at fourteen minutes past two." [ref=f1e36]:
+            - generic [ref=f1e37]: 8 min
+            - generic [ref=f1e39]:
+              - paragraph [ref=f1e40]: supernatural horror
+              - heading "The Night Desk" [level=2] [ref=f1e41]
+              - paragraph [ref=f1e42]: Room 400 is vacant. It still calls down at fourteen minutes past two.
+          - button "8 min noir mystery Rain on the Vestry A man is dead in a room bolted from the inside. You have until the bridge clears." [ref=f1e43]:
+            - generic [ref=f1e44]: 8 min
+            - generic [ref=f1e46]:
+              - paragraph [ref=f1e47]: noir mystery
+              - heading "Rain on the Vestry" [level=2] [ref=f1e48]
+              - paragraph [ref=f1e49]: A man is dead in a room bolted from the inside. You have until the bridge clears.
+          - button "8 min sci-fi The Amaranth Everyone who was awake on this ship is dead. You have one docking window to learn why — before you're the one they log next." [ref=f1e50]:
+            - generic [ref=f1e51]: 8 min
+            - generic [ref=f1e53]:
+              - paragraph [ref=f1e54]: sci-fi
+              - heading "The Amaranth" [level=2] [ref=f1e55]
+              - paragraph [ref=f1e56]: Everyone who was awake on this ship is dead. You have one docking window to learn why — before you're the one they log next.
+          - button "8 min heist The Inside Voice You never leave the chair. Everyone inside is trusting a voice they can't see." [ref=f1e57]:
+            - generic [ref=f1e58]: 8 min
+            - generic [ref=f1e60]:
+              - paragraph [ref=f1e61]: heist
+              - heading "The Inside Voice" [level=2] [ref=f1e62]
+              - paragraph [ref=f1e63]: You never leave the chair. Everyone inside is trusting a voice they can't see.
+        - button "Reset all progress" [ref=f1e65]
