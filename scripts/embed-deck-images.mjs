@@ -69,6 +69,23 @@ html = html.replace(
     .slide-art::after{content:"";position:absolute;inset:0;
       background:linear-gradient(100deg,rgba(5,6,10,.95) 30%,rgba(5,6,10,.74) 52%,rgba(5,6,10,.10) 84%)}
     .slide-hook .content,.slide-demo .content{position:relative;z-index:1}
+    /* Print / PDF: every slide becomes its own landscape page. */
+    @media print{
+      @page{size:1280px 720px;margin:0}
+      html,body{background:#05060a!important;width:1280px!important;height:auto!important;overflow:visible!important}
+      .viewport,.stage,.slides{position:static!important;inset:auto!important;width:1280px!important;
+        height:auto!important;overflow:visible!important;transform:none!important}
+      .progress-track,.chrome-bottom,.vignette,.hook-hint{display:none!important}
+      .slide{position:relative!important;inset:auto!important;opacity:1!important;transform:none!important;
+        pointer-events:auto!important;width:1280px!important;height:720px!important;
+        page-break-after:always;break-after:page;display:flex!important;overflow:hidden!important}
+      .slide:last-child{page-break-after:auto;break-after:auto}
+      .slide .content>*{animation:none!important;opacity:1!important;transform:none!important}
+      /* Chrome's print renderer paints large blurred text-shadows as solid
+         boxes; the gradient scrim alone carries legibility on paper. */
+      .slide-hook .content *,.slide-demo .content *{text-shadow:none!important}
+      .slide-art::after{background:linear-gradient(100deg,rgba(5,6,10,.96) 34%,rgba(5,6,10,.80) 55%,rgba(5,6,10,.14) 86%)!important}
+    }
     /* the art runs bright behind the copy, so the copy carries its own shadow */
     .slide-hook .content *,.slide-demo .content *{text-shadow:0 2px 18px rgba(5,6,10,.95),0 1px 3px rgba(5,6,10,.9)}
   </style>`,
