@@ -213,19 +213,30 @@ function createAudioBackend(): AudioBackend {
     ambient = { source, drone, gain }
   }
 
-  function startFileAmbient(fileUrl: string): void {
+  function startFileAmbient(sceneId: string, fileUrl: string): void {
     const el = new Audio(fileUrl)
     el.loop = true
     el.volume = 0.25
     ambientBaseGain = el.volume
-    void el.play().catch(() => {})
-    ambient = { el }
+    const entry: AmbientFile = { el }
+    ambient = entry
+    void el.play().catch(() => {
+      // iOS (and other un-gestured browser contexts) reject HTMLAudioElement.play() even
+      // though the Web Audio context is already unlocked — the unlocked synth ambient
+      // would happily play, but a silent rejection here left the scene with no ambient
+      // bed at all. Fall back to the synth ambient for this scene instead. Guard against
+      // `ambient` having already moved on (stopAmbient/startAmbient ran again before this
+      // rejection arrived) so a stale fallback can't clobber whatever's playing now.
+      if (ambient !== entry) return
+      el.pause()
+      startSynthAmbient(sceneId)
+    })
   }
 
   function startAmbient(sceneId: string, fileUrl?: string): void {
     if (!ctx || !master) return
     stopAmbient()
-    if (fileUrl) startFileAmbient(fileUrl)
+    if (fileUrl) startFileAmbient(sceneId, fileUrl)
     else startSynthAmbient(sceneId)
   }
 
