@@ -137,3 +137,24 @@ describe('ConversationSheet typewriter integration', () => {
     expect(screen.getByText('Second line here')).toBeInTheDocument()
   })
 })
+
+// Spec §5 ("conversation sheet slides up on first select"): the sheet's `if (!charId)
+// return null` guard means its root div only ever mounts once activeCharacterId is first
+// set — activeCharacterId never reverts to null afterwards (see packages/engine's
+// reducer), so the root DOM node is created exactly once, and a mount-triggered CSS
+// animation on it plays exactly on that first select, never again on later re-renders.
+describe('ConversationSheet', () => {
+  it('carries the slideup animation on its root element whenever a character is active', () => {
+    const { container } = render(
+      <ConversationSheet
+        bundle={bundle}
+        state={baseState}
+        busy={false}
+        stallLine={null}
+        failedMessage={null}
+        onRetry={() => {}}
+      />,
+    )
+    expect(container.firstChild).toHaveClass('animate-[slideup_0.25s_ease-out]')
+  })
+})

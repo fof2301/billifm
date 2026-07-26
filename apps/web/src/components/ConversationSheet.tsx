@@ -32,7 +32,7 @@ export function ConversationSheet({
 
   if (!charId) return null
   return (
-    <div className="pointer-events-auto mb-2 flex max-h-[42dvh] min-h-0 flex-col rounded-2xl border border-white/10 bg-slate-950/80">
+    <div className="pointer-events-auto mb-2 flex max-h-[42dvh] min-h-0 animate-[slideup_0.25s_ease-out] flex-col rounded-2xl border border-white/10 bg-slate-950/80">
       <p className="px-4 pt-3 text-[11px] uppercase tracking-wide text-slate-400">
         {character?.name} — {character?.role}
       </p>
