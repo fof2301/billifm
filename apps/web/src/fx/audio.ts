@@ -21,6 +21,11 @@ type AmbientFile = { el: HTMLAudioElement }
 
 const DUCK_MS = 1500
 const DUCK_LEVEL = 0.2
+// Every oscillator note releases to near-zero over this final window instead of
+// stopping at whatever amplitude it was holding — an abrupt stop at nonzero gain is
+// an audible click/pop, worst on the 30ms square-wave tick (fires up to ~29 times per
+// countdown).
+const RELEASE_S = 0.008
 
 function createAudioBackend(): AudioBackend {
   let ctx: AudioContext | null = null
@@ -28,6 +33,7 @@ function createAudioBackend(): AudioBackend {
   let ambient: AmbientSynth | AmbientFile | null = null
   let ambientBaseGain = 0
   let duckTimer: ReturnType<typeof setTimeout> | null = null
+  let fileRampInterval: ReturnType<typeof setInterval> | null = null
 
   function unlock(): void {
     if (ctx) {
@@ -71,9 +77,24 @@ function createAudioBackend(): AudioBackend {
     }
     gain.gain.setValueAtTime(opts.gainStart, now)
     if (opts.decay === 'exp') {
+      // The whole note IS the decay (thud/bell) — already reaches near-zero exactly
+      // at `end`, so no separate release tail is needed.
       gain.gain.exponentialRampToValueAtTime(0.0001, end)
     } else {
-      gain.gain.linearRampToValueAtTime(opts.gainEnd ?? 0, end)
+      const target = opts.gainEnd ?? 0
+      if (target > 0) {
+        // A held/swept-to-nonzero note (resolve, tick): sustain at `target` until
+        // just before the stop time, then release to near-zero over a short final
+        // window so the oscillator never stops while still sounding.
+        const release = Math.min(RELEASE_S, opts.duration / 3)
+        const releaseStart = end - release
+        gain.gain.linearRampToValueAtTime(target, releaseStart)
+        gain.gain.linearRampToValueAtTime(0.0001, end)
+      } else {
+        // Envelope already ramps to true zero across the full duration (sting) —
+        // nothing left to release.
+        gain.gain.linearRampToValueAtTime(0, end)
+      }
     }
     osc.connect(gain)
     gain.connect(master)
@@ -120,6 +141,10 @@ function createAudioBackend(): AudioBackend {
     if (duckTimer) {
       clearTimeout(duckTimer)
       duckTimer = null
+    }
+    if (fileRampInterval) {
+      clearInterval(fileRampInterval)
+      fileRampInterval = null
     }
     if (!ambient) return
     if ('el' in ambient) {
@@ -204,15 +229,37 @@ function createAudioBackend(): AudioBackend {
     else startSynthAmbient(sceneId)
   }
 
+  // HTMLAudioElement.volume isn't an AudioParam — it has no built-in ramp, so this
+  // steps it in small increments over `ms` to approximate the same 50ms fade the
+  // synth path gets via linearRampToValueAtTime, instead of an instant jump.
+  function fadeVolume(el: HTMLAudioElement, to: number, ms: number): void {
+    if (fileRampInterval) {
+      clearInterval(fileRampInterval)
+      fileRampInterval = null
+    }
+    const from = el.volume
+    const steps = 5
+    const stepMs = ms / steps
+    let step = 0
+    fileRampInterval = setInterval(() => {
+      step++
+      el.volume = from + (to - from) * (step / steps)
+      if (step >= steps && fileRampInterval) {
+        clearInterval(fileRampInterval)
+        fileRampInterval = null
+      }
+    }, stepMs)
+  }
+
   function duckAmbient(): void {
     if (!ctx || !ambient) return
     if (duckTimer) clearTimeout(duckTimer)
 
     if ('el' in ambient) {
       const el = ambient.el
-      el.volume = ambientBaseGain * DUCK_LEVEL
+      fadeVolume(el, ambientBaseGain * DUCK_LEVEL, 50)
       duckTimer = setTimeout(() => {
-        el.volume = ambientBaseGain
+        fadeVolume(el, ambientBaseGain, 50)
         duckTimer = null
       }, DUCK_MS)
       return
