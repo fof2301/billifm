@@ -235,9 +235,13 @@ def validate_directed_story(data: dict) -> list[str]:
             )
 
     n_decisions = sum(1 for s in story.segments if s.decision_point)
-    if n_decisions > 2:
+    # Riya Calling has 4 checkpoints per playthrough; the manual v0
+    # additionally represents alternate-track decisions so a rendered
+    # directed_story may carry up to 5-6. Anything beyond 8 is a red flag.
+    if n_decisions > 8:
         errors.append(
-            f"{n_decisions} decision points; rules.md caps at 2 for Ep 8"
+            f"{n_decisions} decision points; more than 8 is a red flag "
+            f"(Riya Calling has 4 per playthrough + alternates)"
         )
 
     return errors

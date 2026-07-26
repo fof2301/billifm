@@ -90,50 +90,70 @@ def cohort_tone(name: str) -> str:
 
 # --- Segment → prompt --------------------------------------------------
 
-# Which segment IDs get an image. Some (`merge`, unused reaction slots)
-# don't earn one; the demo shows 7 key beats per cohort, no more.
+# Which segment IDs get an image. Aligned with content/directed_story_v0.json
+# (Riya Calling default path). Skip checkpoints — the beats are what render.
 DEMO_SEGMENT_ALLOWLIST = {
-    "s1_cold_open", "s2_whisper", "s3_blackout_torch", "s4_knocks",
-    "s5_call", "s7_silence_test", "s8_escape", "s8_caught",
+    "ep1_missed_call",
+    "ep2_teen_din",
+    "ep3_parchhaai",
+    "ep4a_vishwasghat",
+    "ep4b_kaanch",
+    "ep5_spine",
+    "e4_wahi_raat",
 }
 
 
 # Fallback beat prompts per known segment id, used when the LLM-authored
 # `beat` field is too abstract. Written to describe FRAMES not story.
+# Per content/prompts/image_style.md: no faces of real people, no text
+# overlays, characters glimpsed obliquely.
 BEAT_HINTS: dict[str, str] = {
-    "s1_cold_open": (
-        "A hidden mobile phone lit under fabric in a dim concrete "
-        "storeroom. Just the phone screen glowing. A woman's hand in "
-        "the foreground, her face out of frame."
+    "ep1_missed_call": (
+        "A man's phone on a wooden desk in a dim bedroom, glowing with an "
+        "incoming call notification labelled with just an emoji heart. "
+        "Far off through the window, a few faint Diwali sparks in the sky. "
+        "The man's silhouette blurred in the foreground — face out of frame. "
+        "2:07 AM digital clock softly visible on a nightstand."
     ),
-    "s2_whisper": (
-        "Extreme close-up of lips near a phone microphone. Rest of the "
-        "face and room lost to shadow. Fear held very still."
+    "ep2_teen_din": (
+        "A young woman on a Bhopal apartment terrace at dusk, back to camera, "
+        "phone pressed to her ear. City lights below. A single word spray-"
+        "painted on the low wall behind her — kept illegible in the frame, "
+        "just a smear of white paint. Warm amber horizon. Quiet, waiting mood."
     ),
-    "s3_blackout_torch": (
-        "The instant a small torch beam cuts through total darkness in a "
-        "cluttered storeroom — a shelf, a drawer, dust in the beam."
+    "ep3_parchhaai": (
+        "The instant a small phone-torch beam cuts through total darkness "
+        "in a middle-class Indian home storeroom — cluttered shelves, a "
+        "sewing machine, dust in the beam. A woman's hand in the beam. "
+        "Cracks of hallway light around a closed wooden door in the "
+        "background. Nobody else visible. High tension."
     ),
-    "s4_knocks": (
-        "A wooden door seen from inside a dark storeroom, cracks of "
-        "light around the edges, no figure visible."
+    "ep4a_vishwasghat": (
+        "Two men across a small table in a dimly lit interior — one seated "
+        "and lit, the other only a hand and a shoulder in the foreground "
+        "shadow. The lit man's face turned toward the camera at three-"
+        "quarter angle, unable to hold the gaze. A confrontation the moment "
+        "before someone flips."
     ),
-    "s5_call": (
-        "A ringing phone screen showing 'UNKNOWN NUMBER' held in a dark "
-        "room, the caller-ID light illuminating a single hand."
+    "ep4b_kaanch": (
+        "Inside a shuttered car showroom at night. Rows of vehicles in "
+        "silhouette under emergency lighting. A young woman in the "
+        "foreground, framed small, phone-torch beam picking out a paper "
+        "ledger. Reflection of a tall male figure glimpsed in a distant "
+        "windshield — deliberately partial, face out of frame."
     ),
-    "s7_silence_test": (
-        "Held-breath moment: a phone lying on the floor of a dark room "
-        "recording, silence rendered as absence of light and colour."
+    "ep5_spine": (
+        "A single mobile phone lying face-up on a bed of Diwali marigolds "
+        "and unlit diyas. Notifications piled on the lock screen. A "
+        "digital clock reading 11:40 PM. No people. Everything held very "
+        "still — the moment before an ending arrives."
     ),
-    "s8_escape": (
-        "Bhopal at night through the loose plywood of a boarded window, "
-        "rain outside, escape underway."
-    ),
-    "s8_caught": (
-        "A door wide open, a tall unhurried male silhouette in the "
-        "doorway backlit — face and body deliberately obscured. Menace "
-        "implied entirely by posture."
+    "e4_wahi_raat": (
+        "A rain-slick Bhopal underpass at midnight. A single motorcycle "
+        "headlight cutting through the wet dark. A phone dropped on the "
+        "road, screen cracked, still glowing. The scene composed to feel "
+        "like an accident report photograph — no bodies, no violence, only "
+        "the aftermath's cold geometry."
     ),
 }
 

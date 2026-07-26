@@ -1,238 +1,340 @@
 {
-  "story_id": "ep8_aakhri_awaaz",
-  "linear_script_ref": "files/story.md",
-  "title": "Sutradhar (Ep 8)",
+  "story_id": "riya_calling_default_path",
+  "linear_script_ref": "story/linear_script.txt",
+  "title": "Riya Calling — default path (v0 baseline)",
   "mode": "interactive",
-  "duration_s": 360,
+  "duration_s": 3000,
   "genome_ref": null,
   "iteration": 0,
   "source": "manual_v0",
   "reasoning": {
-    "why_this_shape": "Hand-authored baseline for the Sequencer to improve against. Two decision points (villain call, silence test) and three endings (escape / caught / compromised) are the maximum the Design pack permits: rules.md caps one on-tap decision per episode, Design.md caps 2-4 sensory moments. The linear script (files/story.md) fixes the beats; only the reactivity is authored here.",
+    "why_this_shape": "Hand-authored baseline for the Sequencer, targeting the story_graph.json default_path: CP1:SABOOT -> CP2:CHAARA -> CP3:TRACK_B -> CP4b:SACH_KI_DAAK -> E4_WAHI_RAAT. This is the 'fate + justice' canonical playthrough — she dies, he wins, the invariants hold. Alternative track_a segments (ep4a + cp4a) are included so the Director-v2 can experiment with re-routing per cohort. Every checkpoint uses the new visible checkpoint_menu model per story/README.md; my sim still treats them via the interaction_agent kind (persona picks an outcome; the visibility difference doesn't change simulation semantics).",
     "manual_baseline": true
   },
   "segments": [
     {
-      "seg_id": "s1_cold_open",
+      "seg_id": "ep1_missed_call",
       "t_start": 0,
-      "t_end": 94,
-      "beat": "Meera wakes in the storeroom, whispers into the hidden phone. Establishes the listener as her only line out.",
-      "event_track": [],
-      "cliffhanger": null,
-      "reasoning": "No effects — earn trust before the possessed-phone moves start."
-    },
-    {
-      "seg_id": "s2_whisper",
-      "t_start": 94,
-      "t_end": 121,
-      "beat": "Footsteps overhead. Meera whispers. The listener must physically lean in.",
+      "t_end": 630,
+      "beat": "Night 1, D-3 for Riya. Diwali sparse in the distance. Arjun's phone rings from Riya - but she died three nights ago. Ep1 'Missed Call' — establishes the phone-link, the 3-day compression, and CP1.",
       "event_track": [
-        {
-          "id": "e1", "t": 94, "type": "volume_duck",
-          "to": 0.15, "ramp_ms": 800, "hold_s": 16, "restore_ms": 1200,
-          "cue": "'Woh aa raha hai... awaaz neeche.'",
-          "why": "The listener must physically lean in. Gain on our own player only."
-        },
-        {
-          "id": "e2", "t": 94, "type": "screen_dim",
-          "opacity": 0.85, "hold_s": 25, "fade_ms": 200,
-          "cue": "Same beat as e1.",
-          "why": "The room and the screen recede together."
-        },
-        {
-          "id": "e3", "t": 96, "type": "haptic",
-          "pattern": "heartbeat_rising",
-          "cue": "Under the scene.",
-          "why": "Reads as her pulse, not as a device buzz."
-        }
+        {"id": "e1", "t": 20, "type": "message_overlay",
+         "cue": "Lockscreen popup — 'Riya - Missed Call (3)' at 11:41 / 11:47 / 11:53 PM.",
+         "why": "The listener's device is directly implicated — the missed calls appeared on YOUR phone."},
+        {"id": "e2", "t": 127, "type": "haptic", "pattern": "heartbeat_rising",
+         "cue": "Caller-ID lights up 'Riya' at 2:07 AM. The listener's heart is Arjun's heart.",
+         "why": "The haptic starts the moment doubt sets in — not when the call is answered."},
+        {"id": "e3", "t": 200, "type": "fake_call",
+         "from": "Riya", "agent": "riya", "pause_audio": true, "ring_timeout_s": 25,
+         "decision_id": "arjun_answers",
+         "cue": "The 2:07 AM signature call from Riya - three days from her death.",
+         "why": "First voice-contact with the impossible — no menu, just the human choice to pick up."},
+        {"id": "e4", "t": 500, "type": "volume_duck", "to": 0.15, "ramp_ms": 800,
+         "hold_s": 12, "restore_ms": 1200,
+         "cue": "The news alert during the call at ~5:00 — his own future reality intruding.",
+         "why": "Duck lets the news headline cut through Riya's voice — the world proving her right."}
       ],
       "cliffhanger": null,
-      "reasoning": "Sensory moment 1: duck + dim + haptic converge on one beat. Scarcity is the effect."
+      "reasoning": "Establishes premise + phone-link. Fake_call is not a decision — it's a moment. The one on-tap decision is at cp1."
     },
     {
-      "seg_id": "s3_blackout_torch",
-      "t_start": 121,
-      "t_end": 160,
-      "beat": "Power cut. Total dark. Meera finds a torch.",
+      "seg_id": "cp1_yakeen",
+      "t_start": 630,
+      "t_end": 660,
+      "beat": "CP1 — 'Woh teen din baad marne wali hai. Usse kaise yakeen dilaoge?' (How do you convince her?)",
       "event_track": [
-        {
-          "id": "e4", "t": 121, "type": "screen_blackout",
-          "duration_s": 6,
-          "cue": "CLUNK - the main switch. 'Light gayi. Kuch nahi dikh raha.'",
-          "why": "True dark. Touches blocked; any press >=3s exits (safety)."
-        },
-        {
-          "id": "e5", "t": 127, "type": "flashlight",
-          "pattern": "flicker_then_on", "hold_s": 20,
-          "cue": "CLICK. Click-click. CLICK.",
-          "why": "Diegetic: the torch turns on because she found a torch."
-        }
-      ],
-      "cliffhanger": null,
-      "reasoning": "Sensory moment 2. The turnaround (dark to torch) is the payoff."
-    },
-    {
-      "seg_id": "s4_knocks",
-      "t_start": 160,
-      "t_end": 210,
-      "beat": "Three slow knocks on the storeroom door. The Voice speaks through it.",
-      "event_track": [
-        {
-          "id": "e6", "t": 160, "type": "haptic",
-          "pattern": "knock_x3",
-          "cue": "KNOCK ... KNOCK ... KNOCK.",
-          "why": "Sync to audio position, not wall clock."
-        }
-      ],
-      "cliffhanger": null,
-      "reasoning": "Sensory moment 3. Small effect, huge tension gain."
-    },
-    {
-      "seg_id": "s5_call",
-      "t_start": 210,
-      "t_end": 290,
-      "beat": "UNKNOWN NUMBER incoming. The villain calls the listener because he took Meera's SIM.",
-      "event_track": [
-        {
-          "id": "e7", "t": 210, "type": "fake_call",
-          "from": "UNKNOWN NUMBER", "agent": "villain",
-          "pause_audio": true, "ring_timeout_s": 25,
-          "decision_id": "ep8_villain_call",
-          "cue": "'Woh ab tumhe call karega.'",
-          "why": "Decision point 1. Missed call is canon, not a failure."
-        }
+        {"id": "e5", "t": 632, "type": "message_overlay",
+         "cue": "Checkpoint menu overlay: three visible option cards.",
+         "why": "This story ships the new visible-choices model at checkpoints — see story/README.md."}
       ],
       "decision_point": {
-        "decision_id": "ep8_villain_call",
+        "decision_id": "cp1_yakeen",
         "kind": "interaction_agent",
-        "in_character": "the_voice",
-        "objective": "Elicit what the listener knows about Meera; where she is; what she has told them.",
+        "in_character": "self",
+        "objective": "Convince Riya (three nights from her death) that this call is real.",
         "outcomes": {
-          "A": {
-            "label": "revealed",
-            "intent": "Listener reveals location / betrays Meera",
-            "flag": "call_response=revealed",
-            "consequence_seg": "s6_reaction_betrayed"
+          "SACH": {
+            "flag": "trust=scared",
+            "consequence_seg": "ep2_teen_din"
           },
-          "B": {
-            "label": "resisted",
-            "intent": "Listener stays loyal, refuses / stonewalls",
-            "flag": "call_response=resisted",
-            "consequence_seg": "s6_reaction_grateful"
+          "KASAM": {
+            "flag": "trust=shaky",
+            "consequence_seg": "ep2_teen_din"
           },
-          "C": {
-            "label": "lied",
-            "intent": "Listener misleads the villain",
-            "flag": "call_response=lied",
-            "consequence_seg": "s6_reaction_grateful"
-          },
-          "FALLBACK": {
-            "label": "fallback",
-            "intent": "Off-topic / jailbreak / silence >2 turns / declined call",
-            "flag": "call_response=fallback",
-            "consequence_seg": "s6_reaction_grateful",
-            "behavior": "Gracious in-character redirect, proceed on default path."
+          "SABOOT": {
+            "flag": "trust=allied",
+            "consequence_seg": "ep2_teen_din"
           }
         },
-        "turn_limit": 6,
-        "max_seconds": 90,
-        "reasoning": "Options never on screen. Constraint is invisible. This is the invisible A/B/C mechanic — the pitch's core positioning."
+        "turn_limit": 1,
+        "max_seconds": 30,
+        "reasoning": "Default path picks SABOOT (prove it with the next-hour predictions). All three converge on the 21:40 transformer blast in ep2. The visible menu is the pitch's new twist on checkpoint-based branching — see story/README.md."
       },
       "cliffhanger": null,
-      "reasoning": "The one on-tap decision per rules.md §4. Everything else is voice or physical."
+      "reasoning": "First branching point. Belief in Riya's story is the audience's first buy-in."
     },
     {
-      "seg_id": "s6_reaction_grateful",
-      "t_start": 250,
-      "t_end": 300,
-      "beat": "Meera reacts: the listener held the line. Reveals what the villain slipped.",
-      "event_track": [],
-      "cliffhanger": null,
-      "reasoning": "M8 stitched reaction — pre-recorded variant used unless M8 lit."
-    },
-    {
-      "seg_id": "s6_reaction_betrayed",
-      "t_start": 250,
-      "t_end": 300,
-      "beat": "Meera reacts, quiet and resigned: the listener let something slip.",
-      "event_track": [],
-      "cliffhanger": null,
-      "reasoning": "Same slot as _grateful, but the emotional weight is different."
-    },
-    {
-      "seg_id": "s7_silence_test",
-      "t_start": 300,
-      "t_end": 310,
-      "beat": "'Dus second. Koi. Awaaz. Nahi.' The story listens to the listener's real room.",
+      "seg_id": "ep2_teen_din",
+      "t_start": 660,
+      "t_end": 1350,
+      "beat": "Night 2, D-2. Transformer blast at 21:40 proves the future is knowable. Ashoka Garden terrace. FL1 (paint AB2026 or BUDDHU). Zoya introduced. Memory-debt price surfaces. Watcher spotted.",
       "event_track": [
-        {
-          "id": "e8", "t": 300, "type": "mic_listen",
-          "duration_s": 10, "threshold_db": -35,
-          "branch": {"quiet": "ep8_safe.mp3", "noise": "ep8_caught.mp3"},
-          "cue": "'Dus second. Koi. Awaaz. Nahi.'",
-          "why": "Amplitude only. The listener's real body in a real room is the input."
-        }
+        {"id": "e6", "t": 900, "type": "message_overlay",
+         "cue": "Photo received - the wall Arjun told Riya to paint. Proof that time is bending.",
+         "why": "Photo received is the receipt for the prediction game."},
+        {"id": "e7", "t": 1050, "type": "fake_call",
+         "from": "Zoya", "agent": "zoya", "pause_audio": true,
+         "ring_timeout_s": 25, "decision_id": "zoya_intro",
+         "cue": "Zoya (cyber-cell SI) introduces herself — the grounded voice.",
+         "why": "First live advice-persona contact. Anchors the story in a real process."}
       ],
+      "cliffhanger": null,
+      "reasoning": "Belief-building beat + first world-broadening (Zoya). Density calibrated so the tension climbs without exhausting the cohort."
+    },
+    {
+      "seg_id": "cp2_plan",
+      "t_start": 1350,
+      "t_end": 1380,
+      "beat": "CP2 — 'Koi Riya pe nazar rakh raha hai. Aaj raat ka plan?' Bait or hide?",
+      "event_track": [],
       "decision_point": {
-        "decision_id": "ep8_silence_test",
-        "kind": "mic_amplitude",
-        "objective": "Reversed agency: the story tests the listener.",
+        "decision_id": "cp2_plan",
+        "kind": "interaction_agent",
+        "in_character": "self",
+        "objective": "Choose Riya's positioning for tonight.",
         "outcomes": {
-          "quiet": {"label": "passed", "flag": "silence=quiet", "consequence_seg": "s8_escape"},
-          "noise": {"label": "failed", "flag": "silence=noise", "consequence_seg": "s8_caught"}
+          "CHAARA": {
+            "flag": "watcher=seen_bike",
+            "consequence_seg": "ep3_parchhaai"
+          },
+          "OJHAL": {
+            "flag": "watcher=knows_moves",
+            "consequence_seg": "ep3_parchhaai"
+          }
         },
-        "duration_s": 10,
-        "threshold_db": -35,
-        "reasoning": "Only physical input in the flow; no on-screen prompt. Darkness is the interface."
+        "turn_limit": 1, "max_seconds": 30,
+        "reasoning": "Default path picks CHAARA (Riya as bait so we can see the watcher). Both converge at ep3's midnight intruder — Dev's leak means the Chaddha side always finds her."
       },
       "cliffhanger": null,
-      "reasoning": "Decision point 2 — not a menu; the body is the input."
+      "reasoning": "Sets the watcher flag — surfaces later in Track selection."
     },
     {
-      "seg_id": "s8_escape",
-      "t_start": 310,
-      "t_end": 360,
-      "beat": "The floorboard above creaks away. Meera plans the escape.",
-      "event_track": [],
-      "cliffhanger": {
-        "kind": "return_promise",
-        "line": "Kal. Episode nau. Wahi time. Line mat kaatna.",
-        "returns_next_episode": true
-      },
-      "reasoning": "Cliffhanger tuned to cohorts that reward loyalty."
+      "seg_id": "ep3_parchhaai",
+      "t_start": 1380,
+      "t_end": 2040,
+      "beat": "Night 2 midnight. The immersion centerpiece: power cut, torch, three knocks, ten-second silence test. FL2 (typed live text). Storeroom hide. Laptop taken. Dev realization at the end.",
+      "event_track": [
+        {"id": "e8", "t": 1440, "type": "volume_duck", "to": 0.15,
+         "ramp_ms": 800, "hold_s": 15, "restore_ms": 1200,
+         "cue": "Arjun (low) 'Battery kitni hai teri?' — Riya about to hide.",
+         "why": "Volume duck arrives with the whisper — listener leans in."},
+        {"id": "e9", "t": 1500, "type": "screen_blackout", "duration_s": 6,
+         "cue": "Power cut. True dark in Riya's room and on the listener's screen.",
+         "why": "The screen and her room lose light on the same beat."},
+        {"id": "e10", "t": 1510, "type": "flashlight",
+         "pattern": "flicker_then_on", "hold_s": 20,
+         "cue": "Her phone-torch clicks on — the listener's torch is her torch.",
+         "why": "Diegetic: the light source is inside the fiction, controlled by her."},
+        {"id": "e11", "t": 1650, "type": "haptic", "pattern": "knock_x3",
+         "cue": "Three slow knocks on the storeroom door.",
+         "why": "Sync to audio position ±50ms — a bug otherwise."},
+        {"id": "e12", "t": 1800, "type": "mic_listen",
+         "duration_s": 10, "threshold_db": -35,
+         "branch": {"quiet": "ep3_safe.mp3", "noise": "ep3_caught.mp3"},
+         "cue": "'Saans mat le' — the ten-second silence.",
+         "why": "Tension-only per story_graph note: both branches converge. The listener's real room is the input; the result is atmospheric, not routing."},
+        {"id": "e13", "t": 1920, "type": "message_overlay",
+         "cue": "FL2 — typed live: 'chup. saans mat le.'",
+         "why": "Cosmetic flag — same result, personalised text you sent her."}
+      ],
+      "cliffhanger": null,
+      "reasoning": "The centerpiece. Four minutes of the listener's device being inside the fiction — this is the sensory keystone of the whole series."
     },
     {
-      "seg_id": "s8_caught",
-      "t_start": 310,
-      "t_end": 360,
-      "beat": "The door bursts open. The Voice takes Meera's line. Ends on him addressing YOU.",
+      "seg_id": "cp3_dhaaga",
+      "t_start": 2040,
+      "t_end": 2070,
+      "beat": "CP3 (FORK) — 'Aakhri poora din bacha hai. Kaunsa dhaaga khichoge?' Confront the traitor (Track A) or complete the evidence trail (Track B)?",
       "event_track": [],
+      "decision_point": {
+        "decision_id": "cp3_dhaaga",
+        "kind": "interaction_agent",
+        "in_character": "self",
+        "objective": "Pick the investigation track for the last day.",
+        "outcomes": {
+          "DEV_KA_SAAMNA": {
+            "flag": "track=dev",
+            "consequence_seg": "ep4a_vishwasghat"
+          },
+          "KAANCH_KA_MAHAL": {
+            "flag": "track=showroom",
+            "consequence_seg": "ep4b_kaanch"
+          }
+        },
+        "turn_limit": 1, "max_seconds": 30,
+        "reasoning": "The main fork. Default path picks Track B (showroom / evidence). Both tracks reconverge at Diwali morning with matching invariants; the emotional flavour of the ending changes."
+      },
+      "cliffhanger": null,
+      "reasoning": "The one true fork in the story. Different cohorts should visibly pick different tracks — this is where the Director-v2 has the most room to differ per genome."
+    },
+    {
+      "seg_id": "ep4a_vishwasghat",
+      "t_start": 2070,
+      "t_end": 2500,
+      "beat": "Track A. 'Vishwasghat' — Dev confrontation, Kalia's drunk confession, Zoya finds the hearing date. Ends on the last-normal-conversation between Arjun and Riya.",
+      "event_track": [
+        {"id": "e14", "t": 2200, "type": "fake_call",
+         "from": "Dev", "agent": "villain", "pause_audio": true,
+         "ring_timeout_s": 25, "decision_id": "dev_confrontation",
+         "cue": "The Dev call — the interaction_scene fires.",
+         "why": "Constrained-outcome conversation (A/B/FALLBACK). Dev either flips or doesn't; either way the story continues."}
+      ],
+      "cliffhanger": null,
+      "reasoning": "Track A only. Emotional density peaks in the last-normal-conversation; cliffhanger of the ep is at cp4a."
+    },
+    {
+      "seg_id": "cp4a_diwali_raat_a",
+      "t_start": 2500,
+      "t_end": 2530,
+      "beat": "CP4a — 'Diwali raat. Dev tumhare saath hai. Kya karna hai?'",
+      "event_track": [],
+      "decision_point": {
+        "decision_id": "cp4a_diwali_raat_a",
+        "kind": "interaction_agent",
+        "in_character": "self",
+        "objective": "Track A ending selection.",
+        "outcomes": {
+          "SHIKANJA": {
+            "flag": "ending=e1", "consequence_seg": "ep5_spine"
+          },
+          "BHARI_MEHFIL": {
+            "flag": "ending=e2", "consequence_seg": "ep5_spine"
+          },
+          "BHAAG": {
+            "flag": "ending=e3", "consequence_seg": "ep5_spine"
+          }
+        },
+        "turn_limit": 1, "max_seconds": 30,
+        "reasoning": "Track A endings: bittersweet triumph, victory with shadow, or safe-hollow."
+      },
+      "cliffhanger": null,
+      "reasoning": "Track A branch — three endings selectable here."
+    },
+    {
+      "seg_id": "ep4b_kaanch",
+      "t_start": 2070,
+      "t_end": 2500,
+      "beat": "Track B (default). 'Kaanch Ka Mahal' — retrieve the SD card from the lab, break-in at Chaddha showroom, ledger + repair record found, Rohan's first appearance, CCTV catches Riya. Ends on the terrace-quiet scene.",
+      "event_track": [
+        {"id": "e15", "t": 2200, "type": "volume_duck", "to": 0.15,
+         "ramp_ms": 800, "hold_s": 20, "restore_ms": 1200,
+         "cue": "Break-in beat — Riya inside the showroom after hours.",
+         "why": "Second whisper moment of the series — earns the duck again."},
+        {"id": "e16", "t": 2260, "type": "haptic",
+         "pattern": "heartbeat_rising",
+         "cue": "Rohan's first appearance in the doorway.",
+         "why": "The 'you finally see him' moment — pulse, not device buzz."},
+        {"id": "e17", "t": 2380, "type": "message_overlay",
+         "cue": "Message to Dev — unanswered. Screen shows 'Delivered' but no reply.",
+         "why": "The betrayal is quiet — the app shows it as a blue tick that never turns to seen."}
+      ],
+      "cliffhanger": null,
+      "reasoning": "Track B (default). The evidence trail delivers the SD card + repair record — the documents that survive her."
+    },
+    {
+      "seg_id": "cp4b_aakhri",
+      "t_start": 2500,
+      "t_end": 2530,
+      "beat": "CP4b — 'SD card poora hai. Rohan ko pata hai. Aakhri chaal?' Mail everything (safe) or ride out the night together (heroic)?",
+      "event_track": [],
+      "decision_point": {
+        "decision_id": "cp4b_aakhri",
+        "kind": "interaction_agent",
+        "in_character": "self",
+        "objective": "Track B ending selection.",
+        "outcomes": {
+          "SACH_KI_DAAK": {
+            "flag": "ending=e4", "consequence_seg": "ep5_spine"
+          },
+          "GYARAH_ATTHAVAN": {
+            "flag": "ending=e5", "consequence_seg": "ep5_spine"
+          }
+        },
+        "turn_limit": 1, "max_seconds": 30,
+        "reasoning": "Default path picks SACH_KI_DAAK — Riya dies but Rohan falls. GYARAH_ATTHAVAN is the golden 'save Riya' path with the memory-loss cost."
+      },
+      "cliffhanger": null,
+      "reasoning": "Track B branch — the fate / rescue split."
+    },
+    {
+      "seg_id": "ep5_spine",
+      "t_start": 2530,
+      "t_end": 2830,
+      "beat": "Common spine — plays on all 30 paths up to 23:41. Memory-debt readout ('yeh ab tumhare paas hai'). FL3 (phone_mat_chhodna or i_love_you_riyu). Lure message at 23:41 from Ramdin's number.",
+      "event_track": [
+        {"id": "e18", "t": 2540, "type": "screen_dim",
+         "opacity": 0.85, "hold_s": 30, "fade_ms": 200,
+         "cue": "Memory-debt readout — the price of every past-change surfaces.",
+         "why": "The screen dims as the reckoning arrives — the audience settles for the ending."},
+        {"id": "e19", "t": 2700, "type": "message_overlay",
+         "cue": "Lure text at 23:41 from Ramdin's number. Same on every path.",
+         "why": "The invariant that all endings pivot on — the message is fixed, the response varies."},
+        {"id": "e20", "t": 2790, "type": "haptic",
+         "pattern": "heartbeat_rising",
+         "cue": "The countdown to 23:58 — sustained.",
+         "why": "Longer haptic — the audience holds their breath with Arjun."}
+      ],
+      "cliffhanger": null,
+      "reasoning": "The common spine that ties all 30 paths together. Density is by design — this beat is the same across cohorts."
+    },
+    {
+      "seg_id": "e4_wahi_raat",
+      "t_start": 2830,
+      "t_end": 3000,
+      "beat": "Ending E4 — Wahi Raat (default ending). She dies at 23:58. Rohan falls. Fate + justice. The tone is the story acknowledging its own gravity.",
+      "event_track": [
+        {"id": "e21", "t": 2900, "type": "screen_blackout", "duration_s": 4,
+         "cue": "23:58 — the original death moment.",
+         "why": "True dark at the moment. The listener's screen and Riya's story go out together."}
+      ],
       "cliffhanger": {
-        "kind": "threat_to_listener",
-        "line": "Toh yeh hai woh awaaz jo meri kahaani mein ghus aayi. Kal baat karte hain.",
+        "kind": "unresolved_stakes",
+        "line": "Ek listener next episode kyun aayega? Kyunki ek raasta hai jahan yeh nahi hoti.",
         "returns_next_episode": true
       },
-      "reasoning": "Cliffhanger tuned to cohorts that respond to direct-address menace."
+      "reasoning": "Default ending — 'fate + justice'. The cliffhanger is the replay loop itself — that the other 29 paths exist and the golden E5 is among them."
     }
   ],
   "endings": [
     {
-      "ending_id": "escape",
-      "reached_via_flags": {"silence": "quiet"},
-      "segment_id": "s8_escape",
-      "reasoning": "Room stayed silent → Path A of the linear script."
+      "ending_id": "e4_wahi_raat",
+      "reached_via_flags": {"ending": "e4"},
+      "segment_id": "e4_wahi_raat",
+      "reasoning": "Default path ending — Track B / SACH_KI_DAAK."
     },
     {
-      "ending_id": "caught",
-      "reached_via_flags": {"silence": "noise"},
-      "segment_id": "s8_caught",
-      "reasoning": "Room made noise → Path B of the linear script."
+      "ending_id": "e1_shikanja",
+      "reached_via_flags": {"ending": "e1"},
+      "segment_id": "ep5_spine",
+      "reasoning": "Track A / CP4a:SHIKANJA — bittersweet triumph (Dev wounded, Rohan falls)."
     },
     {
-      "ending_id": "compromised",
-      "reached_via_flags": {"call_response": "revealed", "silence": "quiet"},
-      "segment_id": "s8_escape",
-      "reasoning": "Nominally the escape ending, but the reaction seg is _betrayed and the between-episodes callback comes from the Voice, not Meera. Same audio ending, different meaning."
+      "ending_id": "e2_bhari_mehfil",
+      "reached_via_flags": {"ending": "e2"},
+      "segment_id": "ep5_spine",
+      "reasoning": "Track A / CP4a:BHARI_MEHFIL — public burning, victory with a shadow."
+    },
+    {
+      "ending_id": "e3_bhaag",
+      "reached_via_flags": {"ending": "e3"},
+      "segment_id": "ep5_spine",
+      "reasoning": "Track A / CP4a:BHAAG — safe but hollow; the link dies."
+    },
+    {
+      "ending_id": "e5_1158",
+      "reached_via_flags": {"ending": "e5"},
+      "segment_id": "ep5_spine",
+      "reasoning": "Track B / CP4b:GYARAH_ATTHAVAN — the golden save, at the price of every memory."
     }
   ]
 }
