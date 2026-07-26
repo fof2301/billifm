@@ -1,0 +1,15 @@
+{
+  "portraits": {
+    "sparrow": "A wiry young adult in dark tactical layers, fingerless gloves, a small clipped earpiece, sweat at the temple, eyes wide with focused fear, captured mid-crouch in low ambient light, head and shoulders, plain dark background, no text, no watermark",
+    "harlan": "A heavyset man in his early sixties in a rumpled security uniform, thinning grey hair, reading glasses pushed up on his forehead, tired kind eyes, seated under flat fluorescent light, head and shoulders, plain dark background, no text, no watermark",
+    "vale": "A composed woman in her mid-forties in a dark high-collared jacket, close-cropped hair, a headset microphone at her jaw, unreadable calm expression, lit only by a cold screen glow, head and shoulders, plain dark background, no text, no watermark"
+  },
+  "scenes": {
+    "doors-close": "A cramped signal room just as the job begins: a bank of dim security monitors, tangled radio cables, a single desk lamp, a cold cup of coffee, night pressing at a small high window. Painterly digital illustration, cinematic low lighting, no people, no text, no watermark, vertical composition",
+    "the-floor": "The same signal room deeper into the night: monitor glow flickering across empty cups, a second radio unit now lit and blinking on the desk, cable slack pooling on the floor. Painterly digital illustration, cinematic low lighting, no people, no text, no watermark, vertical composition",
+    "the-vault": "The same signal room at its tensest hour: every monitor now showing static or looping footage, two radio units glowing side by side, a hand-scrawled note pinned crooked to the wall, a legal pad the only thing lit under the desk lamp. Painterly digital illustration, cinematic low lighting, no people, no text, no watermark, vertical composition",
+    "last-exit": "The same signal room as first grey light touches the high window: monitors gone dark one by one, radios silent, the desk lamp the only light left burning over an empty chair. Painterly digital illustration, cinematic low lighting, no people, no text, no watermark, vertical composition"
+  },
+  "cover": "A single dim desk lamp over a bank of security monitors and tangled radio cables in a windowless room, the faint outline of a headset resting on the desk, tense and solitary, night pressing at the edges. Painterly digital illustration, cinematic lighting, no people, no text, no watermark, vertical mobile composition",
+  "ambient": "A seamless low room-tone loop for a cramped surveillance room at night: faint electrical hum of monitor equipment, occasional soft radio static crackle, a distant building hum through the walls. Seamless loop, no melody, no voices, no rhythmic beat"
+}

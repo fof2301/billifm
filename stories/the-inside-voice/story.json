@@ -1,0 +1,318 @@
+{
+  "meta": {
+    "id": "the-inside-voice",
+    "title": "The Inside Voice",
+    "tagline": "You never leave the chair. Everyone inside is trusting a voice they can't see.",
+    "genre": "heist",
+    "estimatedMinutes": 8,
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "stallLines": [
+      "The monitor feed hisses and settles…",
+      "Somewhere below, a door does not open…",
+      "Your own pulse is the only sound in the room…"
+    ]
+  },
+  "clock": {
+    "realMinutesPerStoryDay": 8,
+    "totalStoryDays": 1,
+    "phases": [
+      "doors-close",
+      "the-floor",
+      "the-vault",
+      "last-exit"
+    ]
+  },
+  "scene": {
+    "id": "signal-room",
+    "backgrounds": {
+      "doors-close": "assets/doors-close.jpg",
+      "the-floor": "assets/the-floor.jpg",
+      "the-vault": "assets/the-vault.jpg",
+      "last-exit": "assets/last-exit.jpg"
+    },
+    "ambientAudio": "assets/ambient.mp3"
+  },
+  "characters": [
+    {
+      "id": "sparrow",
+      "name": "Sparrow",
+      "role": "On the floor, wearing your earpiece",
+      "portrait": "assets/sparrow.jpg",
+      "personality": "Wiry nerve dressed up as competence. Talks fast when scared, which is most of the night, and covers it with dry commentary on whatever they can see. Trusts your voice completely because they have no other choice — you are their eyes, and they know it. Goes quiet and careful the moment something doesn't match what they were briefed, and says so rather than guessing.",
+      "greeting": "Okay. Okay, you're in my ear, good. Tell me you can see something I can't, because I've got nothing but a red light and a very bad feeling.",
+      "voice": {
+        "voiceId": "nova",
+        "instructions": "hushed, quick, breath caught between words"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": []
+      }
+    },
+    {
+      "id": "harlan",
+      "name": "Harlan",
+      "role": "Night guard, desk four — bored, on the intercom",
+      "portrait": "assets/harlan.jpg",
+      "personality": "Two years from a pension he mentions more than he means to. Bored enough by the graveyard shift to talk to anyone who sounds official, lonely enough to keep talking once he starts. Sharp about anything that smells like a change to his routine; soft about anything that sounds like an old grievance he shares. Doesn't like the family that owns this place nearly as much as his paycheck requires.",
+      "greeting": "Central, this is Harlan, desk four. You're the graveyard test call, right? Little early, aren't you.",
+      "voice": {
+        "voiceId": "fable",
+        "instructions": "gravelly, unhurried, warms when he talks about himself"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "guard-line"
+        ]
+      }
+    },
+    {
+      "id": "vale",
+      "name": "Vale",
+      "role": "Your crew boss, on the second channel",
+      "portrait": "assets/vale.jpg",
+      "personality": "Runs the crew the way she runs everything — economical, unbothered, three steps ahead. Answers questions with logistics and deflects anything personal with more logistics. Has never once, in the time you've worked for her, mentioned a single thing about her life before this. Cracks only for a question that doesn't sound like an accusation.",
+      "greeting": "Channel's open. Say what you need and say it fast — I don't like dead air on this line.",
+      "voice": {
+        "voiceId": "onyx",
+        "instructions": "low, clipped, controlled — cracks only briefly"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "manifest"
+        ]
+      }
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "narration": "The signal room is four monitors and a dead man's coffee mug, and you have not moved from this chair in eleven minutes. Sparrow's breathing fills your left ear, ragged and too fast. Vale is a closed line on channel two, waiting for you to prove you don't need hand-holding. Somewhere in that building a guard is doing the crossword, and you are about to become the most important voice he's never met.",
+      "objective": "Get Sparrow through the loading door and find a way onto the guard's own line — quietly.",
+      "characters": [
+        "sparrow",
+        "harlan",
+        "vale"
+      ],
+      "challenges": [
+        "c1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "inside_confirmed"
+            ]
+          },
+          "goto": "b2"
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "narration": "Sparrow is flat against a pillar in the east gallery, breathing you a running count of every red light on the ceiling. Somewhere close, a guard's radio crackles between empty channels. You have found the panel that reaches it. You have not yet decided what kind of voice to use.",
+      "objective": "Get Harlan to skip his 2 a.m. walk-through and let Sparrow cross the floor unseen.",
+      "characters": [
+        "sparrow",
+        "harlan",
+        "vale"
+      ],
+      "challenges": [
+        "c2"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "harlan_onside"
+            ]
+          },
+          "goto": "b3"
+        }
+      ]
+    },
+    {
+      "id": "b3",
+      "narration": "The clipboard by the vault-row checkpoint doesn't match the job. Case 12 — the clasp, the client, the entire reason you took this — isn't listed for tonight. Box 114 is. Vale gave Sparrow this route on purpose, and Vale is still talking like nothing has changed.",
+      "objective": "Press Vale on why the route runs through Vault Row instead of the brooch case.",
+      "characters": [
+        "sparrow",
+        "harlan",
+        "vale"
+      ],
+      "challenges": [
+        "c3"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "vale_confessed"
+            ]
+          },
+          "goto": "b4"
+        }
+      ]
+    },
+    {
+      "id": "b4",
+      "narration": "Box 114 is open in Sparrow's gloved hands — a bundle of letters, a photograph, a name that isn't Vale's. Dawn shift clocks in in six minutes and Harlan is one word from the phone on his desk.",
+      "objective": "Get Sparrow out with the clasp and Box 114 before the changeover — and keep Harlan quiet.",
+      "characters": [
+        "sparrow",
+        "harlan",
+        "vale"
+      ],
+      "challenges": [
+        "c4"
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "id": "c1",
+      "type": "task",
+      "prompt": "Get Sparrow safely past the loading door and find a way onto the night guard's own line — without tripping a single sensor.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "inside_confirmed"
+        ],
+        "unlockClues": [
+          "guard-line"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "inside_confirmed"
+        ],
+        "unlockClues": [
+          "guard-line"
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "type": "task",
+      "prompt": "Get Harlan to skip his 2 a.m. walk-through so Sparrow can cross the floor unseen.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "harlan_onside"
+        ],
+        "unlockClues": [
+          "manifest"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "harlan_onside"
+        ],
+        "unlockClues": [
+          "manifest"
+        ]
+      }
+    },
+    {
+      "id": "c3",
+      "type": "task",
+      "prompt": "Get Vale to admit what's really inside Box 114 and why she rerouted the job to reach it.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "vale_confessed"
+        ],
+        "unlockClues": [
+          "box-114"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "vale_confessed"
+        ]
+      }
+    },
+    {
+      "id": "c4",
+      "type": "task",
+      "prompt": "Walk Sparrow out clean with both the clasp and Box 114's contents before the dawn changeover — without Harlan raising the alarm.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "clean_exit"
+        ]
+      },
+      "onFailure": {}
+    }
+  ],
+  "clues": [
+    {
+      "id": "guard-line",
+      "title": "The guard's private line",
+      "text": "A comms panel behind the loading dock, patched straight to the guard's desk. Nobody logs calls on it."
+    },
+    {
+      "id": "manifest",
+      "title": "The vault-row manifest",
+      "text": "A clipboard at the checkpoint: box numbers marked for 'estate clearance, dawn.' Case 12 — the clasp — isn't on it. Box 114 is."
+    },
+    {
+      "id": "box-114",
+      "title": "Box 114's nameplate",
+      "text": "Hand-etched under the newer tag: 'R. Ansell — for my daughter, when she's ready.' Vale's real name isn't Vale."
+    }
+  ],
+  "endings": [
+    {
+      "id": "out-clean",
+      "when": {
+        "flags": [
+          "clean_exit"
+        ]
+      },
+      "title": "Out Clean",
+      "text": "Sparrow walks out through the same loading door with the clasp in a case and a bundle of letters against their chest, and Harlan never once picks up his phone. On channel two, Vale doesn't say thank you — she isn't built for it — but she stays on the line a full minute longer than the job requires, and that is the closest thing to it you will ever get. Somewhere behind her voice, paper rustles. The family that sealed Box 114 will open their vault at dawn and find one line short. They will never know why."
+    },
+    {
+      "id": "half-the-take",
+      "when": {
+        "flags": [
+          "vale_confessed"
+        ],
+        "clockExpired": true
+      },
+      "title": "Half the Take",
+      "text": "Sparrow makes the door with the clasp and nothing else, and the client will be pleased, and the fee will clear by noon. Box 114 stays shut behind them, its contents about to become someone else's inventory. Vale goes quiet on channel two for a long time. When she finally speaks again, all she says is, 'Good work,' in a voice that has nothing good left in it."
+    },
+    {
+      "id": "the-changeover",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "The Changeover",
+      "text": "The dawn shift's headlights sweep the lot before Sparrow reaches the door, and Harlan's hand finally lands on the phone. You hear the line go to shouting, then to nothing at all. Whatever was in Box 114 stays exactly where a family put it seventy years ago, and you sit alone in a signal room that suddenly has nothing left to say to."
+    }
+  ]
+}

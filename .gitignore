@@ -5,6 +5,7 @@ __pycache__/
 .venv/
 venv/
 .env
+.env.local
 *.egg-info/
 eval/out/
 .DS_Store
@@ -23,3 +24,12 @@ app/ios/
 server/audio/*.mp3
 server/audio/*.wav
 
+# Story framework (apps/, packages/)
+*.db
+.superpowers/
+dist/
+coverage/
+playwright-report/
+test-results/
+*.local
+apps/web/vite.config.ts.timestamp-*.mjs

@@ -1,0 +1,34 @@
+export function createRecorder(): { start(): Promise<void>; stop(): Promise<Blob> } {
+  let recorder: MediaRecorder | null = null
+  let stream: MediaStream | null = null
+  const chunks: Blob[] = []
+  return {
+    async start() {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+      try {
+        recorder = new MediaRecorder(stream)
+        recorder.ondataavailable = (e) => chunks.push(e.data)
+        recorder.start()
+      } catch (err) {
+        stream.getTracks().forEach((t) => t.stop())
+        throw err
+      }
+    },
+    stop() {
+      return new Promise<Blob>((resolve, reject) => {
+        if (!recorder) return reject(new Error('not recording'))
+        recorder.onstop = () => {
+          stream?.getTracks().forEach((t) => t.stop())
+          // iOS Safari's MediaRecorder produces audio/mp4, not audio/webm — label the
+          // blob with what was actually recorded so the upload isn't mislabeled.
+          resolve(new Blob(chunks, { type: recorder!.mimeType || 'audio/webm' }))
+        }
+        recorder.stop()
+      })
+    },
+  }
+}
+
+export function playBase64Mp3(b64: string): void {
+  void new Audio(`data:audio/mpeg;base64,${b64}`).play().catch(() => {})
+}
