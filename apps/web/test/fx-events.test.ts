@@ -75,4 +75,75 @@ describe('useFxEvents', () => {
     act(() => session.onEffect.current?.({ type: 'STORY_ENDED', endingId: 'fin' }))
     expect(onEvent).toHaveBeenCalledWith({ type: 'story-ended' })
   })
+
+  // Regression: the engine can resolve a challenge and activate its successor (or end the
+  // story) in the SAME dispatch — e.g. a task success advances the beat, which immediately
+  // starts that beat's next challenge. By the time the state-watching effect below would
+  // have inferred success from `activeChallenge` clearing, CHALLENGE_STARTED has already
+  // overwritten trackedIdRef (or STORY_ENDED has cleared it), so success must be inferred
+  // synchronously, inside the effect-stream handler itself, ahead of that watcher.
+
+  it('chained challenges: a challenge succeeding straight into the next one starting (same dispatch) still emits success for the first, before the new challenge-started', () => {
+    const session = makeSession()
+    const onEvent = vi.fn()
+    const { rerender } = renderHook(() => useFxEvents(session as unknown as SessionApi, onEvent))
+
+    act(() => session.onEffect.current?.({ type: 'CHALLENGE_STARTED', challengeId: 'a' }))
+    session.state = { activeChallenge: { id: 'a', deadlineMs: 0 } }
+    rerender()
+    onEvent.mockClear()
+
+    // Mirrors real dispatch order: state already reflects challenge 'b' by the time the
+    // CHALLENGE_STARTED('b') effect fires.
+    session.state = { activeChallenge: { id: 'b', deadlineMs: 0 } }
+    act(() => session.onEffect.current?.({ type: 'CHALLENGE_STARTED', challengeId: 'b' }))
+
+    expect(onEvent.mock.calls.map((c) => c[0])).toEqual([
+      { type: 'challenge-succeeded', challengeId: 'a' },
+      { type: 'challenge-started', challengeId: 'b' },
+    ])
+
+    // The state watcher must not double-emit once it observes the 'a' -> 'b' transition.
+    rerender()
+    expect(onEvent).toHaveBeenCalledTimes(2)
+  })
+
+  it('success into ending: a challenge succeeding straight into STORY_ENDED (same dispatch) still emits success before story-ended', () => {
+    const session = makeSession()
+    const onEvent = vi.fn()
+    const { rerender } = renderHook(() => useFxEvents(session as unknown as SessionApi, onEvent))
+
+    act(() => session.onEffect.current?.({ type: 'CHALLENGE_STARTED', challengeId: 'a' }))
+    onEvent.mockClear()
+
+    session.state = { activeChallenge: null }
+    act(() => session.onEffect.current?.({ type: 'STORY_ENDED', endingId: 'fin' }))
+
+    expect(onEvent.mock.calls.map((c) => c[0])).toEqual([
+      { type: 'challenge-succeeded', challengeId: 'a' },
+      { type: 'story-ended' },
+    ])
+
+    rerender()
+    expect(onEvent).toHaveBeenCalledTimes(2)
+  })
+
+  it('timeout then chain: a challenge that timed out does not get a spurious success when the next challenge starts', () => {
+    const session = makeSession()
+    const onEvent = vi.fn()
+    const { rerender } = renderHook(() => useFxEvents(session as unknown as SessionApi, onEvent))
+
+    act(() => session.onEffect.current?.({ type: 'CHALLENGE_STARTED', challengeId: 'a' }))
+    session.state = { activeChallenge: { id: 'a', deadlineMs: 0 } }
+    rerender()
+
+    act(() => session.onEffect.current?.({ type: 'CHALLENGE_TIMED_OUT', challengeId: 'a' }))
+    session.state = { activeChallenge: { id: 'b', deadlineMs: 0 } }
+    act(() => session.onEffect.current?.({ type: 'CHALLENGE_STARTED', challengeId: 'b' }))
+    rerender()
+
+    expect(onEvent).not.toHaveBeenCalledWith(
+      expect.objectContaining({ type: 'challenge-succeeded', challengeId: 'a' }),
+    )
+  })
 })

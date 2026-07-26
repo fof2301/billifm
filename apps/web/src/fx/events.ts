@@ -26,9 +26,31 @@ export function useFxEvents(session: SessionApi, onEvent: (e: FxEvent) => void):
   const timedOutIdRef = useRef<string | null>(null)
 
   useEffect(() => {
+    // Emits the pending success for the currently tracked challenge, if any, and clears
+    // both tracking refs. The engine emits no success effect of its own (success arrives
+    // as a CHALLENGE_RESOLVED *action*), so this is the only place that infers it. It has
+    // to run synchronously from CHALLENGE_STARTED/STORY_ENDED (below) rather than waiting
+    // on the activeChallenge-watching effect further down, because the engine can resolve
+    // a challenge and activate its successor (or end the story) in the SAME dispatch —
+    // by the time that effect ran, CHALLENGE_STARTED would already have overwritten
+    // trackedIdRef (or STORY_ENDED would already have cleared it), silently dropping the
+    // success. Clearing timedOutIdRef here too (not just trackedIdRef) is hygiene: it stops
+    // a stale timeout marker from suppressing a later success for a re-tracked challenge.
+    const flushPendingSuccess = () => {
+      const tracked = trackedIdRef.current
+      if (tracked !== null && timedOutIdRef.current !== tracked) {
+        onEventRef.current({ type: 'challenge-succeeded', challengeId: tracked })
+      }
+      trackedIdRef.current = null
+      timedOutIdRef.current = null
+    }
+
     session.onEffect.current = (e: Effect) => {
       switch (e.type) {
         case 'CHALLENGE_STARTED':
+          if (trackedIdRef.current !== null && trackedIdRef.current !== e.challengeId) {
+            flushPendingSuccess()
+          }
           trackedIdRef.current = e.challengeId
           onEventRef.current({ type: 'challenge-started', challengeId: e.challengeId })
           break
@@ -41,6 +63,7 @@ export function useFxEvents(session: SessionApi, onEvent: (e: FxEvent) => void):
           onEventRef.current({ type: 'phase-changed', day: e.day, phase: e.phase })
           break
         case 'STORY_ENDED':
+          flushPendingSuccess()
           onEventRef.current({ type: 'story-ended' })
           break
         default:
@@ -50,6 +73,11 @@ export function useFxEvents(session: SessionApi, onEvent: (e: FxEvent) => void):
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.onEffect])
 
+  // Fallback for the no-successor case: the tracked challenge left `activeChallenge` with
+  // no new challenge starting and no ending in the same dispatch (e.g. a beat change with
+  // no immediate follow-up challenge). The effect-stream paths above already clear
+  // trackedIdRef whenever they've handled the transition themselves, so this never
+  // double-fires for the chained-challenge or success-into-ending cases.
   useEffect(() => {
     const activeId = session.state.activeChallenge?.id ?? null
     const tracked = trackedIdRef.current
