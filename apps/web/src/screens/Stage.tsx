@@ -6,6 +6,7 @@ import { PushToTalkButton } from '../components/PushToTalkButton'
 import { getAudioBackend } from '../fx/audio'
 import { useFxEvents } from '../fx/events'
 import { effectsEnabled } from '../fx/prefs'
+import { createHapticsController } from '../fx/haptics'
 import { createSoundController } from '../fx/sound'
 import { useSession } from '../useSession'
 import { BackgroundLayer } from '../components/BackgroundLayer'
@@ -39,10 +40,16 @@ export function Stage({
   }, [session.onAudio])
 
   const sound = useMemo(() => createSoundController(getAudioBackend(), effectsEnabled), [])
-  useFxEvents(session, (e) => sound.handle(e))
+  const haptics = useMemo(() => createHapticsController(effectsEnabled), [])
+  useFxEvents(session, (e) => {
+    sound.handle(e)
+    haptics.handle(e)
+  })
 
   useEffect(() => {
-    sound.tickCheck(state.activeChallenge ? state.activeChallenge.deadlineMs - state.elapsedRealMs : null)
+    const remaining = state.activeChallenge ? state.activeChallenge.deadlineMs - state.elapsedRealMs : null
+    sound.tickCheck(remaining)
+    haptics.tickCheck(remaining)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.elapsedRealMs])
 
