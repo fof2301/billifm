@@ -47,9 +47,25 @@ export function TopBar({
         </span>
         <div className="flex items-center gap-2">
           {remaining !== null && deadline !== null && (
-            <span className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${remaining < 30_000 ? 'bg-red-600 animate-pulse' : 'bg-red-500/80'}`}>
-              {`⏱ by ${hhmm(deadline)}`}
+            <span
+              data-testid="deadline-chip"
+              // Reads as a second clock face — "the hour this is due" — rather than a
+              // countdown timer. Urgency comes from the text tint, not a red pill.
+              className={`rounded-full bg-black/50 px-3 py-1 text-xs tabular-nums ${
+                remaining < 30_000 ? 'animate-pulse text-rose-300' : 'text-amber-200/90'
+              }`}
+            >
+              ⏳ by {hhmm(deadline)}
             </span>
+          )}
+          {onOpenTree && (
+            <button
+              onClick={onOpenTree}
+              aria-label="Family tree"
+              className="pointer-events-auto rounded-full bg-black/50 px-3 py-1 text-xs"
+            >
+              🌳
+            </button>
           )}
           <button
             ref={(el) => {

@@ -229,3 +229,34 @@ describe('BackgroundLayer', () => {
     expect(nightImg).toHaveClass('opacity-100')
   })
 })
+
+describe('TopBar tree button', () => {
+  it('renders a family-tree button only when onOpenTree is provided', async () => {
+    const onOpenTree = vi.fn()
+    const { rerender } = render(
+      <TopBar bundle={bundle} state={baseState} time={{ day: 1, phase: 'day', hour: 0, minute: 0 }}
+        clueCount={0} onOpenTree={onOpenTree} onOpenJournal={() => {}} onOpenSettings={() => {}} />,
+    )
+    const btn = screen.getByRole('button', { name: /family tree/i })
+    const userEvent = (await import('@testing-library/user-event')).default
+    await userEvent.click(btn)
+    expect(onOpenTree).toHaveBeenCalled()
+
+    rerender(
+      <TopBar bundle={bundle} state={baseState} time={{ day: 1, phase: 'day', hour: 0, minute: 0 }}
+        clueCount={0} onOpenJournal={() => {}} onOpenSettings={() => {}} />,
+    )
+    expect(screen.queryByRole('button', { name: /family tree/i })).not.toBeInTheDocument()
+  })
+
+  it('shows the challenge deadline as a clock face, not a red timer', () => {
+    render(
+      <TopBar bundle={bundle} state={{ ...baseState, activeChallenge: { id: 'x', deadlineMs: 95_000 } }}
+        time={{ day: 1, phase: 'day', hour: 0, minute: 0 }} clueCount={0}
+        onOpenJournal={() => {}} onOpenSettings={() => {}} />,
+    )
+    const chip = screen.getByTestId('deadline-chip')
+    expect(chip.className).not.toContain('bg-red')
+    expect(chip.textContent).toMatch(/07:36/)
+  })
+})
