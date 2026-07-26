@@ -22,6 +22,7 @@ export interface SessionApi {
   pause(r: PauseReason): void
   resume(r: PauseReason): void
   onAudio: { current: ((b64: string) => void) | null }
+  onEffect: { current: ((e: Effect) => void) | null }
 }
 
 export function useSession(
@@ -32,6 +33,7 @@ export function useSession(
 ): SessionApi {
   const saveKey = `sf-session-${bundle.meta.id}`
   const onAudio = useRef<((b64: string) => void) | null>(null)
+  const onEffect = useRef<((e: Effect) => void) | null>(null)
   const onEndedRef = useRef(onEnded)
   onEndedRef.current = onEnded
 
@@ -68,6 +70,7 @@ export function useSession(
 
   const runEffects = useCallback((effects: Effect[]) => {
     for (const e of effects) {
+      onEffect.current?.(e)
       if (e.type === 'SNAPSHOT' || e.type === 'STORY_ENDED') {
         api.snapshot(initial.sessionId, bundle.meta.id, stateRef.current).catch(() => {})
       }
@@ -188,5 +191,6 @@ export function useSession(
     pause: (r) => dispatch({ type: 'PAUSE', reason: r }),
     resume: (r) => dispatch({ type: 'RESUME', reason: r }),
     onAudio,
+    onEffect,
   }
 }

@@ -45,6 +45,7 @@ function makeSession(overrides: object = {}) {
     pause: vi.fn(),
     resume: vi.fn(),
     onAudio: { current: null },
+    onEffect: { current: null },
     ...overrides,
   }
 }

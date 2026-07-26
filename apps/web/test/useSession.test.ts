@@ -1,6 +1,7 @@
 import { act, renderHook, waitFor } from '@testing-library/react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { StoryBundleSchema } from '@story/schema'
+import type { Effect } from '@story/engine'
 
 const dialogueMock = vi.fn()
 const judgeMock = vi.fn()
@@ -72,6 +73,20 @@ describe('useSession', () => {
     await waitFor(() => expect(result.current.state.transcripts['ann']!.at(-1)?.text).toBe('oh really'))
     await waitFor(() => expect(ended).toHaveBeenCalledWith('fin'))
     expect(dialogueMock.mock.calls[0]![0]).toMatchObject({ storyId: 'hx', characterId: 'ann', wantSuggestions: false })
+  })
+
+  it('onEffect receives every engine effect, including REQUEST_DIALOGUE and SNAPSHOT, when sending a message', async () => {
+    dialogueMock.mockResolvedValue({ text: 'oh really' })
+    judgeMock.mockResolvedValue({ success: true, feedback: 'done' })
+    const { result } = renderHook(() => useSession(bundle, 'text', false, () => {}))
+    const seen: Effect[] = []
+    result.current.onEffect.current = (e) => seen.push(e)
+    act(() => result.current.selectCharacter('ann'))
+    act(() => result.current.send('I did the thing'))
+    await act(async () => { await vi.runOnlyPendingTimersAsync() })
+    await waitFor(() => expect(seen.some((e) => e.type === 'STORY_ENDED')).toBe(true))
+    expect(seen.some((e) => e.type === 'REQUEST_DIALOGUE')).toBe(true)
+    expect(seen.some((e) => e.type === 'SNAPSHOT')).toBe(true)
   })
 
   it('clock is paused while a challenge dialogue is in flight', async () => {
