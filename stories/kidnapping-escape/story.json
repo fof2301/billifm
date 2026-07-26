@@ -12,8 +12,8 @@
       "voice"
     ],
     "stallLines": [
-      "He goes quiet for a moment\u2026",
-      "You hear footsteps pacing above\u2026"
+      "He goes quiet for a moment…",
+      "You hear footsteps pacing above…"
     ]
   },
   "clock": {
@@ -33,7 +33,8 @@
       "day": "assets/day.jpg",
       "dusk": "assets/dusk.jpg",
       "night": "assets/night.jpg"
-    }
+    },
+    "ambientAudio": "assets/ambient.mp3"
   },
   "characters": [
     {
@@ -42,7 +43,7 @@
       "role": "Your captor",
       "portrait": "assets/viktor.jpg",
       "personality": "Calm, polite, chillingly patient. Never raises his voice. Speaks in short sentences. Believes what he is doing is justified.",
-      "greeting": "Ah. You're awake. Good \u2014 we have work to do.",
+      "greeting": "Ah. You're awake. Good — we have work to do.",
       "voice": {
         "voiceId": "onyx",
         "instructions": "slow, quiet, unsettlingly calm"
@@ -64,7 +65,7 @@
       "role": "A voice in the vents",
       "portrait": "assets/mira.jpg",
       "personality": "Whispers. Scared but sharp. Taken weeks before you. Knows the building.",
-      "greeting": "Psst \u2014 down here. Don't let him hear you.",
+      "greeting": "Psst — down here. Don't let him hear you.",
       "voice": {
         "voiceId": "shimmer",
         "instructions": "whispered, urgent"
@@ -84,7 +85,7 @@
   "beats": [
     {
       "id": "b1",
-      "narration": "You wake on a cot in a cellar. Your hands tingle \u2014 something in you feels\u2026 different.",
+      "narration": "You wake on a cot in a cellar. Your hands tingle — something in you feels… different.",
       "objective": "Find out why you were taken.",
       "characters": [
         "viktor"
@@ -208,7 +209,7 @@
     {
       "id": "c3",
       "type": "task",
-      "prompt": "Talk your way through it \u2014 describe how you open the lock with your gift.",
+      "prompt": "Talk your way through it — describe how you open the lock with your gift.",
       "timeLimitSeconds": 120,
       "onSuccess": {
         "setFlags": [
