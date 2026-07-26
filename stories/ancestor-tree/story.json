@@ -12,8 +12,8 @@
       "voice"
     ],
     "stallLines": [
-      "The attic light flickers…",
-      "Dust drifts through the lamplight…"
+      "The attic light flickers\u2026",
+      "Dust drifts through the lamplight\u2026"
     ]
   },
   "clock": {
@@ -51,6 +51,10 @@
         "phases": [
           "*"
         ]
+      },
+      "kin": {
+        "generation": -3,
+        "parents": []
       }
     },
     {
@@ -71,6 +75,10 @@
         "phases": [
           "evening"
         ]
+      },
+      "kin": {
+        "generation": -4,
+        "parents": []
       }
     },
     {
@@ -91,13 +99,17 @@
         "phases": [
           "morning"
         ]
+      },
+      "kin": {
+        "generation": -5,
+        "parents": []
       }
     }
   ],
   "beats": [
     {
       "id": "a1",
-      "narration": "In your grandmother's attic you find a locket that won't open — and the room fills with people only you can see.",
+      "narration": "In your grandmother's attic you find a locket that won't open \u2014 and the room fills with people only you can see.",
       "objective": "Learn the lullaby that runs in your family.",
       "characters": [
         "rose",
@@ -172,12 +184,12 @@
     {
       "id": "lullaby",
       "title": "The lullaby",
-      "text": "\"Low tide, slow tide, carry her home…\" — every generation changed one word."
+      "text": "\"Low tide, slow tide, carry her home\u2026\" \u2014 every generation changed one word."
     },
     {
       "id": "locket_truth",
       "title": "What the locket keeps",
-      "text": "A portrait of the first of your line — and proof the family never really left each other."
+      "text": "A portrait of the first of your line \u2014 and proof the family never really left each other."
     }
   ],
   "endings": [
@@ -197,7 +209,7 @@
         "clockExpired": true
       },
       "title": "Dust settles",
-      "text": "The attic empties. The locket stays shut — for now. They'll wait. They're good at waiting."
+      "text": "The attic empties. The locket stays shut \u2014 for now. They'll wait. They're good at waiting."
     }
   ]
 }
