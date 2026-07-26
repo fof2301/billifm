@@ -191,6 +191,8 @@ export function Stage({
           stallLine={session.stallLine}
           failedMessage={session.failedMessage}
           onRetry={session.retry}
+          getAudio={session.getAudio}
+          onReplay={playBase64Mp3}
         />
         <div ref={(el) => (dockRef.current = el)}>
           <InputDock bundle={bundle} session={session} voiceSlot={<PushToTalkButton session={session} />} />

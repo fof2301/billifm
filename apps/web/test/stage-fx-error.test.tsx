@@ -67,6 +67,7 @@ function fakeSession(): SessionApi {
     resume: vi.fn(),
     onAudio: { current: null },
     onEffect: { current: null },
+    getAudio: () => undefined,
   }
 }
 

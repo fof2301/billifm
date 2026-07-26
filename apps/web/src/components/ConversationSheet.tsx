@@ -9,6 +9,8 @@ export function ConversationSheet({
   stallLine,
   failedMessage,
   onRetry,
+  getAudio,
+  onReplay,
 }: {
   bundle: StoryBundle
   state: SessionState
@@ -16,6 +18,8 @@ export function ConversationSheet({
   stallLine: string | null
   failedMessage: string | null
   onRetry: () => void
+  getAudio?: (characterId: string, index: number) => string | undefined
+  onReplay?: (b64: string) => void
 }) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const charId = state.activeCharacterId
@@ -42,6 +46,7 @@ export function ConversationSheet({
           // once a later entry arrives, this one is no longer last and renders as plain
           // text from then on (it never restarts, since it's simply not wrapped anymore).
           const isTyping = i === entries.length - 1 && e.role === 'character'
+          const audio = e.role === 'character' && charId ? getAudio?.(charId, i) : undefined
           return (
             <p
               key={i}
@@ -50,6 +55,17 @@ export function ConversationSheet({
               }`}
             >
               {isTyping ? <TypewriterText text={e.text} onStep={scrollToBottom} /> : e.text}
+              {audio && onReplay && (
+                <button
+                  onClick={() => onReplay(audio)}
+                  aria-label="Replay line"
+                  className="ml-2 inline-flex h-5 w-5 items-center justify-center rounded-full bg-white/10 align-middle text-[10px] transition hover:bg-white/20"
+                >
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3" aria-hidden="true">
+                    <path d="M8 5v14l11-7z" />
+                  </svg>
+                </button>
+              )}
             </p>
           )
         })}

@@ -3,8 +3,9 @@ import userEvent from '@testing-library/user-event'
 import { describe, expect, it, vi } from 'vitest'
 import { PushToTalkButton } from '../src/components/PushToTalkButton'
 
+const sttMock = vi.fn(async (_blob?: Blob) => ({ text: '' }))
 vi.mock('../src/api', () => ({
-  stt: vi.fn(async () => ({ text: '' })),
+  stt: (blob: Blob) => sttMock(blob),
 }))
 
 vi.mock('../src/audio', () => ({
@@ -46,36 +47,41 @@ function makeSession(overrides: object = {}) {
     resume: vi.fn(),
     onAudio: { current: null },
     onEffect: { current: null },
+    getAudio: vi.fn(() => undefined),
     ...overrides,
   }
 }
 
-describe('PushToTalkButton', () => {
-  it('recovers from error phase when user holds to talk again', async () => {
+describe('PushToTalkButton (tap to record, tap to send)', () => {
+  it('toggles: tap starts recording, tap again stops and sends the transcription', async () => {
+    sttMock.mockResolvedValueOnce({ text: 'hello from voice' })
     const user = userEvent.setup()
-    const session = makeSession({})
+    const session = makeSession()
     render(<PushToTalkButton session={session} />)
 
-    const button = screen.getByLabelText('Hold to talk')
+    await user.click(screen.getByLabelText('Record a message'))
+    expect(screen.getByText(/tap to send/)).toBeInTheDocument()
 
-    // First press: recording starts, release triggers stt which returns empty (error)
-    await user.pointer({ target: button, keys: '[MouseLeft>]' })
-    expect(screen.getByText('release to send')).toBeInTheDocument()
+    await user.click(screen.getByLabelText('Stop and send'))
+    await vi.waitFor(() => expect(session.send).toHaveBeenCalledWith('hello from voice'))
+    expect(screen.getByText('tap to speak')).toBeInTheDocument()
+  })
 
-    await user.pointer({ target: button, keys: '[/MouseLeft]' })
-    // Wait for transcribing and then error state
-    await vi.waitFor(
-      () => {
-        expect(screen.getByText(/Didn't catch that/i)).toBeInTheDocument()
-      },
-      { timeout: 3000 },
-    )
+  it('recovers from error phase when the user taps again', async () => {
+    const user = userEvent.setup()
+    const session = makeSession()
+    render(<PushToTalkButton session={session} />)
 
-    // Second press: should start recording again (not stay stuck in error)
-    await user.pointer({ target: button, keys: '[MouseLeft>]' })
-    expect(screen.getByText('release to send')).toBeInTheDocument()
+    // stt default returns empty text -> error phase
+    await user.click(screen.getByLabelText('Record a message'))
+    expect(screen.getByText(/tap to send/)).toBeInTheDocument()
+    await user.click(screen.getByLabelText('Stop and send'))
+    await vi.waitFor(() => {
+      expect(screen.getByText(/Didn't catch that/i)).toBeInTheDocument()
+    }, { timeout: 3000 })
 
-    await user.pointer({ target: button, keys: '[/MouseLeft]' })
-    vi.unstubAllGlobals()
+    // Tap again: recording restarts (not stuck in error)
+    await user.click(screen.getByLabelText('Record a message'))
+    expect(screen.getByText(/tap to send/)).toBeInTheDocument()
   })
 })

@@ -23,6 +23,8 @@ export interface SessionApi {
   resume(r: PauseReason): void
   onAudio: { current: ((b64: string) => void) | null }
   onEffect: { current: ((e: Effect) => void) | null }
+  /** Base64 audio for a character transcript entry, if TTS played for it this session. */
+  getAudio(characterId: string, index: number): string | undefined
 }
 
 export function useSession(
@@ -34,6 +36,8 @@ export function useSession(
   const saveKey = `sf-session-${bundle.meta.id}`
   const onAudio = useRef<((b64: string) => void) | null>(null)
   const onEffect = useRef<((e: Effect) => void) | null>(null)
+  // Session-lifetime only (never persisted): base64 audio is too heavy for localStorage.
+  const audioCache = useRef<Map<string, string>>(new Map())
   const onEndedRef = useRef(onEnded)
   onEndedRef.current = onEnded
 
@@ -117,7 +121,11 @@ export function useSession(
             wantSuggestions: s.mode === 'mcq',
           })
           dispatch({ type: 'CHARACTER_REPLY', characterId, text: res.text, suggestedReplies: res.suggestedReplies })
-          if (res.audioBase64) onAudio.current?.(res.audioBase64)
+          if (res.audioBase64) {
+            const idx = (stateRef.current.transcripts[characterId]?.length ?? 1) - 1
+            audioCache.current.set(`${characterId}:${idx}`, res.audioBase64)
+            onAudio.current?.(res.audioBase64)
+          }
           return
         } catch {
           if (attempt === 1) {
@@ -191,6 +199,7 @@ export function useSession(
     pause: (r) => dispatch({ type: 'PAUSE', reason: r }),
     resume: (r) => dispatch({ type: 'RESUME', reason: r }),
     onAudio,
+    getAudio: (characterId, index) => audioCache.current.get(`${characterId}:${index}`),
     onEffect,
   }
 }

@@ -158,3 +158,36 @@ describe('ConversationSheet', () => {
     expect(container.firstChild).toHaveClass('animate-[slideup_0.25s_ease-out]')
   })
 })
+
+describe('ConversationSheet replay button', () => {
+  it('shows a replay control on character lines with cached audio and plays on tap', async () => {
+    vi.useRealTimers()
+    const { ConversationSheet } = await import('../src/components/ConversationSheet')
+    const { fireEvent } = await import('@testing-library/react')
+    const onReplay = vi.fn()
+    const state = {
+      ...baseState,
+      activeCharacterId: 'ann',
+      transcripts: {
+        ann: [
+          { role: 'character' as const, text: 'voiced line', atMs: 0 },
+          { role: 'player' as const, text: 'ok', atMs: 1 },
+        ],
+      },
+    }
+    render(
+      <ConversationSheet
+        bundle={bundle}
+        state={state}
+        busy={false}
+        stallLine={null}
+        failedMessage={null}
+        onRetry={() => {}}
+        getAudio={(charId, i) => (charId === 'ann' && i === 0 ? 'QUJD' : undefined)}
+        onReplay={onReplay}
+      />,
+    )
+    fireEvent.click(screen.getByLabelText('Replay line'))
+    expect(onReplay).toHaveBeenCalledWith('QUJD')
+  })
+})
