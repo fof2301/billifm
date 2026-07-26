@@ -15,6 +15,7 @@ import { ChallengeBanner } from '../components/ChallengeBanner'
 import { CharacterRail } from '../components/CharacterRail'
 import { ConversationSheet } from '../components/ConversationSheet'
 import { FamilyTree, hasKin } from '../components/FamilyTree'
+import { PathTree } from '../components/PathTree'
 import { InputDock } from '../components/InputDock'
 import { Journal } from '../components/Journal'
 import { PauseSheet } from '../components/PauseSheet'
@@ -44,7 +45,9 @@ export function Stage({
   const [journalOpen, setJournalOpen] = useState(false)
   const [treeOpen, setTreeOpen] = useState(false)
   const [paused, setPaused] = useState(false)
-  const showTree = hasKin(bundle)
+  // A story opts into a relationship screen: an explicit meta.tree wins, otherwise
+  // kin data implies the family tree.
+  const treeMode = bundle.meta.tree ?? (hasKin(bundle) ? 'kin' : undefined)
 
   // First-play coach marks: shown once per browser (localStorage flag), gating on the
   // clock chip, character rail, input dock, and journal button in turn. Mirrors the
@@ -185,7 +188,8 @@ export function Stage({
           time={time}
           clueCount={state.cluesFound.length}
           onPause={() => setPaused(true)}
-          onOpenTree={showTree ? () => setTreeOpen(true) : undefined}
+          onOpenTree={treeMode ? () => setTreeOpen(true) : undefined}
+          treeIcon={treeMode === 'path' ? '🧭' : '🌳'}
           onOpenJournal={() => setJournalOpen(true)}
           onOpenSettings={() => setSettingsOpen(true)}
           clockRef={clockRef}
@@ -202,6 +206,7 @@ export function Stage({
           stallLine={session.stallLine}
           failedMessage={session.failedMessage}
           onRetry={session.retry}
+          onClose={session.closeConversation}
           getAudio={session.getAudio}
           onReplay={playBase64Mp3}
         />
@@ -220,14 +225,24 @@ export function Stage({
         onLeave={onLeave}
         onRestart={onRestart}
       />
-      <FamilyTree
-        bundle={bundle}
-        state={state}
-        session={session}
-        open={treeOpen}
-        onSelect={session.selectCharacter}
-        onClose={() => setTreeOpen(false)}
-      />
+      {treeMode === 'path' ? (
+        <PathTree
+          bundle={bundle}
+          state={state}
+          session={session}
+          open={treeOpen}
+          onClose={() => setTreeOpen(false)}
+        />
+      ) : (
+        <FamilyTree
+          bundle={bundle}
+          state={state}
+          session={session}
+          open={treeOpen}
+          onSelect={session.selectCharacter}
+          onClose={() => setTreeOpen(false)}
+        />
+      )}
       <Journal
         bundle={bundle}
         state={state}

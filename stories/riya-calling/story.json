@@ -1,0 +1,405 @@
+{
+  "meta": {
+    "id": "riya-calling",
+    "title": "Riya Calling",
+    "tagline": "Your sister died three days ago. At 2:07 AM, your phone rings. It's her.",
+    "genre": "hinglish suspense",
+    "estimatedMinutes": 10,
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "order": 0,
+    "tree": "path",
+    "stallLines": [
+      "The line hisses. Somewhere on her side, a scooter goes past…",
+      "Static. Then her breathing again…",
+      "The call quality drops, the way it does under the flyover…"
+    ]
+  },
+  "clock": {
+    "realMinutesPerStoryDay": 10,
+    "totalStoryDays": 1,
+    "phases": [
+      "2am",
+      "before-midnight",
+      "diwali-night",
+      "11:58"
+    ]
+  },
+  "scene": {
+    "id": "studio",
+    "backgrounds": {
+      "2am": "assets/2am.jpg",
+      "before-midnight": "assets/before-midnight.jpg",
+      "diwali-night": "assets/diwali-night.jpg",
+      "11:58": "assets/1158.jpg"
+    },
+    "ambientAudio": "assets/ambient.mp3"
+  },
+  "characters": [
+    {
+      "id": "riya",
+      "name": "Riya",
+      "role": "Your sister — calling from three days ago",
+      "portrait": "assets/riya.jpg",
+      "personality": "Nineteen, fast-talking, fearless, funny. Calls you 'Buddhu bhaiya' and drags her vowels — 'bhaiyaaaa'. Runs a tiny true-crime college podcast called Khoji. Speaks conversational Hinglish, roughly one Hindi word in four — 'arre', 'matlab', 'sach mein', 'pagal ho kya'. Not a victim waiting to be rescued: she is the one with hands and hours, you only have hindsight. She argues back, improvises, and teases you when you get solemn. When something frightens her she goes quiet and whispers, and the whisper is worse than a scream.",
+      "greeting": "Buddhu bhaiya! Do baj rahe hain, tu jaag raha hai? Arre I knew it. Listen — I need a favour.",
+      "voice": {
+        "voiceId": "nova",
+        "instructions": "bright, fast, teasing; drops to a whisper when scared"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": []
+      }
+    },
+    {
+      "id": "zoya",
+      "name": "Zoya",
+      "role": "Sub-Inspector, Cyber Cell — your college batchmate",
+      "portrait": "assets/zoya.jpg",
+      "personality": "Twenty-eight, clipped Hinglish, procedural, zero patience for grief-mysticism. Starts every hard truth with 'dekho Arjun—'. Sips chai mid-sentence. She will not believe the call is real until you hand her something physically impossible; after that she is the most useful person you know. Gives you a read of the case, never the answer — she reasons about what you have actually collected, and says plainly when you have nothing.",
+      "voice": {
+        "voiceId": "sage",
+        "instructions": "clipped, dry, procedural; small pauses like she is sipping chai"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "buried-note"
+        ]
+      },
+      "greeting": "Arjun. Do baj rahe hain. Dekho — main sympathy nahi de sakti abhi, so tell me what you actually have."
+    },
+    {
+      "id": "dev",
+      "name": "Dev",
+      "role": "Riya's boyfriend — the one who talked",
+      "portrait": "assets/dev.jpg",
+      "personality": "Twenty-one, sweet, weak, drowning. He told the wrong person that Riya was 'almost done' with her story, believing they would only warn her off. His father's dealership franchise survives at the Chaddha family's mercy. He does not fully understand yet that he is the reason she died, and some part of him already suspects. Deflects with 'main toh bas—' and goes silent when cornered. If you show him what his warning actually bought, he breaks, and then he is useful.",
+      "voice": {
+        "voiceId": "echo",
+        "instructions": "young, hesitant, cracking under pressure"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "sd-card"
+        ]
+      },
+      "greeting": "Bhaiya? Main… main aapko call karne wala tha. Sach mein. Roz socha."
+    }
+  ],
+  "beats": [
+    {
+      "id": "n1",
+      "narration": "Three missed calls, all from Diwali night: 11:41, 11:47, 11:53. Your phone was on silent in the edit bay. It is now 2:07 AM, three nights after the cremation, and the screen says Riya 💜.",
+      "objective": "Answer it. Work out when she is.",
+      "characters": [
+        "riya",
+        "zoya",
+        "dev"
+      ],
+      "challenges": [
+        "c1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "link_proven"
+            ]
+          },
+          "goto": "n2"
+        }
+      ]
+    },
+    {
+      "id": "n2",
+      "narration": "She buried a note under the tulsi pot on her Tuesday. You dug it up an hour ago: three days weathered, ink one day old. Whatever this is, it is real, and she has two nights left.",
+      "objective": "Find out why anyone would want her dead.",
+      "characters": [
+        "riya",
+        "zoya",
+        "dev"
+      ],
+      "challenges": [
+        "c2"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_murder"
+            ]
+          },
+          "goto": "n3"
+        }
+      ]
+    },
+    {
+      "id": "n3",
+      "narration": "Someone has been outside her hostel gate for two nights. She has a name for the hit-and-run that killed Sana, an SD card full of audio, and a bail hearing landing the morning after Diwali.",
+      "objective": "Choose how she spends her last day: break the boy, or break into the records.",
+      "characters": [
+        "riya",
+        "zoya",
+        "dev"
+      ],
+      "challenges": [
+        "c3"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "track_dev"
+            ]
+          },
+          "goto": "n4a"
+        },
+        {
+          "when": {
+            "flags": [
+              "track_showroom"
+            ]
+          },
+          "goto": "n4b"
+        }
+      ]
+    },
+    {
+      "id": "n4a",
+      "narration": "Dev picks up on the second ring and you can hear him already crying. He knows what he did; he has known for three days that never happened yet.",
+      "objective": "Turn Dev — get the lure traced back to whoever sent it.",
+      "characters": [
+        "riya",
+        "zoya",
+        "dev"
+      ],
+      "challenges": [
+        "c4"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "lure_known"
+            ]
+          },
+          "goto": "n5"
+        }
+      ]
+    },
+    {
+      "id": "n4b",
+      "narration": "The MP Nagar showroom keeps paper. A smashed headlight, an invoice, a date eleven months old — the one thing nobody thought to corrupt.",
+      "objective": "Get the invoice out of the showroom before it closes.",
+      "characters": [
+        "riya",
+        "zoya",
+        "dev"
+      ],
+      "challenges": [
+        "c4"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "lure_known"
+            ]
+          },
+          "goto": "n5"
+        }
+      ]
+    },
+    {
+      "id": "n5",
+      "narration": "Diwali night on her side. 11:41 PM. The message that killed her is about to arrive from the watchman's phone, and this time you know what it says before she reads it.",
+      "objective": "Keep her off the bypass at 11:58.",
+      "characters": [
+        "riya",
+        "zoya",
+        "dev"
+      ],
+      "challenges": [
+        "c5"
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "id": "c1",
+      "type": "task",
+      "prompt": "Get Riya to do something in her present that you can verify in yours.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "link_proven"
+        ],
+        "unlockClues": [
+          "buried-note"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "link_proven"
+        ],
+        "unlockClues": [
+          "buried-note"
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "type": "task",
+      "prompt": "Find out what Riya has been recording for the last eleven months.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "knows_murder"
+        ],
+        "unlockClues": [
+          "sd-card"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_murder"
+        ],
+        "unlockClues": [
+          "sd-card"
+        ]
+      }
+    },
+    {
+      "id": "c3",
+      "type": "mcq",
+      "prompt": "One day left. Where do you point her?",
+      "timeLimitSeconds": 90,
+      "options": [
+        {
+          "id": "dev",
+          "text": "At Dev. Somebody told them she was close.",
+          "onPick": {
+            "setFlags": [
+              "track_dev"
+            ]
+          }
+        },
+        {
+          "id": "showroom",
+          "text": "At the showroom. Paper doesn't get frightened.",
+          "onPick": {
+            "setFlags": [
+              "track_showroom"
+            ]
+          }
+        }
+      ],
+      "onTimeout": {
+        "setFlags": [
+          "track_dev"
+        ]
+      }
+    },
+    {
+      "id": "c4",
+      "type": "task",
+      "prompt": "Learn who sends the 11:41 message — and from whose phone.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "lure_known"
+        ],
+        "unlockClues": [
+          "ramdin-message"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "lure_known"
+        ]
+      }
+    },
+    {
+      "id": "c5",
+      "type": "task",
+      "prompt": "11:41 is coming. Convince her not to go — and get the evidence somewhere it survives her.",
+      "timeLimitSeconds": 240,
+      "onSuccess": {
+        "setFlags": [
+          "she_lives"
+        ]
+      },
+      "onFailure": {}
+    }
+  ],
+  "clues": [
+    {
+      "id": "buried-note",
+      "title": "The note under the tulsi pot",
+      "text": "Three days weathered, ink one day old. Lab-datable. Impossible."
+    },
+    {
+      "id": "sd-card",
+      "title": "The Khoji SD card",
+      "text": "Eleven months of audio: the watchman before he was paid, the garage manager, Sana's last voicemail."
+    },
+    {
+      "id": "ramdin-message",
+      "title": "The 11:41 message",
+      "text": "Sent from Ramdin's phone under duress. It ends mid-sentence: '…warna woh mujhe'"
+    }
+  ],
+  "endings": [
+    {
+      "id": "she-lives",
+      "when": {
+        "flags": [
+          "she_lives"
+        ]
+      },
+      "title": "11:59",
+      "text": "She doesn't go. At 11:58 the bypass flyover stays empty and history rewrites itself while you are still on the call — the obituary, the file, the three days you spent burying her, gone like a held breath let out. Your phone says one missed call, from a number you no longer recognise. You cannot remember what her voice sounded like on the night she didn't die. You would pay it again."
+    },
+    {
+      "id": "justice-without-her",
+      "when": {
+        "flags": [
+          "lure_known"
+        ],
+        "clockExpired": true
+      },
+      "title": "Her Voice, Read Into Record",
+      "text": "She goes. The bypass takes her at 11:58, the way it always has. But the SD card is in Zoya's hand by then and the bail hearing is at ten. Eleven months of audio plays in a district court while an MLA's son learns that the smallest podcast in Bhopal outlived him. She never knows she won."
+    },
+    {
+      "id": "another-1158",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "Wahi Raat",
+      "text": "The link closes at dawn with nothing proved and nobody named. Three missed calls sit on your screen: 11:41, 11:47, 11:53. The case is closed in two days. It was an accident, they said, and this time you have no way to say otherwise."
+    }
+  ]
+}

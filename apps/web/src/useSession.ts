@@ -18,6 +18,8 @@ export interface SessionApi {
   retry(): void
   pick(optionId: string): void
   selectCharacter(id: string): void
+  /** Leave the current conversation; the transcript is kept. */
+  closeConversation(): void
   setMode(m: Mode): void
   pause(r: PauseReason): void
   resume(r: PauseReason): void
@@ -195,6 +197,7 @@ export function useSession(
       if (ch) dispatch({ type: 'MCQ_PICK', challengeId: ch.id, optionId })
     },
     selectCharacter: (id) => dispatch({ type: 'SELECT_CHARACTER', characterId: id }),
+    closeConversation: () => dispatch({ type: 'CLOSE_CONVERSATION' }),
     setMode: (m) => dispatch({ type: 'SET_MODE', mode: m }),
     pause: (r) => dispatch({ type: 'PAUSE', reason: r }),
     resume: (r) => dispatch({ type: 'RESUME', reason: r }),

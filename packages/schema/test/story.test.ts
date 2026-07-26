@@ -136,3 +136,21 @@ describe('ancestry fields', () => {
     expect(() => StoryBundleSchema.parse(bad2)).toThrow(/kin parent 'ghost'/)
   })
 })
+
+describe('library ordering and tree mode', () => {
+  it('accepts optional order and tree mode', () => {
+    const b = makeMinimalBundle()
+    ;(b.meta as Record<string, unknown>).order = 0
+    ;(b.meta as Record<string, unknown>).tree = 'path'
+    const parsed = StoryBundleSchema.parse(b)
+    expect(parsed.meta.order).toBe(0)
+    expect(parsed.meta.tree).toBe('path')
+    expect(StoryBundleSchema.parse(makeMinimalBundle()).meta.order).toBeUndefined()
+  })
+
+  it('rejects an unknown tree mode', () => {
+    const bad = makeMinimalBundle()
+    ;(bad.meta as Record<string, unknown>).tree = 'galaxy'
+    expect(() => StoryBundleSchema.parse(bad)).toThrow()
+  })
+})

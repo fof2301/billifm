@@ -34,6 +34,13 @@ export const MetaSchema = z
     cover: z.string(),
     modes: z.array(ModeSchema).nonempty(),
     stallLines: z.array(z.string()).default([]),
+    /** Lower sorts first in the library; unset sorts last. */
+    order: z.number().int().optional(),
+    /**
+     * Which relationship screen this story offers, if any:
+     * 'kin' = family tree (needs character.kin), 'path' = the decision tree of beats.
+     */
+    tree: z.enum(['kin', 'path']).optional(),
   })
   .strict()
 

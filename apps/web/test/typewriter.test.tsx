@@ -191,3 +191,21 @@ describe('ConversationSheet replay button', () => {
     expect(onReplay).toHaveBeenCalledWith('QUJD')
   })
 })
+
+describe('ConversationSheet close', () => {
+  it('offers a close control that hands back to the caller', async () => {
+    vi.useRealTimers()
+    const { ConversationSheet } = await import('../src/components/ConversationSheet')
+    const { fireEvent } = await import('@testing-library/react')
+    const onClose = vi.fn()
+    render(
+      <ConversationSheet
+        bundle={bundle}
+        state={{ ...baseState, activeCharacterId: 'ann', transcripts: { ann: [{ role: 'character' as const, text: 'hi', atMs: 0 }] } }}
+        busy={false} stallLine={null} failedMessage={null} onRetry={() => {}} onClose={onClose}
+      />,
+    )
+    fireEvent.click(screen.getByRole('button', { name: /close conversation/i }))
+    expect(onClose).toHaveBeenCalled()
+  })
+})

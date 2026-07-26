@@ -9,6 +9,7 @@ export function ConversationSheet({
   stallLine,
   failedMessage,
   onRetry,
+  onClose,
   getAudio,
   onReplay,
 }: {
@@ -18,6 +19,7 @@ export function ConversationSheet({
   stallLine: string | null
   failedMessage: string | null
   onRetry: () => void
+  onClose?: () => void
   getAudio?: (characterId: string, index: number) => string | undefined
   onReplay?: (b64: string) => void
 }) {
@@ -37,9 +39,20 @@ export function ConversationSheet({
   if (!charId) return null
   return (
     <div className="pointer-events-auto mb-2 flex max-h-[42dvh] min-h-0 animate-[slideup_0.25s_ease-out] flex-col rounded-2xl border border-white/10 bg-slate-950/80">
-      <p className="px-4 pt-3 text-[11px] uppercase tracking-wide text-slate-400">
-        {character?.name} — {character?.role}
-      </p>
+      <div className="flex items-start justify-between gap-2 px-4 pt-3">
+        <p className="min-w-0 text-[11px] uppercase tracking-wide text-slate-400">
+          {character?.name} — {character?.role}
+        </p>
+        {onClose && (
+          <button
+            onClick={onClose}
+            aria-label="Close conversation"
+            className="-mr-1 -mt-1 shrink-0 rounded-full px-2 py-1 text-sm leading-none text-slate-400 transition hover:bg-white/10 hover:text-slate-100"
+          >
+            ✕
+          </button>
+        )}
+      </div>
       <div ref={scrollRef} className="min-h-0 flex-1 overflow-y-auto p-3">
         {entries.map((e, i) => {
           // Only the newest line, and only when it's the character speaking, types out —

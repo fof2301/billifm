@@ -41,7 +41,8 @@ function makeSession(overrides: object) {
   return {
     state: baseState, time: { day: 1, phase: 'day', expired: false, hour: 0, minute: 0 }, busy: false,
     stallLine: null, failedMessage: null, send: vi.fn(), retry: vi.fn(), pick: vi.fn(),
-    selectCharacter: vi.fn(), setMode: vi.fn(), pause: vi.fn(), resume: vi.fn(),
+    selectCharacter: vi.fn(),
+    closeConversation: vi.fn(), setMode: vi.fn(), pause: vi.fn(), resume: vi.fn(),
     onAudio: { current: null }, onEffect: { current: null },
     getAudio: () => undefined, ...overrides,
   }

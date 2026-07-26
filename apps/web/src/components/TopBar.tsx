@@ -17,6 +17,7 @@ export function TopBar({
   clueCount,
   onPause,
   onOpenTree,
+  treeIcon = '🌳',
   onOpenJournal,
   onOpenSettings,
   clockRef,
@@ -28,6 +29,7 @@ export function TopBar({
   clueCount: number
   onPause?: () => void
   onOpenTree?: () => void
+  treeIcon?: string
   onOpenJournal: () => void
   onOpenSettings: () => void
   clockRef?: React.MutableRefObject<HTMLElement | null>
@@ -75,7 +77,7 @@ export function TopBar({
               aria-label="Family tree"
               className="pointer-events-auto rounded-full bg-black/50 px-3 py-1 text-xs"
             >
-              🌳
+              {treeIcon}
             </button>
           )}
           <button

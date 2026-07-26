@@ -182,6 +182,10 @@ export function reduce(bundle: StoryBundle, state: SessionState, action: Action)
       }
       return { state: next, effects }
     }
+    case 'CLOSE_CONVERSATION': {
+      if (!state.activeCharacterId) return { state, effects }
+      return { state: { ...state, activeCharacterId: null, suggestedReplies: [] }, effects }
+    }
     case 'PLAYER_MESSAGE': {
       const charId = state.activeCharacterId
       if (!charId) return { state, effects }

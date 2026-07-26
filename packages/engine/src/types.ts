@@ -3,6 +3,7 @@ import type { Mode, PauseReason, SessionState } from '@story/schema'
 export type Action =
   | { type: 'TICK'; deltaMs: number }
   | { type: 'SELECT_CHARACTER'; characterId: string }
+  | { type: 'CLOSE_CONVERSATION' }
   | { type: 'PLAYER_MESSAGE'; text: string; source: Mode }
   | { type: 'CHARACTER_REPLY'; characterId: string; text: string; suggestedReplies?: string[] }
   | { type: 'MCQ_PICK'; challengeId: string; optionId: string }

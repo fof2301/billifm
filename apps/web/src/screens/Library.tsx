@@ -20,7 +20,10 @@ export function Library({ onPick }: { onPick: (storyId: string) => void }) {
   }
 
   useEffect(() => {
-    listStories().then(setStories).catch(() => setError(true))
+    listStories()
+      // meta.order pins featured stories to the front; unset sorts last.
+      .then((list) => setStories([...list].sort((a, b) => (a.order ?? 1e9) - (b.order ?? 1e9))))
+      .catch(() => setError(true))
   }, [])
 
   if (error) return <p className="p-8 text-center text-slate-400">Couldn't load stories. Is the gateway running?</p>

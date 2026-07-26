@@ -62,6 +62,7 @@ function fakeSession(): SessionApi {
     retry: vi.fn(),
     pick: vi.fn(),
     selectCharacter: vi.fn(),
+    closeConversation: vi.fn(),
     setMode: vi.fn(),
     pause: vi.fn(),
     resume: vi.fn(),
