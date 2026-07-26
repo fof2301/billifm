@@ -5,7 +5,7 @@
       <stop offset="100%" stop-color="#020204"/>
     </linearGradient>
     <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="#ffd166" stop-opacity="0.5"/>
+      <stop offset="0%" stop-color="#ffd166" stop-opacity="0.14"/>
       <stop offset="100%" stop-color="#ffd166" stop-opacity="0"/>
     </radialGradient>
   </defs>
@@ -14,7 +14,7 @@
   
   <ellipse cx="200" cy="460" rx="130" ry="60" fill="url(#glow)"/>
   <rect x="178" y="430" width="44" height="80" rx="8" fill="#101018" stroke="#2a2a3e" stroke-width="2"/>
-  <rect x="182" y="438" width="36" height="60" rx="3" fill="#ffd166" fill-opacity="0.95"/>
+  <rect x="182" y="438" width="36" height="60" rx="3" fill="#ffd166" fill-opacity="0.4"/>
   <text x="200" y="470" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#1a1a2e">2:07 AM</text>
   <text x="200" y="575" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#55556a">aadhi raat — 11:58 is coming</text>
 </svg>

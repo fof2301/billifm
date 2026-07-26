@@ -6,7 +6,11 @@
     "genre": "thriller",
     "estimatedMinutes": 10,
     "cover": "assets/cover.svg",
-    "modes": ["mcq", "text", "voice"],
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
     "stallLines": [
       "Static rises on the line…",
       "A diya gutters somewhere far away…",
@@ -17,7 +21,10 @@
   "clock": {
     "realMinutesPerStoryDay": 2.5,
     "totalStoryDays": 4,
-    "phases": ["raat", "aadhi-raat"]
+    "phases": [
+      "raat",
+      "aadhi-raat"
+    ]
   },
   "scene": {
     "id": "arjun-room",
@@ -38,8 +45,20 @@
         "voiceId": "nova",
         "instructions": "Bright, quick, teasing Hinglish; drops to a fierce whisper when scared; never screams"
       },
-      "availability": { "beats": ["*"], "phases": ["*"] },
-      "kin": { "generation": 0, "parents": ["papa"] }
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ]
+      },
+      "kin": {
+        "generation": 0,
+        "parents": [
+          "papa"
+        ]
+      }
     },
     {
       "id": "zoya",
@@ -52,7 +71,20 @@
         "voiceId": "coral",
         "instructions": "Clipped, dry Hinglish; measured; a cop who is tired but listening"
       },
-      "availability": { "beats": ["b2", "b3", "b4a", "b4a2", "b4b", "b4b2", "b5"], "phases": ["*"] }
+      "availability": {
+        "beats": [
+          "b2",
+          "b3",
+          "b4a",
+          "b4a2",
+          "b4b",
+          "b4b2",
+          "b5"
+        ],
+        "phases": [
+          "*"
+        ]
+      }
     },
     {
       "id": "dev",
@@ -65,7 +97,16 @@
         "voiceId": "echo",
         "instructions": "Young, nervous, voice cracks under pressure; earnest"
       },
-      "availability": { "beats": ["b4a", "b4a2", "b5"], "phases": ["*"] }
+      "availability": {
+        "beats": [
+          "b4a",
+          "b4a2",
+          "b5"
+        ],
+        "phases": [
+          "*"
+        ]
+      }
     },
     {
       "id": "sana",
@@ -78,7 +119,17 @@
         "voiceId": "shimmer",
         "instructions": "Soft, unhurried, faintly echoing calm; kind; never spooky for its own sake"
       },
-      "availability": { "beats": ["*"], "phases": ["*"], "requiresClues": ["sd_card"] }
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "sd_card"
+        ]
+      }
     },
     {
       "id": "papa",
@@ -91,8 +142,18 @@
         "voiceId": "onyx",
         "instructions": "Deep, slow, warm; long pauses; a father's steadiness"
       },
-      "availability": { "beats": ["*"], "phases": ["*"] },
-      "kin": { "generation": -1, "parents": [] }
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ]
+      },
+      "kin": {
+        "generation": -1,
+        "parents": []
+      }
     },
     {
       "id": "rohan",
@@ -105,7 +166,14 @@
         "voiceId": "ash",
         "instructions": "Low, controlled, amused menace; never raises his voice; silk over stone"
       },
-      "availability": { "beats": ["b5"], "phases": ["*"] }
+      "availability": {
+        "beats": [
+          "b5"
+        ],
+        "phases": [
+          "*"
+        ]
+      }
     }
   ],
   "beats": [
@@ -113,64 +181,147 @@
       "id": "b1",
       "narration": "Three nights after your little sister died on the bypass flyover, your phone rings at 2:07 AM. Caller ID: Riya 💜. She is mid-laugh, alive, three days in the past — three days before Diwali. Three days before the night she dies. The line will not hold forever, and she thinks you are joking.",
       "objective": "Make her believe you.",
-      "characters": ["riya"],
-      "challenges": ["cp1"],
+      "characters": [
+        "riya",
+        "papa"
+      ],
+      "challenges": [
+        "cp1"
+      ],
       "transitions": []
     },
     {
       "id": "b2",
       "narration": "She believes you now — the transformer blast you predicted saw to that. And today you saw her scooty in the police yard: the brake line wasn't worn through. It was cut. One clean stroke. This was never an accident — which means somebody chose Diwali night. Find out who wants her silenced, and why the date matters.",
       "objective": "Find out who would want Riya silenced — and why the date matters.",
-      "characters": ["riya", "zoya"],
-      "challenges": ["ch_motive"],
-      "transitions": [{ "when": { "flags": ["knows_motive"] }, "goto": "b3" }]
+      "characters": [
+        "riya",
+        "zoya",
+        "papa"
+      ],
+      "challenges": [
+        "ch_motive"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_motive"
+            ]
+          },
+          "goto": "b3"
+        }
+      ]
     },
     {
       "id": "b3",
       "narration": "Midnight. The power cut only her house. You stayed on the line while a man walked room to room, patient as a clock, and knocked three slow knuckle-taps on the storeroom door she hid behind. He wasn't a thief — he came for her recorder. And he knew things only one person could have told him. One full day remains before Diwali. Two threads. No time for both.",
       "objective": "Choose the last day's thread.",
-      "characters": ["riya", "zoya"],
-      "challenges": ["cp3"],
+      "characters": [
+        "riya",
+        "zoya",
+        "papa",
+        "sana"
+      ],
+      "challenges": [
+        "cp3"
+      ],
       "transitions": []
     },
     {
       "id": "b4a",
       "narration": "D-1. Riya walks into the college media lab where Dev is waiting, her recorder running in her pocket. Whoever sent the man in the dark knew about her closet studio, knew where she slept, knew about the recorder. The list of people who knew those things has one name on it that she loves.",
       "objective": "Get Dev to admit who he told — and make him yours.",
-      "characters": ["riya", "dev", "zoya"],
-      "challenges": ["ch_dev"],
-      "transitions": [{ "when": { "flags": ["dev_turned"] }, "goto": "b4a2" }]
+      "characters": [
+        "riya",
+        "dev",
+        "zoya",
+        "papa",
+        "sana"
+      ],
+      "challenges": [
+        "ch_dev"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "dev_turned"
+            ]
+          },
+          "goto": "b4a2"
+        }
+      ]
     },
     {
       "id": "b4a2",
       "narration": "Diwali morning. Dev told the showroom manager — he thought they'd only scare her. Now he'll do anything, and last night he got Kalia drunk on tape: 'scooty wali ka intezaam'. You hold a confession and a broken boy who wants to be forgiven. Tonight is the night she dies. Choose how you spend it.",
       "objective": "Diwali raat. Dev tumhare saath hai. Kya karna hai?",
-      "characters": ["riya", "dev", "zoya"],
-      "challenges": ["cp4a"],
+      "characters": [
+        "riya",
+        "dev",
+        "zoya",
+        "papa",
+        "sana"
+      ],
+      "challenges": [
+        "cp4a"
+      ],
       "transitions": []
     },
     {
       "id": "b4b",
       "narration": "D-1. She collects the SD card from the media lab locker on the way — every voice Sana's case ever needed, one year of quiet work. Tonight Chaddha Motors throws its Diwali party, and its records office holds the one thing money couldn't burn: the repair bill for a smashed headlight, dated the day after Sana died. Riya goes in as event crew. You are her eyes that cannot see — only listen.",
       "objective": "Guide her into Chaddha Motors and out again — with the ledger.",
-      "characters": ["riya", "zoya"],
-      "challenges": ["ch_break"],
-      "transitions": [{ "when": { "flags": ["has_documents"] }, "goto": "b4b2" }]
+      "characters": [
+        "riya",
+        "zoya",
+        "papa",
+        "sana"
+      ],
+      "challenges": [
+        "ch_break"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "has_documents"
+            ]
+          },
+          "goto": "b4b2"
+        }
+      ]
     },
     {
       "id": "b4b2",
       "narration": "Diwali morning. The chain is complete — ledger, repair record, Sana's voicemail, the watchman's voice. But a service-corridor camera caught her face for one second, and the showroom pulled its own CCTV within the hour. Now you both know. And he knows she knows. His bail hearing is tomorrow morning. Tonight is all he has left — and all you have too.",
       "objective": "SD card poora hai. Rohan ko pata hai. Aakhri chaal?",
-      "characters": ["riya", "zoya"],
-      "challenges": ["cp4b"],
+      "characters": [
+        "riya",
+        "zoya",
+        "papa",
+        "sana"
+      ],
+      "challenges": [
+        "cp4b"
+      ],
       "transitions": []
     },
     {
       "id": "b5",
       "narration": "Diwali night. Both houses glow three days apart — hers with fifty diyas, yours with one. At 11:41 PM the message lands from Ramdin the watchman's number, the same lure as the first time: 'Beta, woh log mere ghar pe hain…' It ends mid-sentence. Seventeen minutes to 11:58. The line is open. Whatever happens — it happens with you listening.",
       "objective": "Stay on the line. Jo bhi ho, phone mat chhodna.",
-      "characters": ["riya", "rohan", "zoya"],
-      "challenges": ["ch_finale"],
+      "characters": [
+        "riya",
+        "rohan",
+        "zoya",
+        "papa",
+        "sana"
+      ],
+      "challenges": [
+        "ch_finale"
+      ],
       "transitions": []
     }
   ],
@@ -184,28 +335,63 @@
         {
           "id": "sach",
           "text": "SACH — Sab sach bata do: 'teen din baad tu nahi rahegi'",
-          "onPick": { "setFlags": ["trust_scared"], "goto": "b2" }
+          "onPick": {
+            "setFlags": [
+              "trust_scared"
+            ],
+            "goto": "b2"
+          }
         },
         {
           "id": "kasam",
           "text": "KASAM — Bina wajah bataye kasam do: 'Diwali raat ghar se mat nikalna'",
-          "onPick": { "setFlags": ["trust_shaky"], "goto": "b2" }
+          "onPick": {
+            "setFlags": [
+              "trust_shaky"
+            ],
+            "goto": "b2"
+          }
         },
         {
           "id": "saboot",
           "text": "SABOOT — Agle ek ghante ki har cheez predict karke dikha do",
-          "onPick": { "setFlags": ["trust_allied"], "goto": "b2" }
+          "onPick": {
+            "setFlags": [
+              "trust_allied"
+            ],
+            "goto": "b2"
+          }
         }
       ],
-      "onTimeout": { "setFlags": ["trust_allied"], "goto": "b2" }
+      "onTimeout": {
+        "setFlags": [
+          "trust_allied"
+        ],
+        "goto": "b2"
+      }
     },
     {
       "id": "ch_motive",
       "type": "task",
       "prompt": "Talk to Riya (or Zoya). Find out who would want Riya silenced — and why Diwali night matters.",
       "timeLimitSeconds": 240,
-      "onSuccess": { "setFlags": ["knows_motive"], "unlockClues": ["sd_card", "brake_cut"] },
-      "onFailure": { "setFlags": ["knows_motive"], "unlockClues": ["sd_card"] }
+      "onSuccess": {
+        "setFlags": [
+          "knows_motive"
+        ],
+        "unlockClues": [
+          "sd_card",
+          "brake_cut"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_motive"
+        ],
+        "unlockClues": [
+          "sd_card"
+        ]
+      }
     },
     {
       "id": "cp3",
@@ -216,23 +402,49 @@
         {
           "id": "dev_saamna",
           "text": "DEV KA SAAMNA — Pehle ghar ka bhedi. Riya Dev se sach ugalwaegi",
-          "onPick": { "setFlags": ["track_dev"], "goto": "b4a" }
+          "onPick": {
+            "setFlags": [
+              "track_dev"
+            ],
+            "goto": "b4a"
+          }
         },
         {
           "id": "kaanch_mahal",
           "text": "KAANCH KA MAHAL — Proof pura karo: Chaddha showroom ke records, raat mein",
-          "onPick": { "setFlags": ["track_showroom"], "goto": "b4b" }
+          "onPick": {
+            "setFlags": [
+              "track_showroom"
+            ],
+            "goto": "b4b"
+          }
         }
       ],
-      "onTimeout": { "setFlags": ["track_showroom"], "goto": "b4b" }
+      "onTimeout": {
+        "setFlags": [
+          "track_showroom"
+        ],
+        "goto": "b4b"
+      }
     },
     {
       "id": "ch_dev",
       "type": "task",
       "prompt": "Get Dev to admit who he told about Riya's investigation.",
       "timeLimitSeconds": 240,
-      "onSuccess": { "setFlags": ["dev_turned"], "unlockClues": ["dev_leak"] },
-      "onFailure": { "setFlags": ["dev_turned"] }
+      "onSuccess": {
+        "setFlags": [
+          "dev_turned"
+        ],
+        "unlockClues": [
+          "dev_leak"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "dev_turned"
+        ]
+      }
     },
     {
       "id": "cp4a",
@@ -243,28 +455,59 @@
         {
           "id": "shikanja",
           "text": "SHIKANJA — Dev wire pehnega. Showroom mein Rohan se sach kabulwao, record karo",
-          "onPick": { "setFlags": ["chose_shikanja"], "goto": "b5" }
+          "onPick": {
+            "setFlags": [
+              "chose_shikanja"
+            ],
+            "goto": "b5"
+          }
         },
         {
           "id": "mehfil",
           "text": "BHARI MEHFIL — MLA ki Diwali sabha mein, sab ke saamne, speaker pe chala do sab kuch",
-          "onPick": { "setFlags": ["chose_mehfil"], "goto": "b5" }
+          "onPick": {
+            "setFlags": [
+              "chose_mehfil"
+            ],
+            "goto": "b5"
+          }
         },
         {
           "id": "bhaag",
           "text": "BHAAG — Koi hero-giri nahi. Riya aaj raat sheher chhod degi — zinda rehna jeet hai",
-          "onPick": { "setFlags": ["chose_bhaag"], "goto": "b5" }
+          "onPick": {
+            "setFlags": [
+              "chose_bhaag"
+            ],
+            "goto": "b5"
+          }
         }
       ],
-      "onTimeout": { "setFlags": ["chose_shikanja"], "goto": "b5" }
+      "onTimeout": {
+        "setFlags": [
+          "chose_shikanja"
+        ],
+        "goto": "b5"
+      }
     },
     {
       "id": "ch_break",
       "type": "task",
       "prompt": "Riya is inside Chaddha Motors. Keep her calm, steer her to the records office, and tell her what to photograph.",
       "timeLimitSeconds": 240,
-      "onSuccess": { "setFlags": ["has_documents"], "unlockClues": ["repair_ledger"] },
-      "onFailure": { "setFlags": ["has_documents"] }
+      "onSuccess": {
+        "setFlags": [
+          "has_documents"
+        ],
+        "unlockClues": [
+          "repair_ledger"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "has_documents"
+        ]
+      }
     },
     {
       "id": "cp4b",
@@ -275,23 +518,46 @@
         {
           "id": "daak",
           "text": "SACH KI DAAK — Aaj raat kuch mat karo. Teen parcel: court, press, crime branch. Subah pahunchenge",
-          "onPick": { "setFlags": ["chose_wahiraat"], "goto": "b5" }
+          "onPick": {
+            "setFlags": [
+              "chose_wahiraat"
+            ],
+            "goto": "b5"
+          }
         },
         {
           "id": "gyarah_atthavan",
           "text": "11:58 — Bhaago mat, chhupo mat. Main line pe hoon, poori raat. Hum 11:58 ke paar nikalenge — saath",
-          "onPick": { "setFlags": ["chose_1158"], "goto": "b5" }
+          "onPick": {
+            "setFlags": [
+              "chose_1158"
+            ],
+            "goto": "b5"
+          }
         }
       ],
-      "onTimeout": { "setFlags": ["chose_wahiraat"], "goto": "b5" }
+      "onTimeout": {
+        "setFlags": [
+          "chose_wahiraat"
+        ],
+        "goto": "b5"
+      }
     },
     {
       "id": "ch_finale",
       "type": "task",
       "prompt": "Seventeen minutes to 11:58. Stay on the line — keep her moving, or keep her company. Rohan may call. Jo bhi ho, phone mat chhodna.",
       "timeLimitSeconds": 180,
-      "onSuccess": { "setFlags": ["night_resolved"] },
-      "onFailure": { "setFlags": ["night_resolved"] }
+      "onSuccess": {
+        "setFlags": [
+          "night_resolved"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "night_resolved"
+        ]
+      }
     }
   ],
   "clues": [
@@ -319,37 +585,64 @@
   "endings": [
     {
       "id": "shikanja",
-      "when": { "flags": ["chose_shikanja", "night_resolved"] },
+      "when": {
+        "flags": [
+          "chose_shikanja",
+          "night_resolved"
+        ]
+      },
       "title": "Shikanja",
       "text": "Dev walks the wire into the party and Rohan, two pegs in, says the sentence that ends him: 'Ek scooty wali ka intezaam kiya hai aaj raat ka.' Premeditation, on tape, before the attempt. The past-side police take him at the gate at 11:52 — and Dev holds the door with his bare hands against Kalia's knife so she can run. 12:00 AM. She's past it. Riya lives. Rohan falls for Sana AND for her. Some debts are paid in scars; Dev wears his home."
     },
     {
       "id": "mehfil",
-      "when": { "flags": ["chose_mehfil", "night_resolved"] },
+      "when": {
+        "flags": [
+          "chose_mehfil",
+          "night_resolved"
+        ]
+      },
       "title": "Bhari Mehfil",
       "text": "MLA Chaddha's Diwali sabha, three thousand phones. At 11:20 the PA system stops playing filmi remixes and starts playing the truth — Sana's last voicemail, the watchman, Kalia's laugh. Sixty seconds of audio. Rohan unravels on his father's own stage, on camera, grabbing for the mic. Arrest by morning; the crowd's videos outrun every fixer. Riya lives. But the empire stands, wounded and patient. Jeet gaye… par jung baaki hai."
     },
     {
       "id": "bhaag",
-      "when": { "flags": ["chose_bhaag", "night_resolved"] },
+      "when": {
+        "flags": [
+          "chose_bhaag",
+          "night_resolved"
+        ]
+      },
       "title": "Bhaag",
       "text": "No heroics. Dev drives her to Itarsi junction at dusk; the SD card is sewn into her jacket. 11:58 passes in a train corridor between two coaches, and the record flickers to 'whereabouts unknown' — and holds. She's alive. But the parcels were never sent, the hearing sails through, and Rohan walks. The line dies mid-sentence, wheels on tracks. Weeks later, a voicemail from a number you don't know: 'Zinda hoon, bhaiya. Par kab tak bhaagungi?'"
     },
     {
       "id": "wahi_raat",
-      "when": { "flags": ["chose_wahiraat", "night_resolved"] },
+      "when": {
+        "flags": [
+          "chose_wahiraat",
+          "night_resolved"
+        ]
+      },
       "title": "Wahi Raat",
       "text": "The parcels go out at dusk from three post offices. She only had to stay home. At 11:41 the lure lands anyway — Ramdin, the one thread she can't leave to burn. She goes. 'Bhaiya. Sun'na mat chhodna.' The flyover. The engine. 11:58 — and this time the record doesn't flicker. Three mornings later the parcels land, and the recording of her last eleven minutes — carried across three days by a phone line that shouldn't exist — convicts Rohan for Sana and for Riya both. Her podcast gets its final episode, posted by her brother: 'Khoji, episode aakhri. Host: meri behen.'"
     },
     {
       "id": "gyarah_atthavan",
-      "when": { "flags": ["chose_1158", "night_resolved"] },
+      "when": {
+        "flags": [
+          "chose_1158",
+          "night_resolved"
+        ]
+      },
       "title": "11:58",
       "text": "You tell her everything, and then you run her through the night of her own death — every turn called from three days of hindsight, every turn burning a memory: Nainital, her first day of school, her voice. At 11:58 the SUV finds the service road — and meets the one barricade Zoya moved from the far side of time. 12:00 AM. The record rewrites itself while you watch: obituary dissolving, cremation photos becoming Diwali photos. And you forget. All of it. The last thing that happens is your phone ringing — Riya 💜 — 'Bhaiyaaaa, ghar aaja, Maa bula rahi hai. …Arre, ro kyun rahe ho?' You don't know. You will never know. She will always know someone was on the line."
     },
     {
       "id": "waqt_khatam",
-      "when": { "clockExpired": true },
+      "when": {
+        "clockExpired": true
+      },
       "title": "Waqt Khatam",
       "text": "The window closes the way it opened — without warning, without mercy. 11:58 arrives on schedule, three days ago, and the record holds the shape it always had. Some nights can only be rewritten by someone who refuses to put the phone down. The line is dead. But somewhere in the static, very faint: 'Buddhu bhaiya. Phir se try karna.'"
     }
