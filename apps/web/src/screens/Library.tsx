@@ -17,21 +17,34 @@ export function Library({ onPick }: { onPick: (storyId: string) => void }) {
   if (!stories) return <p className="p-8 text-center text-slate-400">Loading…</p>
 
   return (
-    <div className="mx-auto max-w-md p-4 pb-12">
-      <h1 className="py-6 text-2xl font-bold">Stories</h1>
-      <div className="flex flex-col gap-4">
+    <div className="mx-auto max-w-md p-4 pb-12 sm:max-w-3xl lg:max-w-5xl">
+      <header className="py-6 sm:py-10">
+        <h1 className="text-2xl font-bold sm:text-4xl">Stories</h1>
+        <p className="mt-1 text-sm text-slate-400">
+          Short interactive mysteries. Talk your way through them — by voice, by typing, or by choosing.
+        </p>
+      </header>
+      {/* One column on phones, two from sm, three from lg. */}
+      <div data-story-grid className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
         {stories.map((s) => (
           <button
             key={s.id}
             onClick={() => onPick(s.id)}
-            className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 text-left transition hover:border-slate-600"
+            className="group flex flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 text-left transition hover:-translate-y-0.5 hover:border-slate-600 hover:shadow-lg hover:shadow-black/40"
           >
-            <img src={assetUrl(s.id, s.cover)} alt="" className="h-40 w-full object-cover" />
-            <div className="p-4">
-              <div className="flex items-baseline justify-between">
-                <h2 className="text-lg font-semibold">{s.title}</h2>
-                <span className="text-xs text-slate-400">{s.estimatedMinutes} min</span>
-              </div>
+            <div className="relative aspect-[3/2] overflow-hidden sm:aspect-[4/5]">
+              <img
+                src={assetUrl(s.id, s.cover)}
+                alt=""
+                className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+              />
+              <span className="absolute right-2 top-2 rounded-full bg-black/70 px-2 py-0.5 text-[11px] text-slate-200">
+                {s.estimatedMinutes} min
+              </span>
+            </div>
+            <div className="flex flex-1 flex-col p-4">
+              <p className="text-[10px] uppercase tracking-widest text-slate-500">{s.genre}</p>
+              <h2 className="mt-1 text-lg font-semibold">{s.title}</h2>
               <p className="mt-1 text-sm text-slate-400">{s.tagline}</p>
             </div>
           </button>
@@ -48,7 +61,7 @@ export function Library({ onPick }: { onPick: (storyId: string) => void }) {
 
       {review && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950 p-4">
-          <div className="mx-auto max-w-md pb-12">
+          <div className="mx-auto max-w-md pb-12 sm:max-w-3xl">
             <div className="flex items-center justify-between py-4">
               <h1 className="text-xl font-bold">{review.bundle.meta.title}</h1>
               <button onClick={() => setReview(null)} className="rounded-lg bg-slate-800 px-3 py-1.5 text-sm">
