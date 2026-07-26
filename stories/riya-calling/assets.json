@@ -1,15 +1,16 @@
 {
   "portraits": {
-    "riya": "A nineteen-year-old Indian college student, bright alert eyes, messy bun, oversized hoodie, headphones round her neck, lit by a laptop screen in a dark hostel room, warm and full of mischief",
-    "zoya": "An Indian woman of twenty-eight in plain clothes police attire, sharp tired eyes, hair tied back, a paper chai cup in hand, fluorescent office light, unsentimental",
-    "dev": "An Indian man of twenty-one, soft features, red-rimmed eyes, hooded sweatshirt, sitting in a parked car at night, guilt written across his face"
+    "riya": "A 19-year-old Indian college student, bright mischievous eyes, marigold flower in her hair, holding a small podcast recorder, warm lamplight against deep shadow, cinematic thriller-noir, Bhopal, semi-photorealistic, film grain",
+    "zoya": "An Indian policewoman in her late twenties, cyber-cell sub-inspector, plain kurta over uniform trousers, tired sharp eyes, chai glass in hand, desk lamp in a dark office, thriller-noir, film grain",
+    "dev": "A 21-year-old Indian young man, soft nervous face, showroom staff lanyard, guilt in his eyes, lit by a phone screen in the dark, thriller-noir, film grain",
+    "sana": "A young Indian woman of nineteen, warm open smile, college scarf, soft daylight, photographed as if from a remembered photo, gentle and alive",
+    "papa": "An Indian man in his late fifties, greying moustache, tired kind eyes, plain shirt, sitting in a dim living room, grief held quietly",
+    "rohan": "An Indian man of twenty-eight, expensive casual shirt, gold chain, smooth arrogant confidence, harsh flash lighting at night, unlikeable"
   },
   "scenes": {
-    "2am": "A cramped video-editing studio at 2 AM in an Indian city: two monitors glowing on a timeline, cold blue light, a phone face-up on the desk screen lit with an incoming call, cigarette smoke haze, dead marigold garland on the wall",
-    "before-midnight": "The same studio the next night, monitors dark, only a desk lamp: a small muddy paper note unfolded beside the phone, a chai glass gone cold, rain on the window",
-    "diwali-night": "The same studio during Diwali: fireworks flashing green and gold through the window blinds, the room strobing, the phone glowing on the desk, strings of lights on the building opposite",
-    "1158": "The same studio at 11:58 PM, fireworks finished, only smoke drifting past the window, the phone screen the single light source, the chair pushed back and empty"
+    "raat": "A young man's dark bedroom in Bhopal at night, editing desk with dead monitors, one phone glowing face-up on the bed, window with distant Diwali lights and one unlit street, low-key lighting, near-black palette with a single blood-red accent, cinematic thriller-noir, portrait 2:3, film grain",
+    "aadhi-raat": "The same dark bedroom past midnight, phone screen now the only light source casting long shadows, clock at 2:07, curtains breathing in night wind, deeper blacks, colder, more menacing, cinematic thriller-noir, portrait 2:3, film grain"
   },
-  "cover": "A phone lying face-up on a dark editing desk at 2 AM, its screen a plain glowing blank rectangle with a single small purple heart shape and two round call buttons \u2014 absolutely no letters, no numbers, no words anywhere in the image \u2014 marigold petals scattered on the desk, cold blue monitor light, Diwali fireworks blurred through the window behind, ominous and intimate",
-  "ambient": "Late-night Indian city interior: distant traffic hum, a ceiling fan turning, faint far-off Diwali firecrackers, the electrical whine of monitors, an occasional dog barking blocks away. Seamless loop, no melody, no voices."
+  "cover": "A cracked smartphone face-up in darkness receiving a call, screen glowing with warm light and a purple heart, a faint translucent girl with a marigold in her hair reflected in the glass, distant Diwali diyas bokeh, near-black palette with one blood-red accent, cinematic thriller-noir poster, no text",
+  "ambient": "Quiet Indian city bedroom at 2 AM: slow ceiling fan, distant last Diwali crackers very far away, faint electrical hum, a phone's soft static presence, cold and held-breath stillness. Seamless loop, no melody, no voices."
 }

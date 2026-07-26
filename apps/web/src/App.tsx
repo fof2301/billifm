@@ -1,5 +1,6 @@
 import type { Mode, StoryBundle } from '@story/schema'
 import { useState } from 'react'
+import { DemoPlayer } from './screens/DemoPlayer'
 import { Ending } from './screens/Ending'
 import { Intro } from './screens/Intro'
 import { Library } from './screens/Library'
@@ -10,13 +11,18 @@ export type Route =
   | { name: 'intro'; storyId: string }
   | { name: 'stage'; bundle: StoryBundle; mode: Mode; resume: boolean }
   | { name: 'ending'; bundle: StoryBundle; endingId: string }
+  | { name: 'demo' }
 
 export default function App() {
-  const [route, setRoute] = useState<Route>({ name: 'library' })
+  const [route, setRoute] = useState<Route>(() =>
+    window.location.hash === '#demo' ? { name: 'demo' } : { name: 'library' },
+  )
   // Bumping this remounts the Stage, which is how "start over" gets a fresh session.
   const [runId, setRunId] = useState(0)
 
   switch (route.name) {
+    case 'demo':
+      return <DemoPlayer />
     case 'library':
       return <Library onPick={(storyId) => setRoute({ name: 'intro', storyId })} />
     case 'intro':
