@@ -27,16 +27,6 @@ export function InputDock({
     }
   }, [])
 
-  // Chips mount at opacity-0/translate-y-1 then flip to visible right after first paint,
-  // each with its own transitionDelay (i * 60ms) — a one-shot staggered entrance, not a
-  // keyframe, so it composes with each chip's own transition duration.
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    const id = requestAnimationFrame(() => setMounted(true))
-    return () => cancelAnimationFrame(id)
-  }, [])
-  const chipTransitionClass = `transition duration-300 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`
-
   const mcqChallenge =
     state.activeChallenge != null
       ? bundle.challenges.find((c) => c.id === state.activeChallenge!.id && c.type === 'mcq')
@@ -44,6 +34,23 @@ export function InputDock({
 
   const STARTERS = ['Who are you?', 'What is this place?', 'What do you want from me?']
   const chips = state.suggestedReplies.length > 0 ? state.suggestedReplies : noCharacter ? [] : STARTERS
+
+  // Chips mount at opacity-0/translate-y-1 then flip to visible on the next paint, each
+  // with its own transitionDelay (i * 60ms) — a staggered entrance re-armed per chip-SET
+  // IDENTITY, not just on InputDock's own mount. Chips don't exist until a character is
+  // picked (activeCharacterId starts null), and every suggested-replies refresh swaps
+  // their content in place, so a mount-only flip would already be true by the time any
+  // chip set first has something to show, and stay true forever after — nothing would
+  // ever stagger in.
+  const chipSetKey =
+    mcqChallenge?.type === 'mcq' ? `mcq:${mcqChallenge.id}` : chips.length > 0 ? `chips:${chips.join('|')}` : 'none'
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setMounted(false)
+    const id = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(id)
+  }, [chipSetKey])
+  const chipTransitionClass = `transition duration-300 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`
 
   const submit = () => {
     const text = draft.trim()

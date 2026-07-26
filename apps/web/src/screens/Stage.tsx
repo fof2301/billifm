@@ -60,6 +60,16 @@ export function Stage({
       if (phaseToastTimeout.current) clearTimeout(phaseToastTimeout.current)
       phaseToastTimeout.current = setTimeout(() => setPhaseToast(null), 2500)
     }
+    if (e.type === 'challenge-started') {
+      // Chained challenges: the engine can resolve the previous challenge and activate
+      // this one in the same dispatch, so a still-pending outcome/timeout from the one
+      // that just resolved must not bleed onto this new challenge's banner.
+      setChallengeOutcome(null)
+      if (outcomeTimeout.current) {
+        clearTimeout(outcomeTimeout.current)
+        outcomeTimeout.current = null
+      }
+    }
     if (e.type === 'challenge-succeeded' || e.type === 'challenge-timed-out') {
       const ch = bundle.challenges.find((c) => c.id === e.challengeId)
       setLastChallengePrompt(ch?.prompt ?? null)

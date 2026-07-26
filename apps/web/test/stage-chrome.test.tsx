@@ -91,9 +91,10 @@ const challengeBundle = StoryBundleSchema.parse({
     { id: 'ann', name: 'Ann', role: 'r', portrait: 'p.svg', personality: 'k', greeting: 'g',
       voice: { voiceId: 'alloy' }, availability: { beats: ['*'], phases: ['*'] } },
   ],
-  beats: [{ id: 'b1', narration: 'n', objective: 'o', characters: [], challenges: ['c1'] }],
+  beats: [{ id: 'b1', narration: 'n', objective: 'o', characters: [], challenges: ['c1', 'c2'] }],
   challenges: [
     { id: 'c1', type: 'task', prompt: 'Convince Ann to help.', timeLimitSeconds: 90, onSuccess: {}, onFailure: {} },
+    { id: 'c2', type: 'task', prompt: 'Find the door.', timeLimitSeconds: 90, onSuccess: {}, onFailure: {} },
   ],
   clues: [],
   endings: [{ id: 'e', when: { clockExpired: true }, title: 'E', text: 'e' }],
@@ -118,12 +119,19 @@ describe('ChallengeBanner', () => {
     expect(p).not.toHaveClass('bg-emerald-950/70')
   })
 
+  // outcome/lastPrompt only ever apply once activeChallenge has gone null (either the
+  // engine resolved it with no successor, or Stage's own 'challenge-started' handler
+  // already cleared the outcome for a chained successor — see the "renders neutral..."
+  // regression test below). A *live* challenge never carries outcome styling, so these
+  // pass activeChallenge: null + lastPrompt, matching the real Stage->ChallengeBanner data
+  // flow instead of an artificial "active challenge with its own outcome" combination.
   it('flips to green success styling when outcome is success', () => {
     render(
       <ChallengeBanner
         bundle={challengeBundle}
-        state={{ ...challengeBaseState, activeChallenge: { id: 'c1', deadlineMs: 90_000 } }}
+        state={{ ...challengeBaseState, activeChallenge: null }}
         outcome="success"
+        lastPrompt="Convince Ann to help."
       />,
     )
     const p = screen.getByText('Convince Ann to help.')
@@ -134,8 +142,9 @@ describe('ChallengeBanner', () => {
     render(
       <ChallengeBanner
         bundle={challengeBundle}
-        state={{ ...challengeBaseState, activeChallenge: { id: 'c1', deadlineMs: 90_000 } }}
+        state={{ ...challengeBaseState, activeChallenge: null }}
         outcome="timeout"
+        lastPrompt="Convince Ann to help."
       />,
     )
     const p = screen.getByText('Convince Ann to help.')
@@ -157,6 +166,26 @@ describe('ChallengeBanner', () => {
   it('renders nothing with no active challenge and no outcome', () => {
     const { container } = render(<ChallengeBanner bundle={challengeBundle} state={challengeBaseState} />)
     expect(container).toBeEmptyDOMElement()
+  })
+
+  // Regression: the engine can resolve challenge A and activate challenge B in the same
+  // dispatch (chained challenges). Stage's outcome/lastPrompt state is still A's until its
+  // own 1.2s timeout clears it, but the banner must never paint B's prompt with A's
+  // outcome styling — a live challenge always renders neutral.
+  it('renders neutral styling for a NEW active challenge even while a stale outcome/lastPrompt from the previous one is still pending clear', () => {
+    render(
+      <ChallengeBanner
+        bundle={challengeBundle}
+        state={{ ...challengeBaseState, activeChallenge: { id: 'c2', deadlineMs: 90_000 } }}
+        outcome="success"
+        lastPrompt="Convince Ann to help."
+      />,
+    )
+    const p = screen.getByText('Find the door.')
+    expect(p).toHaveClass('bg-red-950/70', 'text-red-200')
+    expect(p).not.toHaveClass('bg-emerald-950/70')
+    expect(p).not.toHaveClass('animate-[shake_0.4s_ease-in-out]')
+    expect(screen.queryByText('Convince Ann to help.')).not.toBeInTheDocument()
   })
 })
 

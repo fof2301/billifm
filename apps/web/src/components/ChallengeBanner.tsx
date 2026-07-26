@@ -20,10 +20,16 @@ export function ChallengeBanner({
   const prompt = active?.prompt ?? (outcome ? lastPrompt : undefined)
   if (!prompt) return null
 
+  // Chained challenges: the engine can resolve challenge A and activate B in the same
+  // dispatch, so Stage's `outcome`/`lastPrompt` can still be A's for up to 1.2s while
+  // `active` already points at B. Outcome styling only ever applies on the lastPrompt
+  // fallback path (no live challenge) — a live challenge always renders neutral, even if a
+  // stale outcome prop hasn't cleared yet.
+  const effectiveOutcome = active ? null : outcome
   const outcomeClass =
-    outcome === 'success'
+    effectiveOutcome === 'success'
       ? 'bg-emerald-950/70 text-emerald-200'
-      : outcome === 'timeout'
+      : effectiveOutcome === 'timeout'
         ? 'bg-red-950/70 text-red-200 animate-[shake_0.4s_ease-in-out]'
         : 'bg-red-950/70 text-red-200'
 

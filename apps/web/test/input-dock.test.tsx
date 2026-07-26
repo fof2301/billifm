@@ -1,8 +1,20 @@
-import { render, screen } from '@testing-library/react'
+import { act, render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { StoryBundleSchema } from '@story/schema'
 import { InputDock } from '../src/components/InputDock'
+
+// jsdom's real requestAnimationFrame fires on a wall-clock timer, which makes tests that
+// need to observe the "before the flip" and "after the flip" states flaky/slow. Stub it to
+// resolve on a same-tick macrotask instead, so `await act(() => Promise.resolve())`-style
+// flushing is deterministic.
+beforeEach(() => {
+  vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => setTimeout(() => cb(0), 0) as unknown as number)
+  vi.stubGlobal('cancelAnimationFrame', (id: number) => clearTimeout(id))
+})
+afterEach(() => {
+  vi.unstubAllGlobals()
+})
 
 vi.mock('../src/api', () => ({ assetUrl: () => 'x' }))
 
@@ -69,5 +81,60 @@ describe('InputDock', () => {
     const session = makeSession({ state: { ...baseState, mode: 'text' as const, activeCharacterId: null } })
     render(<InputDock bundle={bundle} session={session} />)
     expect(screen.getByPlaceholderText(/pick someone/i)).toBeDisabled()
+  })
+
+  // Regression: chips don't exist until a character is picked (activeCharacterId starts
+  // null), so a "mounted once on InputDock's own mount" flip is already true by the time
+  // the FIRST chip set ever renders — nothing ever staggers in. The entrance must be
+  // re-armed per chip-set identity instead.
+  it('re-arms the chip entrance per chip-set identity — the first starter set stages in on a fresh frame', async () => {
+    const noCharSession = makeSession({ state: { ...baseState, activeCharacterId: null } })
+    const { rerender } = render(<InputDock bundle={bundle} session={noCharSession} />)
+    expect(screen.getByText(/pick someone/i)).toBeInTheDocument()
+
+    // Let the dock's initial mount-frame flip fire BEFORE any chips exist — this is the
+    // real-world timing bug: `mounted` flips ~1 frame after InputDock mounts, well before
+    // a player has actually picked a character, so a "mounted once, ever" flip is already
+    // true by the time the first chip set has anything to show.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    })
+
+    const withCharSession = makeSession({})
+    rerender(<InputDock bundle={bundle} session={withCharSession} />)
+
+    const labels = ['Who are you?', 'What is this place?', 'What do you want from me?']
+    const buttons = labels.map((l) => screen.getByRole('button', { name: l }))
+    buttons.forEach((b) => expect(b).toHaveClass('opacity-0', 'translate-y-1'))
+    expect(buttons[0]).toHaveStyle({ transitionDelay: '0ms' })
+    expect(buttons[1]).toHaveStyle({ transitionDelay: '60ms' })
+    expect(buttons[2]).toHaveStyle({ transitionDelay: '120ms' })
+
+    // Flush the (stubbed) animation frame the mount effect scheduled.
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    })
+
+    buttons.forEach((b) => expect(b).toHaveClass('opacity-100', 'translate-y-0'))
+  })
+
+  it('re-arms the entrance again when suggested replies refresh to a different set', async () => {
+    const starters = makeSession({})
+    const { rerender } = render(<InputDock bundle={bundle} session={starters} />)
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    })
+    expect(screen.getByRole('button', { name: 'Who are you?' })).toHaveClass('opacity-100')
+
+    const suggested = makeSession({ state: { ...baseState, suggestedReplies: ['Ask why', 'Stay quiet'] } })
+    rerender(<InputDock bundle={bundle} session={suggested} />)
+
+    const fresh = screen.getByRole('button', { name: 'Ask why' })
+    expect(fresh).toHaveClass('opacity-0', 'translate-y-1')
+
+    await act(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+    })
+    expect(fresh).toHaveClass('opacity-100', 'translate-y-0')
   })
 })
