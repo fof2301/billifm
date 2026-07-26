@@ -97,3 +97,63 @@ print("Cliffhangers (right):", _cliffs(right["story"]))
 print()
 print("Reasoning (left):",  left["story"].get("reasoning",{}).get("why_this_shape","")[:250])
 print("Reasoning (right):", right["story"].get("reasoning",{}).get("why_this_shape","")[:250])
+
+# COMMAND ----------
+# MAGIC %md ## Visual side-by-side (requires notebook 60 to have run)
+
+# COMMAND ----------
+import base64, os
+from pyspark.sql.functions import col
+
+img_rows = spark.sql(f"""
+  SELECT cohort, seg_id, volume_path
+  FROM billifm.eval.image_assets
+  WHERE iteration_tag = '{ITER_TAG}' AND iteration = {ITER}
+    AND error IS NULL
+""").collect()
+
+# Group by seg_id, keep only segs that have both cohorts rendered
+from collections import defaultdict
+by_seg = defaultdict(dict)
+for r in img_rows:
+    by_seg[r["seg_id"]][r["cohort"]] = r["volume_path"]
+
+cohort_A = left["cohort"]
+cohort_B = right["cohort"]
+pairs = [(sid, m) for sid, m in by_seg.items()
+         if cohort_A in m and cohort_B in m]
+
+if not pairs:
+    print(f"No paired image assets yet for iteration_tag={ITER_TAG} iteration={ITER}.")
+    print(f"Run notebook 60_generate_assets first (cost: ~$0.60 at medium quality).")
+else:
+    from html import escape
+    def _b64(path: str) -> str:
+        with open(path, "rb") as f:
+            return base64.b64encode(f.read()).decode("ascii")
+    html_parts = ['<style>'
+                  '.pair{display:flex;gap:12px;margin:16px 0;align-items:flex-start}'
+                  '.pair img{width:280px;height:auto;border:1px solid #333;'
+                  'border-radius:8px}'
+                  '.pair .cap{font-family:Inter,sans-serif;color:#ccc;'
+                  'font-size:11px;text-transform:uppercase;letter-spacing:.05em}'
+                  '.pair .beat{font-family:Inter,sans-serif;color:#fff;'
+                  'flex:1;padding:8px 12px;font-size:13px}'
+                  'body{background:#0D0D12}'
+                  '</style>']
+    seg_order = [s["seg_id"] for s in left["story"].get("segments", [])]
+    ordered_pairs = sorted(pairs, key=lambda x: seg_order.index(x[0]) if x[0] in seg_order else 999)
+    for sid, m in ordered_pairs:
+        beat = next((s.get("beat","") for s in left["story"]["segments"]
+                     if s["seg_id"] == sid), "")
+        html_parts.append('<div class="pair">')
+        html_parts.append(f'<div><div class="cap">{escape(cohort_A)}</div>'
+                          f'<img src="data:image/png;base64,{_b64(m[cohort_A])}" '
+                          f'alt="{escape(sid)}"></div>')
+        html_parts.append(f'<div class="beat"><div class="cap">{escape(sid)}</div>'
+                          f'{escape(beat)}</div>')
+        html_parts.append(f'<div><div class="cap">{escape(cohort_B)}</div>'
+                          f'<img src="data:image/png;base64,{_b64(m[cohort_B])}" '
+                          f'alt="{escape(sid)}"></div>')
+        html_parts.append('</div>')
+    displayHTML("\n".join(html_parts))
