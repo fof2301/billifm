@@ -40,7 +40,10 @@ export function Stage({
   // First-play coach marks: shown once per browser (localStorage flag), gating on the
   // clock chip, character rail, input dock, and journal button in turn. Mirrors the
   // Journal/SettingsSheet pattern below — an effect keyed on the "open" boolean drives
-  // pause/resume, rather than calling them directly from event handlers.
+  // pause/resume, rather than calling them directly from event handlers. Holds its own
+  // 'coach' pause reason (distinct from Journal/SettingsSheet's 'settings') — the engine's
+  // RESUME only ever drops the one reason it's given, so this can't be silently unpaused
+  // by Settings (or Journal) opening and closing on top of it.
   const [showCoach, setShowCoach] = useState(() => !localStorage.getItem('sf-coached'))
   const clockRef = useRef<HTMLElement | null>(null)
   const railRef = useRef<HTMLElement | null>(null)
@@ -48,8 +51,8 @@ export function Stage({
   const journalRef = useRef<HTMLElement | null>(null)
 
   useEffect(() => {
-    if (showCoach) session.pause('settings')
-    else session.resume('settings')
+    if (showCoach) session.pause('coach')
+    else session.resume('coach')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showCoach])
 

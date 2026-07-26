@@ -1,6 +1,6 @@
 import type { Mode } from './story'
 
-export type PauseReason = 'hidden' | 'request' | 'settings'
+export type PauseReason = 'hidden' | 'request' | 'settings' | 'coach'
 
 export interface TranscriptEntry {
   role: 'player' | 'character'
