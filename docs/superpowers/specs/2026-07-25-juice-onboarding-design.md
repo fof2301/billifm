@@ -58,7 +58,7 @@ First Stage mount ever (no `localStorage['sf-coached']`): dim overlay, four tap-
 3. Input dock — "This is your voice — chips, keyboard, or hold-to-talk."
 4. Journal button — "Everything you know is in here. It pauses time."
 
-"Skip" on every step; finishing or skipping writes the flag. Clock paused while showing (existing `'settings'` pause reason). Stage passes target refs. SettingsSheet gains "Replay tips" (clears the flag and re-shows).
+"Skip" on every step; finishing or skipping writes the flag. Clock paused while showing (a dedicated `'coach'` pause reason — added to the PauseReason union during implementation so no UI layer can release another's hold). Stage passes target refs. SettingsSheet gains "Replay tips" (clears the flag and re-shows).
 
 ## 7. Testing
 
