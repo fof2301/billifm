@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Story Framework — Demo Deck</title>
+<style>
+  :root{
+    --bg-void:#050609;
+    --bg-deep:#0b0d14;
+    --bg-panel:#12141d;
+    --bg-panel-2:#181b27;
+    --line:rgba(232,169,76,0.18);
+    --line-soft:rgba(255,255,255,0.07);
+    --amber:#e8a94c;
+    --amber-bright:#f5c473;
+    --indigo:#7683d6;
+    --indigo-soft:#4a5390;
+    --ink:#f3ede1;
+    --muted:#a9a6bb;
+    --muted-2:#6f7086;
+    --serif:ui-serif,"Iowan Old Style","Palatino Linotype","URW Palladio L",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Code","Roboto Mono",Menlo,Consolas,monospace;
+    --phase-gradient:linear-gradient(90deg,#23264a 0%,#5c67b8 20%,#e8c17a 45%,#e8a94c 65%,#4a3560 85%,#14162a 100%);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    background:#000;
+    overflow:hidden;
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  .viewport{
+    width:100vw;
+    height:100dvh;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .stage{
+    position:relative;
+    width:100%;
+    height:100%;
+    background:radial-gradient(ellipse at 20% 15%, #12142090 0%, transparent 55%), linear-gradient(160deg,var(--bg-deep),var(--bg-void) 70%);
+    color:var(--ink);
+    overflow:hidden;
+  }
+
+  @media (min-width:701px){
+    .stage{
+      width:min(100vw, calc(100vh * 16 / 9));
+      height:min(100vh, calc(100vw * 9 / 16));
+      margin:auto;
+      box-shadow:0 0 0 1px rgba(255,255,255,0.05), 0 40px 120px rgba(0,0,0,0.7);
+    }
+  }
+
+  .vignette{
+    position:absolute; inset:0;
+    pointer-events:none;
+    background:radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.55) 100%);
+    z-index:4;
+  }
+
+  /* ---------- progress bar: doubles as the story-clock phase bar ---------- */
+  .progress-track{
+    position:absolute; top:0; left:0; right:0; height:4px;
+    background-image:var(--phase-gradient);
+    background-size:100% 100%;
+    opacity:0.22;
+    z-index:6;
+  }
+  .progress-fill{
+    position:absolute; top:0; left:0; height:100%;
+    width:0%;
+    background-image:var(--phase-gradient);
+    background-size:100% 100%;
+    transition:width .5s ease;
+  }
+  .progress-marker{
+    position:absolute; top:50%; left:0%;
+    width:10px; height:10px; border-radius:50%;
+    background:var(--amber-bright);
+    box-shadow:0 0 10px 3px rgba(245,196,115,0.7);
+    transform:translate(-50%,-50%);
+    transition:left .5s ease;
+  }
+
+  /* ---------- slides ---------- */
+  .slides{ position:absolute; inset:0; z-index:2; }
+
+  .slide{
+    position:absolute; inset:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    opacity:0;
+    transform:translateY(18px) scale(.99);
+    pointer-events:none;
+    transition:opacity .6s ease, transform .6s ease;
+    overflow:hidden;
+  }
+  .slide.active{ opacity:1; transform:translateY(0) scale(1); pointer-events:auto; }
+
+  .slide::before{
+    content:"";
+    position:absolute;
+    width:60vmin; height:60vmin;
+    top:-14%; right:-12%;
+    background:radial-gradient(circle, rgba(232,169,76,0.15), transparent 70%);
+    filter:blur(4px);
+    z-index:0;
+    animation:breathe 9s ease-in-out infinite alternate;
+    pointer-events:none;
+  }
+  @keyframes breathe{ from{ transform:scale(1); opacity:.6;} to{ transform:scale(1.18); opacity:1;} }
+
+  .content{
+    position:relative;
+    z-index:1;
+    padding:clamp(1.4rem,4.5vw,3.2rem) clamp(1.6rem,6vw,5.5rem);
+    padding-bottom:clamp(3.2rem,6vw,4.5rem);
+    max-width:100%;
+  }
+
+  .slide.active .content > *{
+    animation:fadeUp .6s ease both;
+  }
+  .content > *:nth-child(1){ animation-delay:.02s; }
+  .content > *:nth-child(2){ animation-delay:.1s; }
+  .content > *:nth-child(3){ animation-delay:.18s; }
+  .content > *:nth-child(4){ animation-delay:.26s; }
+  .content > *:nth-child(5){ animation-delay:.34s; }
+  @keyframes fadeUp{ from{ opacity:0; transform:translateY(10px);} to{ opacity:1; transform:translateY(0);} }
+
+  .eyebrow{
+    margin:0 0 .8rem;
+    font-family:var(--sans);
+    font-size:clamp(.68rem,1.1vw,.8rem);
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    color:var(--amber);
+    display:flex; align-items:center; gap:.6rem;
+  }
+  .eyebrow::before{
+    content:"";
+    display:inline-block;
+    width:26px; height:2px;
+    background:linear-gradient(90deg,var(--amber),transparent);
+  }
+
+  h1,h2,h3{ font-family:var(--serif); font-weight:500; margin:0; color:var(--ink); }
+
+  .headline{
+    font-size:clamp(1.9rem,4.6vw,3.4rem);
+    line-height:1.12;
+    max-width:20ch;
+    margin-bottom:.85rem;
+  }
+
+  .subhead{
+    font-size:clamp(.92rem,1.7vw,1.2rem);
+    line-height:1.55;
+    color:var(--muted);
+    max-width:62ch;
+    margin:0 0 1.4rem;
+  }
+
+  .brand-tag{
+    position:absolute;
+    left:clamp(1.6rem,6vw,5.5rem);
+    top:clamp(1rem,3vw,1.6rem);
+    font-family:var(--sans);
+    font-size:.68rem;
+    letter-spacing:.16em;
+    color:var(--muted-2);
+    text-transform:uppercase;
+    z-index:1;
+  }
+
+  /* ---------- chrome / nav ---------- */
+  .chrome-bottom{
+    position:absolute; left:0; right:0; bottom:0;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:.85rem clamp(1.2rem,4vw,2.6rem);
+    z-index:8;
+  }
+  .brand-mark{
+    font-family:var(--sans); font-size:.68rem; letter-spacing:.14em;
+    color:var(--muted-2); text-transform:uppercase;
+  }
+  .nav{ display:flex; align-items:center; gap:.9rem; margin-left:auto; }
+  .nav button{
+    appearance:none; background:rgba(255,255,255,0.04);
+    border:1px solid var(--line); color:var(--ink);
+    width:2.3rem; height:2.3rem; border-radius:50%;
+    font-size:1rem; cursor:pointer; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    transition:background .2s, transform .15s, border-color .2s;
+  }
+  .nav button:hover:not(:disabled){ background:rgba(232,169,76,0.15); border-color:var(--amber); transform:translateY(-1px); }
+  .nav button:active:not(:disabled){ transform:translateY(0); }
+  .nav button:disabled{ opacity:.22; cursor:default; }
+  .nav button:focus-visible{ outline:2px solid var(--amber-bright); outline-offset:2px; }
+  .counter{
+    font-family:var(--mono); font-size:.78rem; color:var(--muted);
+    min-width:3.4rem; text-align:center; letter-spacing:.03em;
+  }
+
+  /* ---------- reusable bits ---------- */
+  .chip{
+    display:inline-flex; align-items:center; gap:.4rem;
+    padding:.32rem .85rem;
+    border:1px solid var(--line);
+    border-radius:999px;
+    background:rgba(255,255,255,0.03);
+    font-size:.78rem; color:var(--ink);
+    white-space:nowrap;
+  }
+
+  .two-col{ display:flex; gap:clamp(1.5rem,4vw,3.5rem); align-items:center; flex-wrap:wrap; }
+  .two-col > .col{ flex:1 1 320px; min-width:0; }
+
+  .contrast-row{ display:flex; gap:1.1rem; flex-wrap:wrap; margin-top:.4rem; }
+  .contrast-card{
+    flex:1 1 240px;
+    border:1px solid var(--line-soft);
+    background:rgba(255,255,255,0.02);
+    border-radius:14px;
+    padding:1.1rem 1.3rem;
+  }
+  .contrast-card.accent{ border-color:var(--line); background:rgba(232,169,76,0.05); }
+  .contrast-card h4{
+    margin:0 0 .5rem; font-family:var(--sans); font-size:.72rem;
+    letter-spacing:.12em; text-transform:uppercase; color:var(--muted-2);
+  }
+  .contrast-card.accent h4{ color:var(--amber); }
+  .contrast-card p{ margin:0; font-size:.92rem; line-height:1.5; color:var(--muted); }
+
+  .stat-row{ display:flex; gap:2.2rem; flex-wrap:wrap; margin-top:.6rem; }
+  .stat-row .stat{ min-width:150px; }
+  .stat .stat-label{ font-size:.74rem; letter-spacing:.06em; color:var(--muted-2); text-transform:uppercase; }
+  .stat .stat-value{ font-family:var(--serif); font-size:clamp(1rem,1.8vw,1.3rem); color:var(--ink); margin-top:.15rem; }
+
+  /* ---------- phone mockup ---------- */
+  .phone{
+    width:clamp(150px,17vw,210px);
+    aspect-ratio:9/19.3;
+    border-radius:2.1rem;
+    background:#050608;
+    border:6px solid #050608;
+    box-shadow:0 24px 60px rgba(0,0,0,0.65), inset 0 0 0 1px rgba(255,255,255,0.05);
+    position:relative;
+    overflow:hidden;
+    flex:0 0 auto;
+  }
+  .phone-scene{
+    position:absolute; inset:0;
+    background:linear-gradient(200deg,#3a2a18 0%, #221a2c 45%, #12131e 100%);
+  }
+  .phone-notch{
+    position:absolute; top:.5rem; left:50%; transform:translateX(-50%);
+    width:34%; height:14px; border-radius:999px; background:#000; z-index:3;
+  }
+  .phone-chip{
+    position:absolute; top:1.5rem; left:50%; transform:translateX(-50%);
+    font-size:.55rem; padding:.25rem .6rem; z-index:2;
+  }
+  .phone-rail{
+    position:absolute; top:3.4rem; right:.5rem; display:flex; flex-direction:column; gap:.4rem; z-index:2;
+  }
+  .phone-rail span{
+    width:1.1rem; height:1.1rem; border-radius:50%;
+    background:rgba(232,169,76,0.5); border:1px solid rgba(255,255,255,0.25);
+  }
+  .phone-rail span.dim{ background:rgba(255,255,255,0.08); }
+  .phone-sheet{
+    position:absolute; left:0; right:0; bottom:2.6rem;
+    background:rgba(10,11,17,0.72);
+    backdrop-filter:blur(2px);
+    padding:.55rem .65rem;
+    font-size:.58rem; line-height:1.4; color:#e8e3d6;
+    border-top:1px solid rgba(255,255,255,0.06);
+  }
+  .phone-dock{
+    position:absolute; left:0; right:0; bottom:0; height:2.6rem;
+    background:#0c0d14; border-top:1px solid rgba(255,255,255,0.06);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .phone-mic{
+    width:1.5rem; height:1.5rem; border-radius:50%;
+    background:radial-gradient(circle, var(--amber-bright), var(--amber));
+    box-shadow:0 0 10px 2px rgba(232,169,76,0.5);
+  }
+
+  .mode-cards{ display:flex; flex-direction:column; gap:.7rem; flex:1 1 280px; min-width:0; }
+  .mode-card{
+    display:flex; gap:.8rem; align-items:flex-start;
+    border:1px solid var(--line-soft); border-radius:12px;
+    padding:.75rem .95rem; background:rgba(255,255,255,0.02);
+  }
+  .mode-card .glyph{ font-size:1.15rem; line-height:1; margin-top:.1rem; }
+  .mode-card h4{ margin:0 0 .2rem; font-family:var(--sans); font-size:.92rem; color:var(--ink); }
+  .mode-card p{ margin:0; font-size:.82rem; color:var(--muted); line-height:1.45; }
+
+  /* ---------- character mock ---------- */
+  .mock-character{
+    border:1px solid var(--line); border-radius:14px;
+    background:linear-gradient(160deg, rgba(232,169,76,0.06), rgba(255,255,255,0.015));
+    padding:1.1rem 1.3rem; max-width:380px;
+  }
+  .mc-head{ display:flex; align-items:center; justify-content:space-between; gap:.6rem; }
+  .mc-name{ font-family:var(--serif); font-size:1.25rem; color:var(--ink); }
+  .mc-tag{ font-size:.68rem; color:var(--amber); border:1px solid var(--line); border-radius:999px; padding:.2rem .55rem; white-space:nowrap; }
+  .mc-role{ margin:.15rem 0 .7rem; font-size:.78rem; color:var(--muted-2); text-transform:uppercase; letter-spacing:.05em; }
+  .mc-line{ margin:0; font-style:italic; color:var(--muted); font-size:.95rem; line-height:1.5; }
+
+  /* ---------- phase bar ---------- */
+  .phasebar-wrap{ max-width:520px; }
+  .phasebar-track{
+    position:relative; height:10px; border-radius:999px; overflow:hidden;
+    background-image:var(--phase-gradient); background-size:100% 100%;
+    opacity:.9;
+  }
+  .phasebar-marker{
+    position:absolute; top:50%; width:14px; height:14px; border-radius:50%;
+    background:var(--amber-bright); box-shadow:0 0 12px 4px rgba(245,196,115,0.7);
+    transform:translate(-50%,-50%);
+  }
+  .phasebar-labels{ display:flex; justify-content:space-between; margin-top:.5rem; font-size:.72rem; color:var(--muted-2); letter-spacing:.04em; text-transform:uppercase; }
+
+  /* ---------- journal / tree mocks ---------- */
+  .mock-panel{
+    border:1px solid var(--line-soft); border-radius:14px;
+    background:rgba(255,255,255,0.02); padding:1rem 1.2rem; flex:1 1 260px; min-width:0;
+  }
+  .mock-panel h4{ margin:0 0 .7rem; font-family:var(--sans); font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); }
+  .mj-row{ display:flex; justify-content:space-between; gap:1rem; padding:.4rem 0; border-bottom:1px solid var(--line-soft); font-size:.85rem; }
+  .mj-row:last-child{ border-bottom:none; }
+  .mj-label{ color:var(--muted-2); }
+  .mj-val{ color:var(--ink); text-align:right; }
+
+  .tree-row{ display:flex; align-items:center; justify-content:space-between; padding:.4rem 0; border-bottom:1px solid var(--line-soft); font-size:.85rem; }
+  .tree-row:last-child{ border-bottom:none; }
+  .tree-gen{ color:var(--muted); }
+  .node{ width:1.5rem; height:1.5rem; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.75rem; }
+  .node.available{ background:rgba(232,169,76,0.25); border:1px solid var(--amber); color:var(--amber-bright); }
+  .node.self{ background:rgba(118,131,214,0.28); border:1px solid var(--indigo); color:#cfd4f7; }
+  .node.locked{ background:rgba(255,255,255,0.04); border:1px solid var(--line-soft); color:var(--muted-2); }
+
+  /* ---------- code block ---------- */
+  .code-block{
+    border:1px solid var(--line); border-left:3px solid var(--amber);
+    background:#0a0b12; border-radius:10px;
+    padding:1.1rem 1.3rem; font-family:var(--mono);
+    font-size:clamp(.72rem,1.3vw,.88rem); line-height:1.65;
+    max-width:560px; overflow:auto; color:#dcd6c4;
+  }
+  .code-block .k{ color:var(--amber-bright); }
+  .code-block .s{ color:#9fd1a8; }
+  .code-block .n{ color:#8fb4e8; }
+  .code-caption{ margin-top:.6rem; font-size:.78rem; color:var(--muted-2); font-family:var(--mono); }
+
+  /* ---------- story library grid ---------- */
+  .story-grid{
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:.85rem;
+    max-width:100%;
+  }
+  .story-card{
+    border:1px solid var(--line-soft); border-left:3px solid var(--amber);
+    background:rgba(255,255,255,0.02); border-radius:10px;
+    padding:.85rem 1rem;
+  }
+  .story-card:nth-child(even){ border-left-color:var(--indigo); }
+  .story-card h4{ margin:0 0 .3rem; font-family:var(--serif); font-size:1.02rem; color:var(--ink); }
+  .story-card .genre{ font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted-2); }
+  .story-card p{ margin:.4rem 0 0; font-size:.76rem; line-height:1.4; color:var(--muted); }
+
+  /* ---------- architecture diagram ---------- */
+  .arch{ display:flex; align-items:stretch; gap:1rem; flex-wrap:wrap; max-width:900px; }
+  .arch-box{
+    flex:1 1 260px; border:1px solid var(--line-soft); border-radius:14px;
+    background:rgba(255,255,255,0.02); padding:1rem 1.2rem;
+  }
+  .arch-box.browser{ border-top:3px solid var(--indigo); }
+  .arch-box.server{ border-top:3px solid var(--amber); }
+  .arch-box h4{ margin:0 0 .5rem; font-family:var(--sans); font-size:.78rem; letter-spacing:.1em; text-transform:uppercase; }
+  .arch-box.browser h4{ color:#b7c0f2; }
+  .arch-box.server h4{ color:var(--amber); }
+  .arch-box p{ margin:0; font-size:.82rem; line-height:1.55; color:var(--muted); }
+  .arch-arrow{
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:.3rem; flex:0 0 auto; padding:0 .3rem;
+  }
+  .arch-arrow span{ font-size:.68rem; color:var(--muted-2); white-space:nowrap; }
+  .arch-arrow .glyph{ font-size:1.3rem; color:var(--amber); }
+  .arch-bundle{
+    margin-top:.9rem; border:1px dashed var(--line);
+    border-radius:12px; padding:.7rem 1rem; max-width:900px;
+    font-size:.82rem; color:var(--muted);
+  }
+  .arch-caption{ margin-top:.8rem; font-family:var(--mono); font-size:.76rem; color:var(--muted-2); }
+
+  /* ---------- quality stat ---------- */
+  .big-stat{ display:flex; align-items:baseline; gap:1rem; flex-wrap:wrap; }
+  .big-stat .num{ font-family:var(--serif); font-size:clamp(3.4rem,10vw,7rem); line-height:1; color:var(--amber-bright); }
+  .big-stat .label{ font-size:clamp(.95rem,1.8vw,1.2rem); color:var(--muted); max-width:22ch; }
+
+  /* ---------- roadmap list ---------- */
+  .roadmap{ display:flex; flex-direction:column; gap:.85rem; max-width:640px; }
+  .roadmap-item{ display:flex; gap:.9rem; align-items:flex-start; }
+  .roadmap-item .glyph{ font-size:1.1rem; margin-top:.1rem; color:var(--amber); }
+  .roadmap-item p{ margin:0; font-size:.95rem; line-height:1.55; color:var(--muted); }
+
+  /* ---------- hook slide ---------- */
+  .slide-hook .content{ max-width:900px; }
+  .hook-line{
+    font-size:clamp(1.7rem,4.6vw,3rem); line-height:1.22; max-width:22ch;
+    font-style:normal; color:var(--ink); margin-bottom:1rem;
+  }
+  .hook-source{ font-size:.9rem; color:var(--muted-2); margin-bottom:2.1rem; }
+  .hook-source em{ color:var(--muted); font-style:italic; }
+  .hook-rule{ width:52px; height:2px; background:linear-gradient(90deg,var(--amber),transparent); margin-bottom:1.3rem; }
+  .brand-line{ font-family:var(--sans); font-size:.85rem; letter-spacing:.22em; color:var(--amber); text-transform:uppercase; margin:0 0 .5rem; }
+  .brand-sub{ font-size:.95rem; color:var(--muted); max-width:52ch; margin:0; }
+  .hook-hint{ margin-top:2rem; font-size:.72rem; color:var(--muted-2); letter-spacing:.05em; }
+
+  /* ---------- demo slide ---------- */
+  .slide-demo .content{ text-align:left; }
+  .demo-url{
+    font-family:var(--serif); font-size:clamp(1.5rem,5vw,3rem);
+    color:var(--amber-bright); text-decoration:none; word-break:break-all;
+    border-bottom:2px solid var(--line); padding-bottom:.15rem;
+    display:inline-block;
+  }
+  .demo-url:hover{ border-bottom-color:var(--amber); }
+  .demo-url:focus-visible{ outline:2px solid var(--amber-bright); outline-offset:6px; }
+
+  /* ---------- phone-friendly reflow ---------- */
+  @media (max-width:700px){
+    .content{ padding:1.1rem 1.25rem 4.4rem; }
+    .headline{ font-size:clamp(1.5rem,7vw,2.1rem); max-width:100%; }
+    .subhead{ font-size:.92rem; max-width:100%; }
+    .two-col{ flex-direction:column; align-items:stretch; }
+    .phone{ width:120px; margin:0 auto; }
+    .story-grid{ grid-template-columns:1fr 1fr; }
+    .arch{ flex-direction:column; }
+    .arch-arrow{ flex-direction:row; }
+    .arch-arrow .glyph{ transform:rotate(90deg); }
+    .big-stat{ flex-direction:column; gap:.3rem; }
+    .contrast-row{ flex-direction:column; }
+    .mode-cards{ flex:1 1 auto; }
+  }
+  @media (max-width:420px){
+    .story-grid{ grid-template-columns:1fr; }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .slide, .content > *, .slide::before{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+  <div class="viewport">
+    <div class="stage" id="stage">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+        <div class="progress-marker" id="progress-marker"></div>
+      </div>
+      <div class="vignette"></div>
+
+      <div class="slides" id="slides">
+
+        <!-- 1. HOOK -->
+        <section class="slide slide-hook">
+          <div class="content">
+            <h1 class="hook-line">Every third of November, this family loses someone.<br>You have until dawn.</h1>
+            <p class="hook-source">— the opening line of <em>The Lantern Line</em>, one of seven stories built on this framework</p>
+            <div class="hook-rule"></div>
+            <p class="brand-line">Story Framework</p>
+            <p class="brand-sub">Interactive audio fiction, authored as data and played by a framework that has no idea which story it's telling.</p>
+            <p class="hook-hint">→ or space to begin</p>
+          </div>
+        </section>
+
+        <!-- 2. PROBLEM -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">The problem</p>
+            <h2 class="headline">Audio fiction has never once listened back.</h2>
+            <p class="subhead">A podcast plays. An audiobook plays. Even a "choose your path" app just plays a different pre-recorded branch. The person on the other end can't hear you, doesn't remember what you said a minute ago, and can't be surprised by the actual question you asked.</p>
+            <div class="contrast-row">
+              <div class="contrast-card">
+                <h4>What you get today</h4>
+                <p>Fixed lines. Fixed branches. The same scene plays out the same way, however many times you open it.</p>
+              </div>
+              <div class="contrast-card accent">
+                <h4>What this is instead</h4>
+                <p>A character who's actually listening, has something to hide, and a clock that keeps moving whether or not you say anything at all.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 3. WHAT WE BUILT -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">What we built</p>
+            <h2 class="headline">A story is a folder. The framework does the rest.</h2>
+            <p class="subhead">Story Framework plays 5–10 minute interactive stories in a mobile browser: one fixed scene, AI characters you can talk to, a clock that runs whether you act or not. Nothing story-specific lives in the framework's own code — every story ships as a JSON bundle plus assets, and the framework just plays it.</p>
+            <div class="stat-row">
+              <div class="stat"><div class="stat-label">To add a story</div><div class="stat-value">zero framework code</div></div>
+              <div class="stat"><div class="stat-label">Length</div><div class="stat-value">5–10 minutes</div></div>
+              <div class="stat"><div class="stat-label">Platform</div><div class="stat-value">mobile-first, in the browser</div></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. THREE MODES -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">Three ways to speak</p>
+            <h2 class="headline">Tap. Type. Talk. Change your mind mid-scene.</h2>
+            <div class="two-col">
+              <div class="col">
+                <div class="phone">
+                  <div class="phone-scene"></div>
+                  <div class="phone-notch"></div>
+                  <div class="phone-chip chip">🕯️ Day 2 · Dusk</div>
+                  <div class="phone-rail"><span></span><span class="dim"></span></div>
+                  <div class="phone-sheet">"Ah. You're awake. Good — we have work to do."</div>
+                  <div class="phone-dock"><div class="phone-mic"></div></div>
+                </div>
+              </div>
+              <div class="col mode-cards">
+                <div class="mode-card"><span class="glyph">👆</span><div><h4>Tap</h4><p>Authored choices, plus LLM-suggested reply chips for open conversation — tap players still get a living exchange, not just branches.</p></div></div>
+                <div class="mode-card"><span class="glyph">⌨️</span><div><h4>Type</h4><p>Free text, straight into the same conversation engine as everyone else.</p></div></div>
+                <div class="mode-card"><span class="glyph">🎙️</span><div><h4>Talk</h4><p>Hold to talk: speech-to-text in, that character's own voice out.</p></div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. CHARACTERS + JUDGE -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">The characters</p>
+            <h2 class="headline">It's not a script. It's a person with something to hide.</h2>
+            <div class="two-col">
+              <div class="col">
+                <p class="subhead">Every character is an authored persona — a personality, a voice, secrets they only give up under conditions the author set, and hard limits they never cross. Talk your way through a challenge however you like: an LLM judge reads the whole conversation against a rubric you never see, and decides on its own whether you actually solved it.</p>
+              </div>
+              <div class="col">
+                <div class="mock-character">
+                  <div class="mc-head"><span class="mc-name">Viktor</span><span class="mc-tag">🔒 hidden rubric</span></div>
+                  <p class="mc-role">Your captor</p>
+                  <p class="mc-line">"Ah. You're awake. Good — we have work to do."</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6. THE CLOCK -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">The clock</p>
+            <h2 class="headline">A whole story day, every few real minutes.</h2>
+            <p class="subhead">An in-story clock turns real minutes into a full day; dawn, day, dusk, and night (or a story's own named phases) crossfade the scene as time passes. Challenges race a countdown of their own — one that pauses whenever a reply is in flight, so network lag never costs you a second of story time.</p>
+            <div class="phasebar-wrap">
+              <div class="phasebar-track"><div class="phasebar-marker" style="left:63%"></div></div>
+              <div class="phasebar-labels"><span>Dawn</span><span>Day</span><span>Dusk</span><span>Night</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. JOURNAL + TREE -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">What you carry</p>
+            <h2 class="headline">Everything you know in one drawer. Everyone you're kin to, on one tree.</h2>
+            <p class="subhead">The journal holds your objective, the story so far, clues you've found, and who's reachable right now. Stories with kinship get a family tree: generations laid out top to bottom, locked ones telling you exactly which clue opens them. Both pause the clock while they're open — thinking doesn't cost story time.</p>
+            <div class="two-col">
+              <div class="mock-panel">
+                <h4>📓 Journal</h4>
+                <div class="mj-row"><span class="mj-label">Objective</span><span class="mj-val">Get free before dusk, day three</span></div>
+                <div class="mj-row"><span class="mj-label">Clues found</span><span class="mj-val">2</span></div>
+                <div class="mj-row"><span class="mj-label">Reachable now</span><span class="mj-val">1 of 2 characters</span></div>
+              </div>
+              <div class="mock-panel">
+                <h4>🌳 Family tree</h4>
+                <div class="tree-row"><span class="tree-gen">Two generations back</span><span class="node locked">🔒</span></div>
+                <div class="tree-row"><span class="tree-gen">Your grandmother</span><span class="node available">●</span></div>
+                <div class="tree-row"><span class="tree-gen">You</span><span class="node self">●</span></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 8. FORMAT -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">The format</p>
+            <h2 class="headline">Stories are data. Not code.</h2>
+            <p class="subhead">A bundle is <code>story.json</code> (public), <code>secrets.json</code> (server-only — never shipped to a browser), and an <code>assets/</code> folder. Both files are checked against a schema the moment the server boots; a broken bundle fails loud, before a single player ever sees it — never mid-game.</p>
+            <div class="code-block"><span class="k">{</span><br>
+&nbsp;&nbsp;<span class="k">"meta"</span>: <span class="k">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"title"</span>: <span class="s">"The Cellar"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"tagline"</span>: <span class="s">"You have 3 days. Only you can do this."</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"genre"</span>: <span class="s">"thriller"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"modes"</span>: [<span class="s">"mcq"</span>, <span class="s">"text"</span>, <span class="s">"voice"</span>]<br>
+&nbsp;&nbsp;<span class="k">}</span>,<br>
+&nbsp;&nbsp;<span class="k">"clock"</span>: <span class="k">{</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"realMinutesPerStoryDay"</span>: <span class="n">5</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"totalStoryDays"</span>: <span class="n">3</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="k">"phases"</span>: [<span class="s">"dawn"</span>, <span class="s">"day"</span>, <span class="s">"dusk"</span>, <span class="s">"night"</span>]<br>
+&nbsp;&nbsp;<span class="k">}</span><br>
+<span class="k">}</span></div>
+            <p class="code-caption">— an unedited excerpt of stories/kidnapping-escape/story.json</p>
+          </div>
+        </section>
+
+        <!-- 9. LIBRARY -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">The library</p>
+            <h2 class="headline">Seven scenes. Six genres. The same engine underneath.</h2>
+            <div class="story-grid">
+              <div class="story-card"><h4>The Cellar</h4><div class="genre">Thriller</div><p>You have 3 days. Only you can do this.</p></div>
+              <div class="story-card"><h4>The Locket</h4><div class="genre">Mystery</div><p>Everyone you came from is still here, if you know how to listen.</p></div>
+              <div class="story-card"><h4>The Lantern Line</h4><div class="genre">Mystery</div><p>Every third of November, this family loses someone. You have until dawn.</p></div>
+              <div class="story-card"><h4>The Night Desk</h4><div class="genre">Supernatural horror</div><p>Room 400 is vacant. It still calls down at fourteen minutes past two.</p></div>
+              <div class="story-card"><h4>Rain on the Vestry</h4><div class="genre">Noir mystery</div><p>A man is dead in a room bolted from the inside. You have until the bridge clears.</p></div>
+              <div class="story-card"><h4>The Amaranth</h4><div class="genre">Sci-fi</div><p>Everyone who was awake on this ship is dead. You have one docking window to learn why.</p></div>
+              <div class="story-card"><h4>The Inside Voice</h4><div class="genre">Heist</div><p>You never leave the chair. Everyone inside is trusting a voice they can't see.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 10. ARCHITECTURE -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">Under the hood</p>
+            <h2 class="headline">The engine runs in your pocket. The secrets stay on the server.</h2>
+            <div class="arch">
+              <div class="arch-box browser">
+                <h4>Browser</h4>
+                <p>Player shell (React) + the engine — state, story clock, timers, all three input modes. Resumes instantly from localStorage.</p>
+              </div>
+              <div class="arch-arrow"><span class="glyph">⇄</span><span>message / reply + audio</span></div>
+              <div class="arch-box server">
+                <h4>Server</h4>
+                <p>An AI gateway holding the API key and every story's secrets. Assembles prompts, calls the LLM, judges challenges, saves session snapshots to SQLite.</p>
+              </div>
+            </div>
+            <div class="arch-bundle">stories/ — story.json + secrets.json + assets, validated against a schema at boot. A broken bundle fails loud, never mid-game.</div>
+            <p class="arch-caption">pnpm monorepo · packages/schema · packages/engine (pure TypeScript, zero DOM or network) · apps/web · apps/server</p>
+          </div>
+        </section>
+
+        <!-- 11. QUALITY -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">How we know it works</p>
+            <h2 class="headline">Tested the same way it ships.</h2>
+            <div class="big-stat"><span class="num">199</span><span class="label">automated tests, across four workspaces</span></div>
+            <p class="subhead" style="margin-top:1.1rem;">Plus one Playwright flow, playing a story start to finish against a mocked gateway — deterministic, no AI calls, no API key required. The engine that decides what happens next is pure TypeScript with no DOM and no network, so it's tested the same way whether it ships to a browser or, one day, somewhere else entirely.</p>
+          </div>
+        </section>
+
+        <!-- 12. WHAT'S NEXT -->
+        <section class="slide">
+          <div class="content">
+            <p class="eyebrow">What's next</p>
+            <h2 class="headline">More voices. More stories. Same framework.</h2>
+            <div class="roadmap">
+              <div class="roadmap-item"><span class="glyph">🎙️</span><p>New character voices are a provider swap away — no story bundle has to change.</p></div>
+              <div class="roadmap-item"><span class="glyph">📚</span><p>The format's already proven across mystery, thriller, sci-fi, heist, supernatural horror, and noir — the next story is just another folder.</p></div>
+              <div class="roadmap-item"><span class="glyph">🎞️</span><p>Today's scenes are stills; the bundle format already has a place for looping video, whenever there's a pipeline to generate it.</p></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 13. DEMO -->
+        <section class="slide slide-demo">
+          <div class="content">
+            <p class="eyebrow">Play it</p>
+            <h2 class="headline">Seven stories. Three ways to speak. A clock that doesn't wait for you.</h2>
+            <a class="demo-url" href="https://billifm.dauntexlabs.com" target="_blank" rel="noopener">https://billifm.dauntexlabs.com</a>
+            <p class="subhead" style="margin-top:1.2rem;">Open it on a phone for the real thing.</p>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="chrome-bottom">
+        <span class="brand-mark">Story Framework</span>
+        <div class="nav">
+          <button id="prev-btn" type="button" aria-label="Previous slide">‹</button>
+          <span class="counter"><span id="count-current">1</span> / <span id="count-total">1</span></span>
+          <button id="next-btn" type="button" aria-label="Next slide">›</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+(function(){
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var total = slides.length;
+  var i = 0;
+
+  var totalEl = document.getElementById('count-total');
+  var curEl = document.getElementById('count-current');
+  var fill = document.getElementById('progress-fill');
+  var marker = document.getElementById('progress-marker');
+  var prevBtn = document.getElementById('prev-btn');
+  var nextBtn = document.getElementById('next-btn');
+
+  totalEl.textContent = String(total);
+
+  function render(){
+    for (var s = 0; s < slides.length; s++){
+      slides[s].classList.toggle('active', s === i);
+    }
+    curEl.textContent = String(i + 1);
+    var pct = total > 1 ? (i / (total - 1)) * 100 : 100;
+    fill.style.width = pct + '%';
+    marker.style.left = pct + '%';
+    prevBtn.disabled = i === 0;
+    nextBtn.disabled = i === total - 1;
+  }
+
+  function go(delta){
+    var next = i + delta;
+    if (next < 0 || next > total - 1) return;
+    i = next;
+    render();
+  }
+
+  prevBtn.addEventListener('click', function(){ go(-1); });
+  nextBtn.addEventListener('click', function(){ go(1); });
+
+  window.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.code === 'Space'){
+      e.preventDefault();
+      go(1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      go(-1);
+    }
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
