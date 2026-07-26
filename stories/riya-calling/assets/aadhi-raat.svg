@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#07070d"/>
+      <stop offset="100%" stop-color="#020204"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffd166" stop-opacity="0.5"/>
+      <stop offset="100%" stop-color="#ffd166" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="600" fill="url(#sky)"/>
+  <rect x="40" y="60" width="110" height="150" fill="#0d0d18" stroke="#22223a" stroke-width="2"/>
+  
+  <ellipse cx="200" cy="460" rx="130" ry="60" fill="url(#glow)"/>
+  <rect x="178" y="430" width="44" height="80" rx="8" fill="#101018" stroke="#2a2a3e" stroke-width="2"/>
+  <rect x="182" y="438" width="36" height="60" rx="3" fill="#ffd166" fill-opacity="0.95"/>
+  <text x="200" y="470" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="9" fill="#1a1a2e">2:07 AM</text>
+  <text x="200" y="575" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="13" fill="#55556a">aadhi raat — 11:58 is coming</text>
+</svg>

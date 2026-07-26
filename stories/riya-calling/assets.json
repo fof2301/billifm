@@ -1,0 +1,16 @@
+{
+  "portraits": {
+    "riya": "A 19-year-old Indian college student, bright mischievous eyes, marigold flower in her hair, holding a small podcast recorder, warm lamplight against deep shadow, cinematic thriller-noir, Bhopal, semi-photorealistic, film grain",
+    "zoya": "An Indian policewoman in her late twenties, cyber-cell sub-inspector, plain kurta over uniform trousers, tired sharp eyes, chai glass in hand, desk lamp in a dark office, thriller-noir, film grain",
+    "dev": "A 21-year-old Indian young man, soft nervous face, showroom staff lanyard, guilt in his eyes, lit by a phone screen in the dark, thriller-noir, film grain",
+    "sana": "A 19-year-old Indian girl seen in gentle out-of-time light, calm faraway smile, dupatta drifting as if underwater, faint cool glow on her skin, tender and sad, not frightening, thriller-noir with soft light",
+    "papa": "An Indian father in his fifties from an old photograph, kind heavy-lidded eyes, camera strap around his neck, warm sepia-tinted light fading into darkness at the edges like a memory, film grain",
+    "rohan": "An Indian man of 28, expensive kurta, gold ring, party-host smile that does not reach his eyes, lit from below by Diwali sparklers, menacing composition, deep shadow, one blood-red accent, thriller-noir"
+  },
+  "scenes": {
+    "raat": "A young man's dark bedroom in Bhopal at night, editing desk with dead monitors, one phone glowing face-up on the bed, window with distant Diwali lights and one unlit street, low-key lighting, near-black palette with a single blood-red accent, cinematic thriller-noir, portrait 2:3, film grain",
+    "aadhi-raat": "The same dark bedroom past midnight, phone screen now the only light source casting long shadows, clock at 2:07, curtains breathing in night wind, deeper blacks, colder, more menacing, cinematic thriller-noir, portrait 2:3, film grain"
+  },
+  "cover": "A cracked smartphone face-up in darkness receiving a call, screen glowing with warm light and a purple heart, a faint translucent girl with a marigold in her hair reflected in the glass, distant Diwali diyas bokeh, near-black palette with one blood-red accent, cinematic thriller-noir poster, no text",
+  "ambient": "Quiet Indian city bedroom at 2 AM: slow ceiling fan, distant last Diwali crackers very far away, faint electrical hum, a phone's soft static presence, cold and held-breath stillness. Seamless loop, no melody, no voices."
+}
