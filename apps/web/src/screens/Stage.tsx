@@ -8,6 +8,7 @@ import { useFxEvents } from '../fx/events'
 import { effectsEnabled } from '../fx/prefs'
 import { createHapticsController } from '../fx/haptics'
 import { createSoundController } from '../fx/sound'
+import { CoachMarks } from '../fx/CoachMarks'
 import { useSession } from '../useSession'
 import { BackgroundLayer } from '../components/BackgroundLayer'
 import { ChallengeBanner } from '../components/ChallengeBanner'
@@ -35,6 +36,32 @@ export function Stage({
   const { state, time } = session
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [journalOpen, setJournalOpen] = useState(false)
+
+  // First-play coach marks: shown once per browser (localStorage flag), gating on the
+  // clock chip, character rail, input dock, and journal button in turn. Mirrors the
+  // Journal/SettingsSheet pattern below — an effect keyed on the "open" boolean drives
+  // pause/resume, rather than calling them directly from event handlers.
+  const [showCoach, setShowCoach] = useState(() => !localStorage.getItem('sf-coached'))
+  const clockRef = useRef<HTMLElement | null>(null)
+  const railRef = useRef<HTMLElement | null>(null)
+  const dockRef = useRef<HTMLElement | null>(null)
+  const journalRef = useRef<HTMLElement | null>(null)
+
+  useEffect(() => {
+    if (showCoach) session.pause('settings')
+    else session.resume('settings')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showCoach])
+
+  const finishCoach = () => {
+    localStorage.setItem('sf-coached', '1')
+    setShowCoach(false)
+  }
+
+  const replayTips = () => {
+    setSettingsOpen(false)
+    setShowCoach(true)
+  }
 
   useEffect(() => {
     session.onAudio.current = playBase64Mp3
@@ -137,9 +164,11 @@ export function Stage({
           clueCount={state.cluesFound.length}
           onOpenJournal={() => setJournalOpen(true)}
           onOpenSettings={() => setSettingsOpen(true)}
+          clockRef={clockRef}
+          journalRef={journalRef}
         />
         <ChallengeBanner bundle={bundle} state={state} outcome={challengeOutcome} lastPrompt={lastChallengePrompt} />
-        <div className="mt-3 flex min-h-0 flex-1">
+        <div ref={(el) => (railRef.current = el)} className="mt-3 flex min-h-0 flex-1">
           <CharacterRail bundle={bundle} state={state} onSelect={session.selectCharacter} />
         </div>
         <ConversationSheet
@@ -150,7 +179,9 @@ export function Stage({
           failedMessage={session.failedMessage}
           onRetry={session.retry}
         />
-        <InputDock bundle={bundle} session={session} voiceSlot={<PushToTalkButton session={session} />} />
+        <div ref={(el) => (dockRef.current = el)}>
+          <InputDock bundle={bundle} session={session} voiceSlot={<PushToTalkButton session={session} />} />
+        </div>
       </div>
 
       <PhaseToast toast={phaseToast} />
@@ -163,7 +194,19 @@ export function Stage({
         open={journalOpen}
         onClose={() => setJournalOpen(false)}
       />
-      <SettingsSheet bundle={bundle} session={session} open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <SettingsSheet
+        bundle={bundle}
+        session={session}
+        open={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        onReplayTips={replayTips}
+      />
+      {showCoach && (
+        <CoachMarks
+          targets={{ clock: clockRef, rail: railRef, dock: dockRef, journal: journalRef }}
+          onDone={finishCoach}
+        />
+      )}
     </div>
   )
 }

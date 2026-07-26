@@ -32,6 +32,9 @@ test('plays kidnapping-escape start to finish in MCQ mode', async ({ page }) => 
   })
   await page.route('**/api/judge', (r) => r.fulfill({ json: { success: true, feedback: 'done' } }))
 
+  // First-play coach marks would otherwise cover the stage and block every click below —
+  // pre-seed the "already seen it" flag so this flow exercises the story, not onboarding.
+  await page.addInitScript(() => localStorage.setItem('sf-coached', '1'))
   await page.goto('/')
   await page.getByText('The Cellar').click()
   await page.getByRole('button', { name: 'Choices' }).click()

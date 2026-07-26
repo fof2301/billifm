@@ -17,6 +17,8 @@ export function TopBar({
   clueCount,
   onOpenJournal,
   onOpenSettings,
+  clockRef,
+  journalRef,
 }: {
   bundle: StoryBundle
   state: SessionState
@@ -24,6 +26,8 @@ export function TopBar({
   clueCount: number
   onOpenJournal: () => void
   onOpenSettings: () => void
+  clockRef?: React.MutableRefObject<HTMLElement | null>
+  journalRef?: React.MutableRefObject<HTMLElement | null>
 }) {
   const beat = bundle.beats.find((b) => b.id === state.beatId)
   const remaining = state.activeChallenge ? state.activeChallenge.deadlineMs - state.elapsedRealMs : null
@@ -31,7 +35,12 @@ export function TopBar({
   return (
     <div className="pointer-events-none">
       <div className="flex items-center justify-between gap-2">
-        <span className="rounded-full bg-black/50 px-3 py-1 text-xs text-slate-100">
+        <span
+          ref={(el) => {
+            if (clockRef) clockRef.current = el
+          }}
+          className="rounded-full bg-black/50 px-3 py-1 text-xs text-slate-100"
+        >
           {PHASE_ICON[time.phase] ?? '🕐'} Day {time.day} · {hhmm(time)}
         </span>
         <div className="flex items-center gap-2">
@@ -41,6 +50,9 @@ export function TopBar({
             </span>
           )}
           <button
+            ref={(el) => {
+              if (journalRef) journalRef.current = el
+            }}
             onClick={onOpenJournal}
             aria-label="Journal"
             className="pointer-events-auto rounded-full bg-black/50 px-3 py-1 text-xs"

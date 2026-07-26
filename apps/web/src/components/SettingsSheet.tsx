@@ -10,11 +10,13 @@ export function SettingsSheet({
   session,
   open,
   onClose,
+  onReplayTips,
 }: {
   bundle: StoryBundle
   session: SessionApi
   open: boolean
   onClose: () => void
+  onReplayTips: () => void
 }) {
   const [effects, setEffects] = useState(() => effectsEnabled())
 
@@ -57,7 +59,16 @@ export function SettingsSheet({
             Effects
           </button>
         </div>
-        <button onClick={onClose} className="mt-6 w-full rounded-xl bg-slate-800 py-2 text-sm">Close</button>
+        <button
+          onClick={() => {
+            localStorage.removeItem('sf-coached')
+            onReplayTips()
+          }}
+          className="mt-6 w-full rounded-xl bg-slate-800 py-2 text-sm"
+        >
+          Replay tips
+        </button>
+        <button onClick={onClose} className="mt-3 w-full rounded-xl bg-slate-800 py-2 text-sm">Close</button>
       </div>
     </div>
   )

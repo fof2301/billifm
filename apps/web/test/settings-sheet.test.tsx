@@ -35,7 +35,7 @@ beforeEach(() => {
 describe('SettingsSheet — Effects toggle', () => {
   it('renders pressed (effects on by default) and flips the pref off on click', () => {
     const session = fakeSession()
-    render(<SettingsSheet bundle={bundle} session={session} open onClose={() => {}} />)
+    render(<SettingsSheet bundle={bundle} session={session} open onClose={() => {}} onReplayTips={() => {}} />)
 
     const btn = screen.getByRole('button', { name: 'Effects' })
     expect(btn).toHaveAttribute('aria-pressed', 'true')
@@ -49,7 +49,7 @@ describe('SettingsSheet — Effects toggle', () => {
   it('reflects an already-muted pref and flips it back on', () => {
     setEffectsEnabled(false)
     const session = fakeSession()
-    render(<SettingsSheet bundle={bundle} session={session} open onClose={() => {}} />)
+    render(<SettingsSheet bundle={bundle} session={session} open onClose={() => {}} onReplayTips={() => {}} />)
 
     const btn = screen.getByRole('button', { name: 'Effects' })
     expect(btn).toHaveAttribute('aria-pressed', 'false')
@@ -58,5 +58,19 @@ describe('SettingsSheet — Effects toggle', () => {
 
     expect(btn).toHaveAttribute('aria-pressed', 'true')
     expect(effectsEnabled()).toBe(true)
+  })
+})
+
+describe('SettingsSheet — Replay tips', () => {
+  it('clears the coach flag and calls onReplayTips', () => {
+    localStorage.setItem('sf-coached', '1')
+    const onReplayTips = vi.fn()
+    const session = fakeSession()
+    render(<SettingsSheet bundle={bundle} session={session} open onClose={() => {}} onReplayTips={onReplayTips} />)
+
+    fireEvent.click(screen.getByRole('button', { name: 'Replay tips' }))
+
+    expect(localStorage.getItem('sf-coached')).toBeNull()
+    expect(onReplayTips).toHaveBeenCalledTimes(1)
   })
 })
