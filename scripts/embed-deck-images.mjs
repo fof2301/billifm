@@ -47,11 +47,11 @@ html = html.replace(
   `
     .art-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:26px}
     .art-strip figure{margin:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.09);background:#0b0d13}
-    .art-strip img{display:block;width:100%;height:120px;object-fit:cover}
+    .art-strip img{display:block;width:100%;height:120px;object-fit:cover;filter:brightness(1.7) saturate(1.15)}
     .art-strip figcaption{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8b93a7;padding:7px 9px}
     .cover-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:24px}
     .cover-grid figure{margin:0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.09);position:relative}
-    .cover-grid img{display:block;width:100%;height:150px;object-fit:cover}
+    .cover-grid img{display:block;width:100%;height:150px;object-fit:cover;filter:brightness(1.45) saturate(1.1)}
     .cover-grid figcaption{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 9px;display:flex;
       flex-direction:column;gap:1px;background:linear-gradient(to top,rgba(5,6,10,.97) 45%,transparent)}
     .cover-grid .ct{font-size:13.5px;color:#f2f5fb;font-weight:600}
@@ -59,14 +59,18 @@ html = html.replace(
     .cover-grid .cl{font-size:11px;line-height:1.35;color:#98a1b4;margin-top:3px}
     .face-row{display:flex;gap:16px;margin-top:24px;flex-wrap:wrap}
     .face-row figure{margin:0;display:flex;align-items:center;gap:11px}
-    .face-row img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(212,163,85,.35)}
+    .face-row img{width:64px;height:64px;border-radius:50%;object-fit:cover;border:2px solid rgba(212,163,85,.35);filter:brightness(1.25)}
     .face-row .fname{font-size:14px;color:#e8ecf7}
     .face-row .frole{font-size:11.5px;color:#8b93a7}
     .slide-art{position:absolute;inset:0;z-index:0;overflow:hidden}
-    .slide-art img{width:100%;height:100%;object-fit:cover;opacity:.55}
+    .slide-art img{width:100%;height:100%;object-fit:cover;opacity:1;
+      filter:brightness(1.85) saturate(1.2) contrast(1.04)}
+    /* Shades only the text column; the art stays bright on the right. */
     .slide-art::after{content:"";position:absolute;inset:0;
-      background:linear-gradient(100deg,rgba(5,6,10,.96) 26%,rgba(5,6,10,.45) 62%,rgba(5,6,10,.30))}
+      background:linear-gradient(100deg,rgba(5,6,10,.95) 30%,rgba(5,6,10,.74) 52%,rgba(5,6,10,.10) 84%)}
     .slide-hook .content,.slide-demo .content{position:relative;z-index:1}
+    /* the art runs bright behind the copy, so the copy carries its own shadow */
+    .slide-hook .content *,.slide-demo .content *{text-shadow:0 2px 18px rgba(5,6,10,.95),0 1px 3px rgba(5,6,10,.9)}
   </style>`,
 )
 
