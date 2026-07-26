@@ -1,0 +1,480 @@
+{
+  "meta": {
+    "id": "lantern-line",
+    "title": "The Lantern Line",
+    "tagline": "Every third of November, this family loses someone. You have until dawn.",
+    "genre": "mystery",
+    "estimatedMinutes": 9,
+    "cover": "assets/cover.jpg",
+    "modes": [
+      "mcq",
+      "text",
+      "voice"
+    ],
+    "stallLines": [
+      "The flame leans, though there is no wind…",
+      "Somewhere below, the house settles…",
+      "The glass fogs, then clears…"
+    ]
+  },
+  "clock": {
+    "realMinutesPerStoryDay": 8,
+    "totalStoryDays": 1,
+    "phases": [
+      "dusk",
+      "midnight",
+      "small-hours",
+      "dawn"
+    ]
+  },
+  "scene": {
+    "id": "parlour",
+    "backgrounds": {
+      "dusk": "assets/dusk.jpg",
+      "midnight": "assets/midnight.jpg",
+      "small-hours": "assets/small-hours.jpg",
+      "dawn": "assets/dawn.jpg"
+    },
+    "ambientAudio": "assets/ambient.mp3"
+  },
+  "characters": [
+    {
+      "id": "sera",
+      "name": "Sera",
+      "role": "Your grandmother — died three days ago",
+      "portrait": "assets/sera.jpg",
+      "personality": "Dry, unsentimental, deeply fond of you and bad at showing it. Speaks plainly about dying and evasively about the family. Answers a hard question with a harder one. Uses small domestic details — tea, a coat, a bus timetable — to avoid the big thing until you press.",
+      "greeting": "Oh, good. You found the lantern. I hoped it would be you and I'm sorry it's you.",
+      "voice": {
+        "voiceId": "coral",
+        "instructions": "warm, wry, unhurried"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": []
+      },
+      "kin": {
+        "generation": -1,
+        "parents": [
+          "nadia"
+        ]
+      }
+    },
+    {
+      "id": "wren",
+      "name": "Wren",
+      "role": "Your daughter — 2061",
+      "portrait": "assets/wren.jpg",
+      "personality": "Grown, careful, speaking to you from a long way off. Knows how your family's story turned out but finds it painful to say. Curious about you as a teenager. Gentle, a little formal, like someone visiting a grave.",
+      "greeting": "…Mum? You're so young. Oh — it's tonight, isn't it. It's tonight for you.",
+      "voice": {
+        "voiceId": "shimmer",
+        "instructions": "soft, distant, tender"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": []
+      },
+      "kin": {
+        "generation": 1,
+        "parents": []
+      }
+    },
+    {
+      "id": "nadia",
+      "name": "Nadia",
+      "role": "Your great-grandmother — kept the ledger",
+      "portrait": "assets/nadia.jpg",
+      "personality": "Precise, cold-eyed, a bookkeeper of griefs. Treats the family deaths as a problem of records rather than feelings. Impatient with vagueness; respects anyone who brings her a date or a number. Softens exactly once, if you ask what it cost her to keep counting.",
+      "greeting": "You've got her lantern, then. Fine. Do you have a pen?",
+      "voice": {
+        "voiceId": "sage",
+        "instructions": "clipped, exact, unsentimental"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "ledger"
+        ]
+      },
+      "kin": {
+        "generation": -2,
+        "parents": [
+          "tomas"
+        ]
+      }
+    },
+    {
+      "id": "tomas",
+      "name": "Tomas",
+      "role": "Your great-great-grandfather — the child who lived",
+      "portrait": "assets/tomas.jpg",
+      "personality": "Old man's voice around a child's memory. Kind, rambling, apologetic. Was an infant on the night in question and has spent eighty years half-remembering water and a woman shouting. Frightened of his own mother's name. Repeats the phrase 'they told me I was too small to remember' when pressed.",
+      "greeting": "Careful with that flame, child. Water and fire, in this family. Always water and fire.",
+      "voice": {
+        "voiceId": "onyx",
+        "instructions": "frail, warm, wandering"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "photo"
+        ]
+      },
+      "kin": {
+        "generation": -3,
+        "parents": [
+          "ilsa"
+        ]
+      }
+    },
+    {
+      "id": "ilsa",
+      "name": "Ilsa",
+      "role": "1891 — the one who chose",
+      "portrait": "assets/ilsa.jpg",
+      "personality": "Guarded to the point of stone. Speaks in the language of duty and weather. Believes what she did was the only thing a mother could do and has never once said it out loud. Deflects with practical detail — the depth of the water, the cost of a coffin. Cracks only if the player offers her something that sounds like understanding rather than judgement.",
+      "greeting": "You have my eyes and my son's chin. Say what you came to say and then let me be.",
+      "voice": {
+        "voiceId": "alloy",
+        "instructions": "hard, low, guarded"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "letter"
+        ]
+      },
+      "kin": {
+        "generation": -4,
+        "parents": []
+      }
+    },
+    {
+      "id": "marren",
+      "name": "Marren",
+      "role": "The name scratched out of every record",
+      "portrait": "assets/marren.jpg",
+      "personality": "Faint, unhurried, entirely without anger — the calm of someone who stopped needing an apology a century ago. Speaks in short sentences and long pauses. Interested in what the family became, not in what was done to her. Asks to be remembered rather than avenged.",
+      "greeting": "Someone said my name. It has been a hundred and seventy years since anyone said my name.",
+      "voice": {
+        "voiceId": "shimmer",
+        "instructions": "quiet, watery, calm"
+      },
+      "availability": {
+        "beats": [
+          "*"
+        ],
+        "phases": [
+          "*"
+        ],
+        "requiresClues": [
+          "scratched-name"
+        ]
+      },
+      "kin": {
+        "generation": -4,
+        "parents": []
+      }
+    }
+  ],
+  "beats": [
+    {
+      "id": "b1",
+      "narration": "Three days after the funeral you are alone in your grandmother's parlour with a brass lantern and her handwriting: 'Every third of November this family loses someone. It ends with you, if you find out what we did.' You light it. The room fills with people who are not there.",
+      "objective": "Ask Sera what the lantern is for.",
+      "characters": [
+        "sera",
+        "wren",
+        "nadia",
+        "tomas",
+        "ilsa",
+        "marren"
+      ],
+      "challenges": [
+        "c1"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_pattern"
+            ]
+          },
+          "goto": "b2"
+        }
+      ]
+    },
+    {
+      "id": "b2",
+      "narration": "Sera's ledger is in your lap — a column of dates in four different hands, every one of them the third of November.",
+      "objective": "Get Nadia to tell you how far back the dates run.",
+      "characters": [
+        "sera",
+        "wren",
+        "nadia",
+        "tomas",
+        "ilsa",
+        "marren"
+      ],
+      "challenges": [
+        "c2"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_1891"
+            ]
+          },
+          "goto": "b3"
+        }
+      ]
+    },
+    {
+      "id": "b3",
+      "narration": "The photograph is a christening: a young woman holding an infant at arm's length, as if he were still wet. Someone has been cut out of the left edge.",
+      "objective": "Ask Tomas what he remembers about the water.",
+      "characters": [
+        "sera",
+        "wren",
+        "nadia",
+        "tomas",
+        "ilsa",
+        "marren"
+      ],
+      "challenges": [
+        "c3"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "knows_drowning"
+            ]
+          },
+          "goto": "b4"
+        }
+      ]
+    },
+    {
+      "id": "b4",
+      "narration": "The letter is water-stained and unsent, in a hand you now recognise from the ledger's first page. It begins: 'I have told them the river took her.'",
+      "objective": "Get Ilsa to say what she did.",
+      "characters": [
+        "sera",
+        "wren",
+        "nadia",
+        "tomas",
+        "ilsa",
+        "marren"
+      ],
+      "challenges": [
+        "c4"
+      ],
+      "transitions": [
+        {
+          "when": {
+            "flags": [
+              "ilsa_confessed"
+            ]
+          },
+          "goto": "b5"
+        }
+      ]
+    },
+    {
+      "id": "b5",
+      "narration": "A name surfaces in the lantern-light — scratched out of the parish record, out of the ledger, out of every photograph. Marren. Ilsa's sister. Dawn is coming.",
+      "objective": "Say Marren's name to Wren, and end the silence.",
+      "characters": [
+        "sera",
+        "wren",
+        "nadia",
+        "tomas",
+        "ilsa",
+        "marren"
+      ],
+      "challenges": [
+        "c5"
+      ]
+    }
+  ],
+  "challenges": [
+    {
+      "id": "c1",
+      "type": "task",
+      "prompt": "Learn what the lantern does — and what Sera was warning you about.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "knows_pattern"
+        ],
+        "unlockClues": [
+          "ledger"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_pattern"
+        ],
+        "unlockClues": [
+          "ledger"
+        ]
+      }
+    },
+    {
+      "id": "c2",
+      "type": "task",
+      "prompt": "Get Nadia to tell you the year the dates begin.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "knows_1891"
+        ],
+        "unlockClues": [
+          "photo"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_1891"
+        ],
+        "unlockClues": [
+          "photo"
+        ]
+      }
+    },
+    {
+      "id": "c3",
+      "type": "task",
+      "prompt": "Get Tomas to describe the night of the water.",
+      "timeLimitSeconds": 150,
+      "onSuccess": {
+        "setFlags": [
+          "knows_drowning"
+        ],
+        "unlockClues": [
+          "letter"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "knows_drowning"
+        ],
+        "unlockClues": [
+          "letter"
+        ]
+      }
+    },
+    {
+      "id": "c4",
+      "type": "task",
+      "prompt": "Get Ilsa to admit what she chose in 1891.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "ilsa_confessed"
+        ],
+        "unlockClues": [
+          "scratched-name"
+        ]
+      },
+      "onFailure": {
+        "setFlags": [
+          "ilsa_confessed"
+        ]
+      }
+    },
+    {
+      "id": "c5",
+      "type": "task",
+      "prompt": "Speak Marren's name to Wren — out loud, in the future, where it can't be scratched out.",
+      "timeLimitSeconds": 180,
+      "onSuccess": {
+        "setFlags": [
+          "silence_broken"
+        ]
+      },
+      "onFailure": {}
+    }
+  ],
+  "clues": [
+    {
+      "id": "ledger",
+      "title": "Nadia's ledger",
+      "text": "Dates in four hands, four generations. Every one the third of November."
+    },
+    {
+      "id": "photo",
+      "title": "The christening photograph",
+      "text": "A woman holding an infant at arm's length. Someone has been cut from the left edge."
+    },
+    {
+      "id": "letter",
+      "title": "The unsent letter",
+      "text": "Water-stained, 1891: 'I have told them the river took her.'"
+    },
+    {
+      "id": "scratched-name",
+      "title": "The name scratched out",
+      "text": "Marren. Ilsa's sister. Removed from the parish record with a knife."
+    }
+  ],
+  "endings": [
+    {
+      "id": "line-breaks",
+      "when": {
+        "flags": [
+          "silence_broken"
+        ]
+      },
+      "title": "The Line Breaks",
+      "text": "You say her name and the lantern goes out — not snuffed, finished. Wren says it back to you across seventy years, and somewhere behind you a woman who drowned in 1891 is finally in the room. No one in this family will lose anyone this November. The silence was the curse. You were the one who spoke."
+    },
+    {
+      "id": "half-truth",
+      "when": {
+        "flags": [
+          "ilsa_confessed"
+        ],
+        "clockExpired": true
+      },
+      "title": "A Half-Truth",
+      "text": "Ilsa told you what she did, and you let it stay in 1891 where she wanted it. The lantern gutters at dawn. Somewhere ahead of you, Wren is holding a brass lantern of her own and reading a note in your handwriting."
+    },
+    {
+      "id": "another-november",
+      "when": {
+        "clockExpired": true
+      },
+      "title": "Another November",
+      "text": "Dawn comes the way it always has. The lantern is cold and the parlour is only a parlour. Your grandmother's note is still in your lap, and the third of November is eleven months away."
+    }
+  ]
+}

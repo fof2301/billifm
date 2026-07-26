@@ -34,7 +34,9 @@ export function isCharacterAvailable(
   const ch = bundle.characters.find((c) => c.id === characterId)
   const beat = bundle.beats.find((b) => b.id === state.beatId)
   if (!ch || !beat || !beat.characters.includes(characterId)) return false
-  const { beats, phases } = ch.availability
+  const { beats, phases, requiresClues } = ch.availability
+  // Ancestry gating: a relative stays out of reach until their clue surfaces.
+  if (requiresClues.some((c) => !state.cluesFound.includes(c))) return false
   if (beats[0] !== '*' && !beats.includes(state.beatId)) return false
   const phase = storyTime(bundle.clock, state.elapsedRealMs).phase
   if (phases[0] !== '*' && !phases.includes(phase)) return false

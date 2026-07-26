@@ -15,6 +15,7 @@ export function TopBar({
   state,
   time,
   clueCount,
+  onOpenTree,
   onOpenJournal,
   onOpenSettings,
   clockRef,
@@ -24,6 +25,7 @@ export function TopBar({
   state: SessionState
   time: { day: number; phase: string; hour: number; minute: number }
   clueCount: number
+  onOpenTree?: () => void
   onOpenJournal: () => void
   onOpenSettings: () => void
   clockRef?: React.MutableRefObject<HTMLElement | null>

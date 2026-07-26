@@ -14,6 +14,7 @@ import { BackgroundLayer } from '../components/BackgroundLayer'
 import { ChallengeBanner } from '../components/ChallengeBanner'
 import { CharacterRail } from '../components/CharacterRail'
 import { ConversationSheet } from '../components/ConversationSheet'
+import { FamilyTree, hasKin } from '../components/FamilyTree'
 import { InputDock } from '../components/InputDock'
 import { Journal } from '../components/Journal'
 import { NarrationCard } from '../components/NarrationCard'
@@ -36,6 +37,8 @@ export function Stage({
   const { state, time } = session
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [journalOpen, setJournalOpen] = useState(false)
+  const [treeOpen, setTreeOpen] = useState(false)
+  const showTree = hasKin(bundle)
 
   // First-play coach marks: shown once per browser (localStorage flag), gating on the
   // clock chip, character rail, input dock, and journal button in turn. Mirrors the
@@ -175,6 +178,7 @@ export function Stage({
           state={state}
           time={time}
           clueCount={state.cluesFound.length}
+          onOpenTree={showTree ? () => setTreeOpen(true) : undefined}
           onOpenJournal={() => setJournalOpen(true)}
           onOpenSettings={() => setSettingsOpen(true)}
           clockRef={clockRef}
@@ -201,6 +205,14 @@ export function Stage({
 
       <PhaseToast toast={phaseToast} />
       <NarrationCard bundle={bundle} beatId={state.beatId} />
+      <FamilyTree
+        bundle={bundle}
+        state={state}
+        session={session}
+        open={treeOpen}
+        onSelect={session.selectCharacter}
+        onClose={() => setTreeOpen(false)}
+      />
       <Journal
         bundle={bundle}
         state={state}

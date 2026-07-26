@@ -16,6 +16,8 @@ const FORCE = process.argv.includes('--force')
 const AMBIENTS = {
   'kidnapping-escape':
     'Low ominous basement room tone: deep concrete rumble, faint electrical hum from a bare bulb, occasional distant water drip, claustrophobic and tense. Seamless loop, no melody, no voices.',
+  'lantern-line':
+    'Quiet Victorian parlour at night: a mantel clock ticking slowly, faint fire crackle dying down, distant house settling creaks, cold and mournful stillness. Seamless loop, no melody, no voices.',
   'ancestor-tree':
     'Warm quiet attic room tone: soft wood creaks, gentle muffled wind outside, faint dust-settling stillness, nostalgic and calm. Seamless loop, no melody, no voices.',
 }

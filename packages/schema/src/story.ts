@@ -58,6 +58,16 @@ export const AvailabilitySchema = z
   .object({
     beats: z.array(z.string()).nonempty(), // ['*'] means all beats
     phases: z.array(z.string()).nonempty(), // ['*'] means all phases
+    // Ancestry-style gating: unreachable until every listed clue is found.
+    requiresClues: z.array(z.string()).default([]),
+  })
+  .strict()
+
+/** Family-tree placement. Generation is signed: negative = ancestors, 0 = the player's own, positive = descendants. */
+export const KinSchema = z
+  .object({
+    generation: z.number().int(),
+    parents: z.array(z.string()).default([]),
   })
   .strict()
 
@@ -73,6 +83,7 @@ export const CharacterSchema = z
       .object({ voiceId: z.string(), instructions: z.string().optional() })
       .strict(),
     availability: AvailabilitySchema,
+    kin: KinSchema.optional(),
   })
   .strict()
 export type Character = z.infer<typeof CharacterSchema>
@@ -194,6 +205,10 @@ export const StoryBundleSchema = z
     }
 
     for (const c of b.characters) {
+      for (const clueId of c.availability.requiresClues)
+        if (!clueIds.has(clueId)) fail(`character '${c.id}': requiresClues '${clueId}' not defined`)
+      for (const parentId of c.kin?.parents ?? [])
+        if (!charIds.has(parentId)) fail(`character '${c.id}': kin parent '${parentId}' not defined`)
       if (c.availability.beats[0] !== '*')
         for (const bid of c.availability.beats)
           if (!beatIds.has(bid)) fail(`character '${c.id}': availability beat '${bid}' not defined`)

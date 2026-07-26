@@ -115,3 +115,24 @@ describe('SecretsSchema', () => {
     expect(parsed.judging).toEqual({})
   })
 })
+
+describe('ancestry fields', () => {
+  it('accepts kin and requiresClues, defaulting requiresClues to empty', () => {
+    const b = makeMinimalBundle()
+    ;(b.characters[0]!.availability as Record<string, unknown>).requiresClues = ['k1']
+    ;(b.characters[0] as Record<string, unknown>).kin = { generation: -2, parents: [] }
+    const parsed = StoryBundleSchema.parse(b)
+    expect(parsed.characters[0]!.availability.requiresClues).toEqual(['k1'])
+    expect(parsed.characters[0]!.kin?.generation).toBe(-2)
+    expect(StoryBundleSchema.parse(makeMinimalBundle()).characters[0]!.availability.requiresClues).toEqual([])
+  })
+
+  it('rejects an unknown clue in requiresClues and an unknown kin parent', () => {
+    const bad = makeMinimalBundle()
+    ;(bad.characters[0]!.availability as Record<string, unknown>).requiresClues = ['nope']
+    expect(() => StoryBundleSchema.parse(bad)).toThrow(/requiresClues 'nope'/)
+    const bad2 = makeMinimalBundle()
+    ;(bad2.characters[0] as Record<string, unknown>).kin = { generation: 0, parents: ['ghost'] }
+    expect(() => StoryBundleSchema.parse(bad2)).toThrow(/kin parent 'ghost'/)
+  })
+})

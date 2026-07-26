@@ -7,8 +7,11 @@ const stories = loadStories(join(__dirname, '../../../stories'))
 const app = createApp({ stories })
 
 describe('story registry', () => {
-  it('loads and validates both reference stories', () => {
-    expect([...stories.keys()].sort()).toEqual(['ancestor-tree', 'kidnapping-escape'])
+  it('loads and validates every story in the stories directory', () => {
+    const ids = [...stories.keys()]
+    expect(ids).toContain('kidnapping-escape')
+    expect(ids).toContain('ancestor-tree')
+    expect(ids.length).toBeGreaterThanOrEqual(2)
   })
 
   it('throws a named error on an invalid stories dir', () => {
@@ -21,7 +24,7 @@ describe('GET /api/stories', () => {
     const res = await app.request('/api/stories')
     expect(res.status).toBe(200)
     const body = await res.json()
-    expect(body.stories).toHaveLength(2)
+    expect(body.stories.length).toBe(stories.size)
     expect(body.stories[0]).toHaveProperty('title')
     expect(body.stories[0]).not.toHaveProperty('beats')
   })

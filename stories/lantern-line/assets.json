@@ -1,0 +1,18 @@
+{
+  "portraits": {
+    "sera": "A woman in her late seventies, silver hair pinned back, sharp amused eyes, cardigan, 1990s Britain",
+    "nadia": "A severe woman in her sixties, dark high-collared dress, spectacles on a chain, 1950s, bookkeeper",
+    "tomas": "A very old man, ninety, thin white hair, gentle bewildered eyes, 1970s cardigan",
+    "ilsa": "A hard-faced woman of thirty-five, dark shawl, hair scraped back, 1890s rural Europe, unforgiving expression",
+    "marren": "A young woman of twenty, pale, damp dark hair, calm faraway expression, 1890s, faint watery light on her skin",
+    "wren": "A woman of forty with kind tired eyes, modern minimal clothing, soft futuristic light, mid-21st century"
+  },
+  "scenes": {
+    "dusk": "A cluttered Victorian parlour at dusk: heavy armchair, writing desk, framed photographs, a brass oil lantern glowing on a side table, last blue light at the window",
+    "midnight": "The same parlour at midnight: only the brass lantern lit, deep shadows swallowing the furniture, photographs catching the flame",
+    "small-hours": "The same parlour in the small hours: lantern burning low, cold grey seeping under the door, an open ledger on the desk",
+    "dawn": "The same parlour at first light: pale dawn through lace curtains, lantern extinguished and smoking faintly, dust in the air"
+  },
+  "cover": "A brass oil lantern burning alone on a dark Victorian side table, faint translucent figures of several generations receding into the shadows behind it, ominous and tender",
+  "ambient": "Quiet Victorian parlour at night: a mantel clock ticking slowly, faint fire crackle dying down, distant house settling creaks, cold and mournful stillness. Seamless loop, no melody, no voices."
+}

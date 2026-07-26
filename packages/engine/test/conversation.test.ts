@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { StoryBundle } from '@story/schema'
 import { StoryBundleSchema } from '@story/schema'
-import { createSession, reduce } from '../src/reducer'
+import { createSession, isCharacterAvailable, reduce } from '../src/reducer'
 
 function fixture(): StoryBundle {
   return StoryBundleSchema.parse({
@@ -172,5 +172,27 @@ describe('serialization', () => {
     const revived = JSON.parse(JSON.stringify(state))
     const r = reduce(bundle, revived, { type: 'TICK', deltaMs: 1000 })
     expect(r.state.elapsedRealMs).toBe(1000)
+  })
+})
+
+describe('clue-gated availability', () => {
+  it('keeps a relative unreachable until their clue is found', () => {
+    const bundle = StoryBundleSchema.parse({
+      meta: { id: 'kin', title: 'K', tagline: '', genre: 't', estimatedMinutes: 5, cover: 'c.svg', modes: ['text'] },
+      clock: { realMinutesPerStoryDay: 5, totalStoryDays: 1, phases: ['day'] },
+      scene: { id: 's', backgrounds: { day: 'd.svg' } },
+      characters: [{
+        id: 'ilsa', name: 'Ilsa', role: 'ancestor', portrait: 'p.svg', personality: 'x', greeting: 'hm',
+        voice: { voiceId: 'sage' },
+        availability: { beats: ['*'], phases: ['*'], requiresClues: ['letter'] },
+        kin: { generation: -4, parents: [] },
+      }],
+      beats: [{ id: 'b1', narration: 'n', objective: 'o', characters: ['ilsa'] }],
+      challenges: [], clues: [{ id: 'letter', title: 'Letter', text: 'water-stained' }],
+      endings: [{ id: 'e', when: { clockExpired: true }, title: 'E', text: 'e' }],
+    })
+    const { state } = createSession(bundle, 'text')
+    expect(isCharacterAvailable(bundle, state, 'ilsa')).toBe(false)
+    expect(isCharacterAvailable(bundle, { ...state, cluesFound: ['letter'] }, 'ilsa')).toBe(true)
   })
 })
