@@ -18,6 +18,7 @@ import { Journal } from '../components/Journal'
 import { NarrationCard } from '../components/NarrationCard'
 import { SettingsSheet } from '../components/SettingsSheet'
 import { TopBar } from '../components/TopBar'
+import { PhaseToast } from '../fx/PhaseToast'
 
 export function Stage({
   bundle,
@@ -41,13 +42,44 @@ export function Stage({
 
   const sound = useMemo(() => createSoundController(getAudioBackend(), effectsEnabled), [])
   const haptics = useMemo(() => createHapticsController(effectsEnabled), [])
+
+  // Phase toast + challenge-outcome banner styling: both are transient, fx-event-driven
+  // state that Stage owns and clears on its own timeout (extending the same single fx
+  // fan-out sound/haptics already use, per the seam fx/events.ts establishes).
+  const [phaseToast, setPhaseToast] = useState<{ day: number; phase: string } | null>(null)
+  const phaseToastTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [challengeOutcome, setChallengeOutcome] = useState<'success' | 'timeout' | null>(null)
+  const [lastChallengePrompt, setLastChallengePrompt] = useState<string | null>(null)
+  const outcomeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   useFxEvents(session, (e) => {
     sound.handle(e)
     haptics.handle(e)
+    if (e.type === 'phase-changed') {
+      setPhaseToast({ day: e.day, phase: e.phase })
+      if (phaseToastTimeout.current) clearTimeout(phaseToastTimeout.current)
+      phaseToastTimeout.current = setTimeout(() => setPhaseToast(null), 2500)
+    }
+    if (e.type === 'challenge-succeeded' || e.type === 'challenge-timed-out') {
+      const ch = bundle.challenges.find((c) => c.id === e.challengeId)
+      setLastChallengePrompt(ch?.prompt ?? null)
+      setChallengeOutcome(e.type === 'challenge-succeeded' ? 'success' : 'timeout')
+      if (outcomeTimeout.current) clearTimeout(outcomeTimeout.current)
+      outcomeTimeout.current = setTimeout(() => setChallengeOutcome(null), 1200)
+    }
   })
 
+  // Clear any pending toast/outcome timers on unmount so they don't fire setState after
+  // the Stage is gone.
   useEffect(() => {
-    const remaining = state.activeChallenge ? state.activeChallenge.deadlineMs - state.elapsedRealMs : null
+    return () => {
+      if (phaseToastTimeout.current) clearTimeout(phaseToastTimeout.current)
+      if (outcomeTimeout.current) clearTimeout(outcomeTimeout.current)
+    }
+  }, [])
+
+  const remaining = state.activeChallenge ? state.activeChallenge.deadlineMs - state.elapsedRealMs : null
+  useEffect(() => {
     sound.tickCheck(remaining)
     haptics.tickCheck(remaining)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -79,6 +111,13 @@ export function Stage({
     <div className="relative mx-auto h-dvh max-w-md overflow-hidden bg-slate-950">
       <BackgroundLayer bundle={bundle} phase={time.phase} />
 
+      {/* Tension vignette: a decorative, non-interactive red inset glow once the active
+          challenge's deadline is under 10s. Fixed (not absolute) per spec so it always
+          covers the viewport even though the stage frame itself is capped at max-w-md. */}
+      {remaining !== null && remaining < 10_000 && (
+        <div className="pointer-events-none fixed inset-0 z-30 animate-pulse shadow-[inset_0_0_120px_40px_rgba(220,38,38,0.35)]" />
+      )}
+
       {/* One flex column owns all stage chrome — nothing can overlap by construction. */}
       <div className="pointer-events-none absolute inset-0 z-20 flex flex-col p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-[max(0.75rem,env(safe-area-inset-top))]">
         <TopBar
@@ -89,7 +128,7 @@ export function Stage({
           onOpenJournal={() => setJournalOpen(true)}
           onOpenSettings={() => setSettingsOpen(true)}
         />
-        <ChallengeBanner bundle={bundle} state={state} />
+        <ChallengeBanner bundle={bundle} state={state} outcome={challengeOutcome} lastPrompt={lastChallengePrompt} />
         <div className="mt-3 flex min-h-0 flex-1">
           <CharacterRail bundle={bundle} state={state} onSelect={session.selectCharacter} />
         </div>
@@ -104,6 +143,7 @@ export function Stage({
         <InputDock bundle={bundle} session={session} voiceSlot={<PushToTalkButton session={session} />} />
       </div>
 
+      <PhaseToast toast={phaseToast} />
       <NarrationCard bundle={bundle} beatId={state.beatId} />
       <Journal
         bundle={bundle}

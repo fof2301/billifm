@@ -6,7 +6,7 @@ export function hhmm(t: { hour: number; minute: number }): string {
   return `${String(t.hour).padStart(2, '0')}:${String(t.minute).padStart(2, '0')}`
 }
 
-const PHASE_ICON: Record<string, string> = {
+export const PHASE_ICON: Record<string, string> = {
   dawn: '🌅', day: '☀️', dusk: '🌆', night: '🌙', morning: '🌅', evening: '🌆',
 }
 
@@ -36,7 +36,7 @@ export function TopBar({
         </span>
         <div className="flex items-center gap-2">
           {remaining !== null && deadline !== null && (
-            <span className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${remaining < 30_000 ? 'bg-red-600' : 'bg-red-500/80'}`}>
+            <span className={`rounded-full px-3 py-1 text-xs font-semibold text-white ${remaining < 30_000 ? 'bg-red-600 animate-pulse' : 'bg-red-500/80'}`}>
               {`⏱ by ${hhmm(deadline)}`}
             </span>
           )}

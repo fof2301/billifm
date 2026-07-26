@@ -49,7 +49,7 @@ export function Journal({
   return (
     <div data-journal className="absolute inset-0 z-40 bg-black/70" onClick={onClose}>
       <div
-        className="absolute inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-2xl bg-slate-900 p-5 pb-[max(2.5rem,env(safe-area-inset-bottom))]"
+        className="absolute inset-x-0 bottom-0 max-h-[85dvh] animate-[slideup_0.25s_ease-out] overflow-y-auto rounded-t-2xl bg-slate-900 p-5 pb-[max(2.5rem,env(safe-area-inset-bottom))]"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-baseline justify-between">

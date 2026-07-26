@@ -27,6 +27,16 @@ export function InputDock({
     }
   }, [])
 
+  // Chips mount at opacity-0/translate-y-1 then flip to visible right after first paint,
+  // each with its own transitionDelay (i * 60ms) — a one-shot staggered entrance, not a
+  // keyframe, so it composes with each chip's own transition duration.
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    const id = requestAnimationFrame(() => setMounted(true))
+    return () => cancelAnimationFrame(id)
+  }, [])
+  const chipTransitionClass = `transition duration-300 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-1 opacity-0'}`
+
   const mcqChallenge =
     state.activeChallenge != null
       ? bundle.challenges.find((c) => c.id === state.activeChallenge!.id && c.type === 'mcq')
@@ -53,22 +63,24 @@ export function InputDock({
       {state.mode === 'mcq' && (
         <div className="flex flex-col gap-2">
           {mcqChallenge?.type === 'mcq'
-            ? mcqChallenge.options.map((o) => (
+            ? mcqChallenge.options.map((o, i) => (
                 <button
                   key={o.id}
                   disabled={busy || !online}
                   onClick={() => session.pick(o.id)}
-                  className="rounded-full border border-indigo-500/60 bg-indigo-950/80 px-4 py-2.5 text-sm text-indigo-100 disabled:opacity-50"
+                  style={{ transitionDelay: `${i * 60}ms` }}
+                  className={`rounded-full border border-indigo-500/60 bg-indigo-950/80 px-4 py-2.5 text-sm text-indigo-100 disabled:opacity-50 ${chipTransitionClass}`}
                 >
                   {o.text}
                 </button>
               ))
-            : chips.map((s) => (
+            : chips.map((s, i) => (
                 <button
                   key={s}
                   disabled={busy || noCharacter || !online}
                   onClick={() => session.send(s)}
-                  className="rounded-full border border-white/15 bg-black/60 px-4 py-2.5 text-sm text-slate-100 disabled:opacity-50"
+                  style={{ transitionDelay: `${i * 60}ms` }}
+                  className={`rounded-full border border-white/15 bg-black/60 px-4 py-2.5 text-sm text-slate-100 disabled:opacity-50 ${chipTransitionClass}`}
                 >
                   {s}
                 </button>

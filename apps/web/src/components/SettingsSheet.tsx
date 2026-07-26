@@ -27,7 +27,10 @@ export function SettingsSheet({
   if (!open) return null
   return (
     <div className="absolute inset-0 z-40 bg-black/70" onClick={onClose}>
-      <div className="absolute inset-x-0 bottom-0 rounded-t-2xl bg-slate-900 p-5 pb-10" onClick={(e) => e.stopPropagation()}>
+      <div
+        className="absolute inset-x-0 bottom-0 animate-[slideup_0.25s_ease-out] rounded-t-2xl bg-slate-900 p-5 pb-10"
+        onClick={(e) => e.stopPropagation()}
+      >
         <h3 className="text-sm font-semibold text-slate-300">Mode</h3>
         <div className="mt-3 flex gap-2">
           {bundle.meta.modes.map((m) => (
