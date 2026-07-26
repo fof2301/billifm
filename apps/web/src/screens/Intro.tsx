@@ -1,6 +1,7 @@
 import type { Mode, StoryBundle } from '@story/schema'
 import { useEffect, useState } from 'react'
 import { assetUrl, getStory } from '../api'
+import { getAudioBackend } from '../fx/audio'
 
 const MODE_LABEL: Record<Mode, string> = { mcq: 'Choices', text: 'Free text', voice: 'Voice' }
 
@@ -50,6 +51,9 @@ export function Intro({
   if (!bundle || !mode) return <p className="p-8 text-center text-slate-400">Loading…</p>
 
   const start = async (resume: boolean) => {
+    // A user gesture (this tap) is required to unlock the AudioContext — do it here so
+    // every sound cue and the ambient bed can play once Stage mounts.
+    getAudioBackend().unlock()
     if (mode === 'voice') {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true })

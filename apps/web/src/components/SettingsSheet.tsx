@@ -1,5 +1,6 @@
 import type { Mode, StoryBundle } from '@story/schema'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import { effectsEnabled, setEffectsEnabled } from '../fx/prefs'
 import type { SessionApi } from '../useSession'
 
 const MODE_LABEL: Record<Mode, string> = { mcq: 'Choices', text: 'Free text', voice: 'Voice' }
@@ -15,6 +16,8 @@ export function SettingsSheet({
   open: boolean
   onClose: () => void
 }) {
+  const [effects, setEffects] = useState(() => effectsEnabled())
+
   useEffect(() => {
     if (open) session.pause('settings')
     else session.resume('settings')
@@ -36,6 +39,20 @@ export function SettingsSheet({
               {MODE_LABEL[m]}
             </button>
           ))}
+        </div>
+        <h3 className="mt-6 text-sm font-semibold text-slate-300">Sound</h3>
+        <div className="mt-3 flex gap-2">
+          <button
+            aria-pressed={effects}
+            onClick={() => {
+              const next = !effects
+              setEffects(next)
+              setEffectsEnabled(next)
+            }}
+            className={`rounded-full px-4 py-2 text-sm ${effects ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-300'}`}
+          >
+            Effects
+          </button>
         </div>
         <button onClick={onClose} className="mt-6 w-full rounded-xl bg-slate-800 py-2 text-sm">Close</button>
       </div>
