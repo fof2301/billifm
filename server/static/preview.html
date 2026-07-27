@@ -1,0 +1,298 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sutradhar — dev preview</title>
+<!--
+  LOCAL DEV PREVIEW. Not the finals room-sync player (memory.md D14) - there is no
+  websocket, no multi-device sync, nothing to demo on stage. This exists so the
+  team can see and hear the Event Track working before the Android dev build is
+  ready, and so Content can check the timing of the audio against the cues.
+
+  What is REAL here:
+    volume_duck     real - gain on the audio element
+    screen_dim      real - overlay
+    screen_blackout real - overlay
+    fake_call       real - the actual OpenAI Realtime villain, same as the app
+    mic_listen      real - getUserMedia + AnalyserNode, real amplitude metering
+
+  What is FAKED here (a browser cannot do these - the phone does them for real):
+    flashlight      full-screen white flash instead of the torch
+    haptic          navigator.vibrate if available, plus a visual pulse
+-->
+<style>
+  :root { --bg:#0D0D12; --red:#C0392B; --text:#EDEDED; --muted:#6B6B76; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--text);
+         font:14px/1.5 ui-sans-serif,system-ui,-apple-system,sans-serif; }
+  .wrap { max-width: 900px; margin:0 auto; padding:28px 20px 60px; }
+  h1 { font-size:15px; letter-spacing:.14em; color:var(--red); margin:0 0 2px; font-weight:800; }
+  .sub { color:var(--muted); font-size:12px; margin-bottom:22px; }
+  .panel { border:1px solid #1C1C24; padding:18px; margin-bottom:16px; }
+  button { background:var(--red); color:#fff; border:0; padding:11px 20px; font:inherit;
+           font-weight:700; cursor:pointer; }
+  button.ghost { background:transparent; border:1px solid #2A2A36; color:var(--text); font-weight:400; }
+  button:disabled { opacity:.4; cursor:default; }
+  .row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .clock { font:600 22px ui-monospace,monospace; margin-left:auto; }
+  .bar { height:3px; background:#1C1C24; margin:16px 0 4px; position:relative; }
+  .bar>i { position:absolute; inset:0 auto 0 0; width:0; background:var(--red); display:block; }
+  .marks { position:relative; height:16px; }
+  .marks>span { position:absolute; transform:translateX(-50%); font-size:9px; color:var(--muted); }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  td, th { text-align:left; padding:6px 8px; border-top:1px solid #16161D; }
+  th { color:var(--muted); font-weight:400; font-size:10px; letter-spacing:.08em; text-transform:uppercase; }
+  tr.fired td { color:var(--red); }
+  tr.fired td.tick::after { content:'●'; }
+  .real { color:#3E8E41; font-size:10px; }
+  .fake { color:#B8860B; font-size:10px; }
+  #log { font:11px/1.7 ui-monospace,monospace; color:#5A5A68; max-height:150px; overflow:auto; }
+  /* effect surfaces */
+  #dim { position:fixed; inset:0; background:#000; opacity:0; pointer-events:none;
+         transition:opacity .2s linear; z-index:50; }
+  #flash { position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; z-index:60; }
+  #pulse { position:fixed; inset:0; border:0 solid var(--red); pointer-events:none; z-index:55; }
+  #call { position:fixed; inset:0; background:#101014; z-index:100; display:none;
+          flex-direction:column; align-items:center; justify-content:space-between; padding:70px 20px; }
+  #call.on { display:flex; }
+  .avatar { width:104px; height:104px; border-radius:50%; background:#22222C; color:#4A4A58;
+            display:grid; place-items:center; font-size:42px; }
+  .num { font-size:25px; margin-top:22px; }
+  .acts { display:flex; gap:60px; }
+  .rnd { width:66px; height:66px; border-radius:50%; display:grid; place-items:center;
+         font-size:24px; color:#fff; cursor:pointer; border:0; }
+  .grn { background:#2E7D32; } .rd { background:var(--red); }
+  #mic { position:fixed; inset:0; background:#000; z-index:70; display:none;
+         place-items:center; color:#2A2A36; font-size:12px; letter-spacing:.3em; }
+  #mic.on { display:grid; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SUTRADHAR — DEV PREVIEW</h1>
+  <div class="sub">Local only. Not the finals player. Torch and haptics are substituted; everything else is real.</div>
+
+  <div class="panel">
+    <div class="row">
+      <button id="play">▶ Play Episode 8</button>
+      <button id="jump" class="ghost">Skip to 1:25</button>
+      <button id="reset" class="ghost">Reset state</button>
+      <span class="clock" id="clock">0:00</span>
+    </div>
+    <div class="bar"><i id="fill"></i></div>
+    <div class="marks" id="marks"></div>
+  </div>
+
+  <div class="panel">
+    <table>
+      <thead><tr><th style="width:26px"></th><th style="width:46px">t</th><th>effect</th><th>real?</th><th>cue</th></tr></thead>
+      <tbody id="rows"></tbody>
+    </table>
+  </div>
+
+  <div class="panel"><div id="log">waiting…</div></div>
+</div>
+
+<div id="dim"></div><div id="flash"></div><div id="pulse"></div>
+<div id="mic">LISTENING</div>
+<div id="call">
+  <div style="text-align:center">
+    <div style="color:#8A8A96;margin-bottom:34px" id="callStatus">Incoming call</div>
+    <div class="avatar">?</div>
+    <div class="num" id="callFrom">UNKNOWN NUMBER</div>
+    <div style="color:#6B6B76;font-size:12px;margin-top:7px">Mobile · India</div>
+  </div>
+  <div class="acts">
+    <button class="rnd rd" id="decline">✕</button>
+    <button class="rnd grn" id="accept">✆</button>
+  </div>
+</div>
+
+<audio id="audio" preload="auto"></audio>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const audio = $('audio');
+let track = null, fired = new Set(), suspended = false, timer = null;
+
+function log(m) {
+  const t = audio.currentTime.toFixed(1).padStart(5);
+  $('log').innerHTML = `[${t}s] ${m}<br>` + $('log').innerHTML;
+}
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+const fmt = (s) => `${Math.floor(s/60)}:${String(Math.floor(s%60)).padStart(2,'0')}`;
+
+// Effects a browser can do honestly ------------------------------------------
+async function volume_duck(e) {
+  const from = audio.volume, steps = Math.max(1, Math.round(e.ramp_ms/50));
+  for (let i=1;i<=steps;i++){ audio.volume = from + (e.to-from)*i/steps; await sleep(50); }
+  await sleep(e.hold_s*1000);
+  const s2 = Math.max(1, Math.round(e.restore_ms/50)), v0 = audio.volume;
+  for (let i=1;i<=s2;i++){ audio.volume = v0 + (1-v0)*i/s2; await sleep(50); }
+}
+async function screen_dim(e) {
+  $('dim').style.transition = `opacity ${e.fade_ms}ms linear`;
+  $('dim').style.opacity = e.opacity;
+  await sleep(e.hold_s*1000);
+  $('dim').style.opacity = 0;
+}
+async function screen_blackout(e) {
+  $('dim').style.transition = 'opacity 0s'; $('dim').style.opacity = 1;
+  await sleep(e.duration_s*1000);
+  $('dim').style.transition = 'opacity .2s'; $('dim').style.opacity = 0;
+}
+// Substitutes - the phone does these for real ---------------------------------
+async function flashlight(e) {
+  const f = $('flash');
+  for (let i=0;i<3;i++){ f.style.opacity=.9; await sleep(80); f.style.opacity=0; await sleep(400); }
+  f.style.opacity = .82; await sleep(e.hold_s*1000); f.style.opacity = 0;
+}
+async function haptic(e) {
+  const beats = e.pattern === 'knock_x3'
+    ? [[120,700],[120,700],[120,0]]
+    : Array.from({length:9},(_,i)=>[90, Math.max(450, 900-i*60)]);
+  for (const [on,gap] of beats) {
+    if (navigator.vibrate) navigator.vibrate(on);
+    $('pulse').style.borderWidth = '14px'; await sleep(on+60);
+    $('pulse').style.borderWidth = '0px';  await sleep(Math.max(0,gap-on-60));
+  }
+}
+// Real: the actual Realtime villain -------------------------------------------
+function fake_call(e) {
+  return new Promise(async (resolve) => {
+    audio.pause();
+    $('callFrom').textContent = e.from;
+    $('callStatus').textContent = 'Incoming call';
+    $('call').classList.add('on');
+
+    let pc = null, done = false;
+    const finish = async (why) => {
+      if (done) return; done = true;
+      clearTimeout(ring);
+      if (pc) try { pc.close(); } catch {}
+      $('call').classList.remove('on');
+      log(`call ended (${why})`);
+      try {
+        await fetch('/call_ended', {method:'POST',headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({transcript: lines.join('\n') || `[no speech: ${why}]`, decision_id: e.decision_id})});
+        const st = await (await fetch('/state')).json();
+        log(`outcome ${st.flags[e.decision_id+'_outcome']} · flags ${JSON.stringify(st.flags)}`);
+      } catch (err) { log('call_ended failed: '+err); }
+      await audio.play(); resolve();
+    };
+
+    const ring = setTimeout(() => finish('missed'), e.ring_timeout_s*1000);
+    const lines = [];
+
+    $('decline').onclick = () => finish('declined');
+    $('accept').onclick = async () => {
+      clearTimeout(ring);
+      $('callStatus').textContent = 'Connecting…';
+      try {
+        const s = await (await fetch('/realtime_session',{method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({agent:e.agent, decision_id:e.decision_id})})).json();
+        if (!s.client_secret) throw new Error(JSON.stringify(s).slice(0,120));
+
+        pc = new RTCPeerConnection();
+        const el = new Audio(); el.autoplay = true;
+        pc.ontrack = (ev) => { el.srcObject = ev.streams[0]; };
+        const mic = await navigator.mediaDevices.getUserMedia({audio:true});
+        pc.addTrack(mic.getTracks()[0]);
+
+        const ch = pc.createDataChannel('oai-events');
+        ch.onmessage = (ev) => {
+          let d; try { d = JSON.parse(ev.data); } catch { return; }
+          if (d.type === 'response.audio_transcript.done' && d.transcript) {
+            lines.push('villain: '+d.transcript); log('HIM: '+d.transcript);
+          }
+          if (d.type === 'conversation.item.input_audio_transcription.completed' && d.transcript) {
+            lines.push('listener: '+d.transcript); log('YOU: '+d.transcript);
+          }
+        };
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+        const r = await fetch('https://api.openai.com/v1/realtime?model='+encodeURIComponent(s.model),
+          {method:'POST', body: offer.sdp,
+           headers:{Authorization:'Bearer '+s.client_secret,'Content-Type':'application/sdp'}});
+        await pc.setRemoteDescription({type:'answer', sdp: await r.text()});
+        $('callStatus').textContent = 'Connected — talk to him';
+        $('decline').onclick = () => finish('hung up');
+        log('villain connected — speak');
+      } catch (err) { log('call failed: '+err); finish('failed'); }
+    };
+  });
+}
+// Real: actual amplitude metering ---------------------------------------------
+async function mic_listen(e) {
+  $('mic').classList.add('on');
+  let peak = -160;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    const ctx = new AudioContext();
+    const an = ctx.createAnalyser(); an.fftSize = 2048;
+    ctx.createMediaStreamSource(stream).connect(an);
+    const buf = new Float32Array(an.fftSize);
+    for (let i=0;i<e.duration_s*10;i++){
+      await sleep(100);
+      an.getFloatTimeDomainData(buf);
+      let sum=0; for (const v of buf) sum += v*v;
+      const db = 20*Math.log10(Math.sqrt(sum/buf.length) || 1e-8);
+      if (db > peak) peak = db;
+    }
+    stream.getTracks().forEach(t=>t.stop()); ctx.close();
+  } catch (err) { log('mic denied: '+err); }
+  $('mic').classList.remove('on');
+
+  const result = peak > e.threshold_db ? 'noise' : 'quiet';
+  log(`silence test: peak ${peak.toFixed(1)}dB vs ${e.threshold_db}dB → ${result.toUpperCase()}`);
+  await fetch('/silence_result',{method:'POST',headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({result})});
+  audio.src = '/audio/'+e.branch[result]; audio.volume = 1;
+  fired.clear(); track = {...track, events: []};
+  await audio.play();
+  log(`branch → ${e.branch[result]}`);
+}
+
+const HANDLERS = {volume_duck, screen_dim, screen_blackout, flashlight, haptic, fake_call, mic_listen};
+const REAL = {volume_duck:1, screen_dim:1, screen_blackout:1, fake_call:1, mic_listen:1};
+
+async function boot() {
+  track = await (await fetch('/event_track/8')).json();
+  audio.src = '/audio/' + track.audio;
+  $('rows').innerHTML = track.events.map(e => `
+    <tr id="r-${e.id}"><td class="tick"></td><td>${fmt(e.t)}</td><td>${e.type}</td>
+    <td class="${REAL[e.type]?'real':'fake'}">${REAL[e.type]?'real':'substituted'}</td>
+    <td style="color:#4A4A58">${(e.cue||'').slice(0,58)}</td></tr>`).join('');
+  $('marks').innerHTML = track.events.map(e =>
+    `<span style="left:${(e.t/track.duration_s*100).toFixed(2)}%">${fmt(e.t)}</span>`).join('');
+  log(`loaded ${track.audio} · ${track.events.length} events · ${track.duration_s}s`);
+}
+
+function tick() {
+  $('clock').textContent = fmt(audio.currentTime);
+  $('fill').style.width = (audio.currentTime/track.duration_s*100)+'%';
+  if (suspended) return;
+  for (const e of track.events) {
+    if (fired.has(e.id) || audio.currentTime < e.t) continue;
+    fired.add(e.id);
+    const row = $('r-'+e.id); if (row) row.className = 'fired';
+    log(`fire ${e.id} ${e.type}`);
+    const blocking = e.type==='fake_call' || e.type==='mic_listen';
+    if (blocking) suspended = true;
+    Promise.resolve(HANDLERS[e.type]?.(e)).catch(err=>log(`${e.id} failed: ${err}`))
+      .finally(()=>{ if (blocking) suspended = false; });
+  }
+}
+
+$('play').onclick = async () => { await audio.play(); if(!timer) timer=setInterval(tick,250); log('playing'); };
+$('jump').onclick = () => { audio.currentTime = 85; log('jumped to 1:25'); };
+$('reset').onclick = async () => {
+  await fetch('/reset_state', {method:'POST'});
+  fired.clear(); log('listener state reset');
+};
+boot();
+</script>
+</body>
+</html>

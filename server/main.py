@@ -192,6 +192,26 @@ async def _place_outbound_call(who: str) -> None:
     )
 
 
+@app.get("/preview", response_class=HTMLResponse)
+def preview_page() -> str:
+    """Local dev preview of the whole Event Track in a browser.
+
+    NOT the finals room-sync player (D14) - no websocket, no multi-device sync,
+    nothing stage-facing. It exists so the team can see and hear the timeline
+    before the Android dev build is ready, and so Content can check audio timing
+    against the cues. Duck, dim, blackout, the live villain call and the silence
+    test are all real here; torch and haptics are substituted.
+    """
+    return (ROOT / "static" / "preview.html").read_text()
+
+
+@app.post("/reset_state")
+def reset_state() -> dict[str, Any]:
+    """Reset the demo listener. Used between rehearsal runs."""
+    state.save(json.loads(json.dumps(state.DEFAULT_STATE)))
+    return {"ok": True, **state.load()}
+
+
 @app.get("/healthz")
 def healthz() -> dict[str, Any]:
     current = state.load()
